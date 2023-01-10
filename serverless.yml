@@ -1,0 +1,24 @@
+org: delorenj
+app: summaraize
+service: summaraize
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  summarizeChunk:
+    handler: summarize.summarizeChunk
+    events:
+      - httpApi:
+          path: /sc
+          method: get
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+
