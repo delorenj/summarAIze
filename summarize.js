@@ -1,5 +1,3 @@
-'use strict';
-const AWS = require('aws-sdk');
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
@@ -12,7 +10,7 @@ module.exports.summarizeChunk = async (event) => {
 
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: "What is 50 plus 50",
+    prompt: "",
     temperature: 0.5,
     max_tokens: 60,
     top_p: 1.0,
@@ -23,5 +21,5 @@ module.exports.summarizeChunk = async (event) => {
   return {
     statusCode: 200,
     body: JSON.stringify(response.data.choices[0])
-  }
+  };
 };

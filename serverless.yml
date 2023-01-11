@@ -3,11 +3,185 @@ app: summaraize
 service: summaraize
 frameworkVersion: '3'
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: nodejs14.x
+  stage: prod
+  region: us-east-1
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
+    tableName: books
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:us-east-1:*:*"
+
+plugins:
+  - serverless-bundle
+  - serverless-s3-local
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  s3:
+    host: localhost
+    directory: /tmp
+
+
+resources:
+  Resources:
+#    BookBucket:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#      # Set the CORS policy
+#      CorsConfiguration:
+#        CorsRules:
+#          -
+#            AllowedOrigins:
+#              - '*'
+#            AllowedHeaders:
+#              - '*'
+#            AllowedMethods:
+#              - GET
+#              - PUT
+#              - POST
+#              - DELETE
+#              - HEAD
+#            MaxAge: 3000
+#    LocalBookBucket:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: local-bucket
+#  CognitoUserPool:
+#    Type: AWS::Cognito::UserPool
+#    Properties:
+#      # Generate a name based on the stage
+#      UserPoolName: ${self:custom.stage}-user-pool
+#      # Set email as an alias
+#      UsernameAttributes:
+#        - email
+#      AutoVerifiedAttributes:
+#        - email
+#
+#  CognitoUserPoolClient:
+#    Type: AWS::Cognito::UserPoolClient
+#    Properties:
+#      # Generate an app client name based on the stage
+#      ClientName: ${self:custom.stage}-user-pool-client
+#      UserPoolId:
+#        Ref: CognitoUserPool
+#      ExplicitAuthFlows:
+#        - ADMIN_NO_SRP_AUTH
+#      GenerateSecret: false
+#  CognitoIdentityPool:
+#    Type: AWS::Cognito::IdentityPool
+#    Properties:
+#      # Generate a name based on the stage
+#      IdentityPoolName: ${self:custom.stage}IdentityPool
+#      # Don't allow unathenticated users
+#      AllowUnauthenticatedIdentities: false
+#      # Link to our User Pool
+#      CognitoIdentityProviders:
+#        - ClientId:
+#            Ref: CognitoUserPoolClient
+#          ProviderName:
+#            Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+#  CognitoIdentityPoolRoles:
+#    Type: AWS::Cognito::IdentityPoolRoleAttachment
+#    Properties:
+#      IdentityPoolId:
+#        Ref: CognitoIdentityPool
+#      Roles:
+#        authenticated:
+#          Fn::GetAtt: [CognitoAuthRole, Arn]
+#  # IAM role used for authenticated users
+#  CognitoAuthRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      Path: /
+#      AssumeRolePolicyDocument:
+#        Version: '2012-10-17'
+#        Statement:
+#          - Effect: 'Allow'
+#            Principal:
+#              Federated: 'cognito-identity.amazonaws.com'
+#            Action:
+#              - 'sts:AssumeRoleWithWebIdentity'
+#            Condition:
+#              StringEquals:
+#                'cognito-identity.amazonaws.com:aud':
+#                  Ref: CognitoIdentityPool
+#              'ForAnyValue:StringLike':
+#                'cognito-identity.amazonaws.com:amr': authenticated
+#      Policies:
+#        - PolicyName: 'CognitoAuthorizedPolicy'
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Effect: 'Allow'
+#                Action:
+#                  - 'mobileanalytics:PutEvents'
+#                  - 'cognito-sync:*'
+#                  - 'cognito-identity:*'
+#                Resource: '*'
+#
+#              # Allow users to invoke our API
+#              - Effect: 'Allow'
+#                Action:
+#                  - 'execute-api:Invoke'
+#                Resource:
+#                  Fn::Join:
+#                    - ''
+#                    -
+#                      - 'arn:aws:execute-api:'
+#                      - Ref: AWS::Region
+#                      - ':'
+#                      - Ref: AWS::AccountId
+#                      - ':'
+#                      - Ref: ApiGatewayRestApi
+#                      - '/*'
+#
+#              # Allow users to upload attachments to their
+#              # folder inside our S3 bucket
+#              - Effect: 'Allow'
+#                Action:
+#                  - 's3:*'
+#                Resource:
+#                  - Fn::Join:
+#                    - ''
+#                    -
+#                      - Fn::GetAtt: [BookBucket, Arn]
+#                      - '/private/'
+#                      - '$'
+#                      - '{cognito-identity.amazonaws.com:sub}/*'
+#  GatewayResponseDefault4XX:
+#    Type: 'AWS::ApiGateway::GatewayResponse'
+#    Properties:
+#      ResponseParameters:
+#         gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+#         gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+#      ResponseType: DEFAULT_4XX
+#      RestApiId:
+#        Ref: 'ApiGatewayRestApi'
+#  GatewayResponseDefault5XX:
+#    Type: 'AWS::ApiGateway::GatewayResponse'
+#    Properties:
+#      ResponseParameters:
+#         gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+#         gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+#      ResponseType: DEFAULT_5XX
+#      RestApiId:
+#        Ref: 'ApiGatewayRestApi'
 
 functions:
   summarizeChunk:
@@ -16,11 +190,28 @@ functions:
       - httpApi:
           path: /sc
           method: get
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
+          authorizer: aws_iam
 
+  create:
+    handler: create.main
+    events:
+      - http:
+          path: notes
+          cors: true
+          method: post
+          authorizer: aws_iam
+
+#Outputs:
+#  BookBucketName:
+#    Value:
+#      Ref: BookBucket
+#  UserPoolId:
+#    Value:
+#      Ref: CognitoUserPool
+#  UserPoolClientId:
+#    Value:
+#      Ref: CognitoUserPoolClient
+#  IdentityPoolId:
+#    Value:
+#      Ref: CognitoIdentityPool
 
