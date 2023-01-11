@@ -7,6 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 module.exports.summarizeChunk = async (event) => {
+  const userId = event.requestContext.identity.cognitoIdentityId
 
   const response = await openai.createCompletion({
     model: "text-davinci-003",
@@ -20,6 +21,7 @@ module.exports.summarizeChunk = async (event) => {
 
   return {
     statusCode: 200,
+    userId,
     body: JSON.stringify(response.data.choices[0])
   };
 };

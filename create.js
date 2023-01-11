@@ -6,12 +6,12 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 export async function main(event, context) {
   // Request body is passed in as a JSON encoded string in 'event.body'
   const data = JSON.parse(event.body);
-
+  console.log("Birds", event.requestContext.identity.cognitoIdentityId);
   const params = {
     TableName: process.env.tableName,
     Item: {
       // The attributes of the item to be created
-      userId: "123", // The id of the author
+      userId: event.requestContext.identity.cognitoIdentityId, // The id of the author
       bookId: uuid.v1(), // A unique uuid
       content: data.content, // Parsed from request body
       attachment: data.attachment, // Parsed from request body

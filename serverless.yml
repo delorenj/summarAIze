@@ -187,7 +187,7 @@ functions:
   summarizeChunk:
     handler: summarize.summarizeChunk
     events:
-      - httpApi:
+      - http:
           path: /sc
           method: get
           authorizer: aws_iam
