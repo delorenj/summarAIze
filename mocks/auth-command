@@ -1,0 +1,12 @@
+npx aws-api-gateway-cli-test \
+--username='jaradd+1@gmail.com' \
+--password='Admin123!' \
+--user-pool-id='us-east-1_6RzBiLbtL' \
+--app-client-id='5bck5lhi2a8fnli19jjg98hffh' \
+--cognito-region='us-east-1' \
+--identity-pool-id='us-east-1:ce71f70e-c355-4389-8d47-57819df31a44' \
+--invoke-url='https://ch8khrljw0.execute-api.us-east-1.amazonaws.com/prod' \
+--api-gateway-region='us-east-1' \
+--path-template='/books' \
+--method='POST' \
+--body='{"content":"hello world","attachment":"hello.jpg"}'

@@ -14,6 +14,8 @@ provider:
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
     tableName: books
+    stripeSecretKey: ${param:stripeSecretKey}
+
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -30,8 +32,6 @@ plugins:
   - serverless-bundle
   - serverless-s3-local
   - serverless-offline
-  - serverless-dotenv-plugin
-
 custom:
   s3:
     host: localhost
@@ -197,6 +197,15 @@ functions:
     events:
       - http:
           path: notes
+          cors: true
+          method: post
+          authorizer: aws_iam
+
+  billing:
+    handler: billing.main
+    events:
+      - http:
+          path: billing
           cors: true
           method: post
           authorizer: aws_iam
