@@ -1,4 +1,6 @@
-@import "~bootstrap/scss/bootstrap";
+//@import "~bootstrap/scss/bootstrap";
+@import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
 body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -16,10 +18,23 @@ body {
 
 
 .content {
-  margin: 15px;
 }
 
 
 #theme-toggle {
   align-self: end;
+}
+
+.bg {
+  content: "";
+  background-color: black;
+  background-image: url("http://localhost:3000/bg-book-2.png");
+  //position: absolute;
+  height: 100vh;
+  width: 100%;
+  //filter: blur(4px);
+  background-position: left;
+  background-position-y: 450px;
+  background-repeat: no-repeat;
+  background-size: cover;
 }

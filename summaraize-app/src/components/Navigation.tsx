@@ -1,25 +1,54 @@
-import React, {useState, FormEvent} from 'react';
-import {Button, Col, Container, Form, FormGroup, InputGroup, Nav, Navbar, Row} from "react-bootstrap";
+import React, {useState} from 'react';
+import {
+    MDBContainer,
+    MDBNavbar,
+    MDBNavbarBrand,
+    MDBNavbarToggler,
+    MDBIcon,
+    MDBNavbarNav,
+    MDBNavbarItem,
+    MDBNavbarLink,
+    MDBBtn,
+    MDBDropdown,
+    MDBDropdownToggle,
+    MDBDropdownMenu,
+    MDBDropdownItem,
+    MDBCollapse,
+} from 'mdb-react-ui-kit';
+
 import {useTheme} from "../contexts/ThemeContext";
-import {FormControl, FormLabel} from "react-bootstrap";
-import Home from "./Home";
 
 export const Navigation = () => {
+    const [showBasic, setShowBasic] = useState(false);
     const {theme} = useTheme();
+    const themeAttribute = { [theme]: theme }
     return (
-        <>
-            <Navbar collapseOnSelect expand='sm' bg={theme} variant={theme}>
-                <Container>
-                    <Navbar.Brand href="#">summarAIze</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
-                    <Navbar.Collapse id="responsive-navbar-nav">
-                        <Nav className="mr-auto">
-                            <Nav.Link href="#home">Home</Nav.Link>
-                            <Nav.Link href="#about">About</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-        </>
+        <MDBNavbar expand='lg' {...themeAttribute} >
+            <MDBContainer>
+                <MDBNavbarBrand href='#'>summarAIze</MDBNavbarBrand>
+
+                <MDBNavbarToggler
+                    aria-controls='navbarSupportedContent'
+                    aria-expanded='false'
+                    aria-label='Toggle navigation'
+                    onClick={() => setShowBasic(!showBasic)}
+                >
+                    <MDBIcon icon='bars' fas/>
+                </MDBNavbarToggler>
+
+                <MDBCollapse navbar show={showBasic}>
+                    <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
+                        <MDBNavbarItem>
+                            <MDBNavbarLink active aria-current='page' href='#'>
+                                Home
+                            </MDBNavbarLink>
+                        </MDBNavbarItem>
+                        <MDBNavbarItem>
+                            <MDBNavbarLink href='#'>About</MDBNavbarLink>
+                        </MDBNavbarItem>
+                    </MDBNavbarNav>
+                </MDBCollapse>
+            </MDBContainer>
+        </MDBNavbar>
     );
-};
+}
