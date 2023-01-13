@@ -1,13 +1,10 @@
 import React, { useState, FormEvent } from 'react';
-import {Button, Col, Container, Form, FormGroup, InputGroup, Row} from "reactstrap";
-import {themes, useTheme} from "../contexts/ThemeContext";
+import {Button, Col, Container, Form, FormGroup, InputGroup, Row} from "react-bootstrap";
 import {FormControl, FormLabel} from "react-bootstrap";
 
 const Home = () => {
-  const {theme, changeTheme} = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [darkMode, setDarkMode] = useState<boolean>(true);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -20,18 +17,6 @@ const Home = () => {
     <Container>
       <Row className="justify-content-center">
         <Col xs={6}>
-          <InputGroup>
-              <Button
-                color="link"
-                onClick={() => {
-                  setDarkMode(!darkMode);
-                  changeTheme(darkMode ? themes.light : themes.dark);
-                }}
-              >
-                <i className={darkMode ? 'fas fa-sun' : 'fas fa-moon'}></i>
-                <span className="d-lg-none d-md-block">Switch mode</span>
-              </Button>
-          </InputGroup>
           <Form onSubmit={handleSubmit}>
             <FormGroup controlId="formBasicEmail">
               <FormLabel>Email address</FormLabel>

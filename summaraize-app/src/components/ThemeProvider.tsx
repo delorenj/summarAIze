@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeContext, themes } from '../contexts/ThemeContext';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 interface Props {
   children: React.ReactNode;
 }
 
 const ThemeProvider: React.FC<Props> = (props) => {
-  const [theme, setTheme] = useState<string>(themes.dark);
+  const [theme, setTheme] = useState<string>('dark');
 
   function changeTheme(newTheme: string) {
     setTheme(newTheme);
@@ -14,12 +14,15 @@ const ThemeProvider: React.FC<Props> = (props) => {
 
   useEffect(() => {
     switch (theme) {
-      case themes.light:
-        document.body.classList.add('white-content');
+      case 'light':
+        document.body.classList.add('light');
+        document.body.classList.remove('dark');
+
         break;
-      case themes.dark:
+      case 'dark':
       default:
-        document.body.classList.remove('white-content');
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
         break;
     }
   }, [theme]);
