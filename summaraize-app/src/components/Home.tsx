@@ -1,51 +1,61 @@
-import React, { useState, FormEvent } from 'react';
-import {Button, Col, Container, Form, FormGroup, InputGroup, Row} from "react-bootstrap";
+import React, {useState, FormEvent} from 'react';
+import {Button, Card, Col, Container, Form, FormGroup, InputGroup, Row} from "react-bootstrap";
 import {FormControl, FormLabel} from "react-bootstrap";
+import {MDBBtn, MDBCheckbox, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow} from "mdb-react-ui-kit";
 
 const Home = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
-    // Add code to handle login here
-  };
+    const handleSubmit = (event: FormEvent) => {
+        event.preventDefault();
+        console.log('Email:', email);
+        console.log('Password:', password);
+        // Add code to handle login here
+    };
 
-  return (
-    <Container>
-      <Row className="justify-content-center">
-        <Col xs={6}>
-          <Form onSubmit={handleSubmit}>
-            <FormGroup controlId="formBasicEmail">
-              <FormLabel>Email address</FormLabel>
-              <FormControl
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </FormGroup>
+    return (
+        <MDBContainer fluid className="p-3 my-5">
+            <MDBRow>
+                <MDBCol col='10' md='6'>
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+                         className="img-fluid" alt="Phone image"/>
+                </MDBCol>
 
-            <FormGroup controlId="formBasicPassword">
-              <FormLabel>Password</FormLabel>
-              <FormControl
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </FormGroup>
+                <MDBCol col='4' md='6'>
 
-            <Button variant="primary" type="submit">
-              Login
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
-  );
+
+                    <MDBInput wrapperClass='mb-4' label='Email address' id='formControlLg' type='email' size="lg"/>
+                    <MDBInput wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg"/>
+
+
+                    <div className="d-flex justify-content-between mx-4 mb-4">
+                        <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me'/>
+                        <a href="!#">Forgot password?</a>
+                    </div>
+
+                    <MDBBtn className="mb-4 w-100" size="lg">Sign in</MDBBtn>
+
+                    <div className="divider d-flex align-items-center my-4">
+                        <p className="text-center fw-bold mx-3 mb-0">OR</p>
+                    </div>
+
+                    <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#3b5998'}}>
+                        <MDBIcon fab icon="facebook-f" className="mx-2"/>
+                        Continue with facebook
+                    </MDBBtn>
+
+                    <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#55acee'}}>
+                        <MDBIcon fab icon="twitter" className="mx-2"/>
+                        Continue with twitter
+                    </MDBBtn>
+
+                </MDBCol>
+
+            </MDBRow>
+
+        </MDBContainer>
+    );
 };
 
 export default Home;
