@@ -16,13 +16,14 @@ import LoginFormProvider from "./LoginFormProvider";
 import {CoverLogin} from "./CoverLogin";
 import {SplitLogin} from "./SplitLogin";
 
-export const Home = () => {
+export const Landing = () => {
 
     return (
+
         <LoginFormProvider>
             <SplitLogin/>
         </LoginFormProvider>
     );
 }
 
-export default Home;
+export default Landing;
