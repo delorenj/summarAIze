@@ -128,12 +128,13 @@ const SignIn: React.FunctionComponent<{}> = () => {
                             fullWidth
                             variant="contained"
                             sx={{mt: 3, mb: 2}}
+                            onClick={signInClicked}
                         >
                             Sign In
                         </Button>
                         <Grid container>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link variant="body2" onClick={() => history.push('signup')}>
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

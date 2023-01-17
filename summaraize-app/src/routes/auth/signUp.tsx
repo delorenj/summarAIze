@@ -9,8 +9,8 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 
-import { useValidEmail, useValidPassword, useValidUsername } from '../../hooks/useAuthHooks'
-import { Email, Password, Username } from '../../components/authComponents'
+import { useValidEmail, useValidPassword, useValidPhone } from '../../hooks/useAuthHooks'
+import { Email, Password, Phone } from '../../components/authComponents'
 
 import { AuthContext } from '../../contexts/authContext'
 
@@ -25,7 +25,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
 
   const { email, setEmail, emailIsValid } = useValidEmail('')
   const { password, setPassword, passwordIsValid } = useValidPassword('')
-  const { username, setUsername, usernameIsValid } = useValidUsername('')
+  const { phone, setPhone, phoneIsValid } = useValidPhone('')
   const [error, setError] = useState('')
   const [created, setCreated] = useState(false)
 
@@ -38,8 +38,8 @@ const SignUp: React.FunctionComponent<{}> = () => {
   const isValid =
     !emailIsValid ||
     email.length === 0 ||
-    !usernameIsValid ||
-    username.length === 0 ||
+    !phoneIsValid ||
+    phone.length === 0 ||
     !passwordIsValid ||
     password.length === 0 ||
     !passwordConfirmIsValid ||
@@ -51,7 +51,10 @@ const SignUp: React.FunctionComponent<{}> = () => {
 
   const signInClicked = async () => {
     try {
-      await authContext.signUpWithEmail(username, email, password)
+        if(phone.length === 10) {
+            setPhone('+1' + phone)
+        }
+      await authContext.signUpWithEmail(phone, email, password)
       setCreated(true)
     } catch (err) {
       if (err instanceof Error) {
@@ -66,7 +69,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
         <Email emailIsValid={emailIsValid} setEmail={setEmail} />
       </Box>
       <Box width="80%" m={1}>
-        <Username usernameIsValid={usernameIsValid} setUsername={setUsername} />
+        <Phone phoneIsValid={phoneIsValid} setPhone={setPhone} />
       </Box>
       <Box width="80%" m={1}>
         <Password label="Password" passwordIsValid={passwordIsValid} setPassword={setPassword} />
@@ -100,7 +103,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
 
   const accountCreated = (
     <>
-      <Typography variant="h5">{`Created ${username} account`}</Typography>
+      <Typography variant="h5">{`Created ${phone} account`}</Typography>
       <Typography variant="h6">{`Verfiy Code sent to ${email}`}</Typography>
 
       <Box m={4}>

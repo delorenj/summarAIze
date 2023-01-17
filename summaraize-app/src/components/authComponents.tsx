@@ -71,3 +71,19 @@ export const Code: React.FunctionComponent<{ codeIsValid: boolean; setCode: (_: 
     />
   )
 }
+export const Phone: React.FunctionComponent<{ phoneIsValid: boolean; setPhone: (_: string) => void }> = ({
+  phoneIsValid,
+  setPhone,
+}) => {
+  return (
+    <TextField
+      fullWidth
+      variant="outlined"
+      label={phoneIsValid ? 'Phone' : 'Invalid Phone'}
+      error={!phoneIsValid}
+      onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setPhone(evt.target.value)
+      }}
+    />
+  )
+}

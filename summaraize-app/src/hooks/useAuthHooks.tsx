@@ -89,3 +89,25 @@ export const useValidCode = (initialValue: string) => {
 
   return { code, setCode, codeIsValid }
 }
+
+export const useValidPhone = (initialValue: string) => {
+  const [phone, setPhone] = useState(initialValue)
+  const [phoneIsValid, setPhoneIsValid] = useState(true)
+
+  useEffect(() => {
+    const phoneSchema = yup.object().shape({
+      phone: yup.string().min(10).required(),
+    })
+
+    if (phone.length === 0) {
+      setPhoneIsValid(true)
+      return
+    }
+
+    const isValid = phoneSchema.isValidSync({ phone })
+
+    setPhoneIsValid(isValid)
+  }, [phone])
+
+  return { phone, setPhone, phoneIsValid }
+}
