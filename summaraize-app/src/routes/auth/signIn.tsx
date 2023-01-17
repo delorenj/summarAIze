@@ -1,118 +1,149 @@
-import React, { useState, useContext } from 'react'
+import React, {useContext, useState} from 'react'
 
-import { useHistory } from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
+import makeStyles from '@mui/styles/makeStyles';
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
 
-import { makeStyles } from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
+import {useValidEmail, useValidPassword, useValidUsername} from '../../hooks/useAuthHooks'
+import {Email, Password} from '../../components/authComponents'
 
-import { useValidPassword, useValidUsername } from '../../hooks/useAuthHooks'
-import { Password, Username } from '../../components/authComponents'
-
-import { AuthContext } from '../../contexts/authContext'
+import {AuthContext} from '../../contexts/authContext'
+import {Checkbox, FormControlLabel, Link} from "@mui/material";
 
 const useStyles = makeStyles({
-  root: {
-    height: '100vh',
-  },
-  hover: {
-    '&:hover': { cursor: 'pointer' },
-  },
+    root: {
+        height: '100vh',
+    },
+    hover: {
+        '&:hover': {cursor: 'pointer'},
+    },
 })
 
+function Copyright(props: any) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+                summarAIze
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
+
 const SignIn: React.FunctionComponent<{}> = () => {
-  const classes = useStyles()
+    const classes = useStyles()
 
-  const { username, setUsername, usernameIsValid } = useValidUsername('')
-  const { password, setPassword, passwordIsValid } = useValidPassword('')
-  const [error, setError] = useState('')
+    const {email, setEmail, emailIsValid} = useValidEmail('')
+    const {password, setPassword, passwordIsValid} = useValidPassword('')
+    const [error, setError] = useState('')
 
-  const isValid = !usernameIsValid || username.length === 0 || !passwordIsValid || password.length === 0
+    const isValid = !emailIsValid || email.length === 0 || !passwordIsValid || password.length === 0
 
-  const history = useHistory()
+    const history = useHistory()
 
-  const authContext = useContext(AuthContext)
+    const authContext = useContext(AuthContext)
 
-  const signInClicked = async () => {
-    try {
-      await authContext.signInWithEmail(username, password)
-      history.push('home')
-    } catch (err: any) {
-      if (err.code === 'UserNotConfirmedException') {
-        history.push('verify')
-      } else {
-        setError(err.message)
-      }
+    const signInClicked = async () => {
+        try {
+            await authContext.signInWithEmail(email, password)
+            history.push('home')
+        } catch (err: any) {
+            if (err.code === 'UserNotConfirmedException') {
+                history.push('verify')
+            } else {
+                setError(err.message)
+            }
+        }
     }
-  }
 
-  const passwordResetClicked = async () => {
-    history.push('requestcode')
-  }
-
-  return (
-    <Grid className={classes.root} container direction="row" justify="center" alignItems="center">
-      <Grid xs={11} sm={6} lg={4} container direction="row" justify="center" alignItems="center" item>
-        <Paper style={{ width: '100%', padding: 32 }}>
-          <Grid container direction="column" justify="center" alignItems="center">
-            {/* Title */}
-            <Box m={2}>
-              <Typography variant="h3">Sign in</Typography>
-            </Box>
-
-            {/* Sign In Form */}
-            <Box width="80%" m={1}>
-              {/* <Email emailIsValid={emailIsValid} setEmail={setEmail} /> */}
-              <Username usernameIsValid={usernameIsValid} setUsername={setUsername} />{' '}
-            </Box>
-            <Box width="80%" m={1}>
-              <Password label="Password" passwordIsValid={passwordIsValid} setPassword={setPassword} />
-              <Grid container direction="row" justify="flex-start" alignItems="center">
-                <Box onClick={passwordResetClicked} mt={2}>
-                  <Typography className={classes.hover} variant="body2">
-                    Forgot Password?
-                  </Typography>
+    const passwordResetClicked = async () => {
+        history.push('requestcode')
+    }
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            email: data.get('email'),
+            password: data.get('password'),
+        });
+    };
+    return (
+        <Grid container component="main" sx={{height: '100vh'}}>
+            <Grid
+                item
+                xs={false}
+                sm={4}
+                md={7}
+                sx={{
+                    backgroundImage: 'url(http://localhost:3000/bg-book-2.png)',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundColor: (t) =>
+                        t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            />
+            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Box
+                    sx={{
+                        my: 8,
+                        mx: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <img width='100' src='./book-icon.png'/>
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 1}}>
+                        <Box mb={2}>
+                            <Email emailIsValid={emailIsValid} setEmail={setEmail}/>
+                        </Box>
+                        <Box mb={0}>
+                            <Password label="Password" passwordIsValid={passwordIsValid} setPassword={setPassword}/>
+                        </Box>
+                        <Box width="100%" m={1}>
+                            <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+                                <Box onClick={passwordResetClicked} mt={2}>
+                                    <Typography className={classes.hover} variant="body2">
+                                        Forgot Password?
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </Box>
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary"/>}
+                            label="Remember me"
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 3, mb: 2}}
+                        >
+                            Sign In
+                        </Button>
+                        <Grid container>
+                            <Grid item>
+                                <Link href="#" variant="body2">
+                                    {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                        <Copyright sx={{mt: 5}}/>
+                    </Box>
                 </Box>
-              </Grid>
-            </Box>
-
-            {/* Error */}
-            <Box mt={2}>
-              <Typography color="error" variant="body2">
-                {error}
-              </Typography>
-            </Box>
-
-            {/* Buttons */}
-            <Box mt={2}>
-              <Grid container direction="row" justify="center">
-                <Box m={1}>
-                  <Button color="secondary" variant="contained" onClick={() => history.goBack()}>
-                    Cancel
-                  </Button>
-                </Box>
-                <Box m={1}>
-                  <Button disabled={isValid} color="primary" variant="contained" onClick={signInClicked}>
-                    Sign In
-                  </Button>
-                </Box>
-              </Grid>
-            </Box>
-            <Box mt={2}>
-              <Box onClick={() => history.push('signup')}>
-                <Typography className={classes.hover} variant="body1">
-                  Register a new account
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        </Paper>
-      </Grid>
-    </Grid>
-  )
+            </Grid>
+        </Grid>
+    );
 }
 
 export default SignIn

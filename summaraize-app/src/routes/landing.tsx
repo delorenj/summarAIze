@@ -2,16 +2,16 @@ import React from 'react'
 
 import { useHistory } from 'react-router-dom'
 
-import { makeStyles } from '@material-ui/core/styles'
+import makeStyles from '@mui/styles/makeStyles';
 
-import Typography from '@material-ui/core/Typography'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
-import Link from '@material-ui/core/Link'
-import GitHubIcon from '@material-ui/icons/GitHub'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import GitHubIcon from '@mui/icons-material/GitHub'
 
-import logoImage from './logo.png'
+import logoImage from './book-icon.png'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,19 +32,16 @@ const Landing: React.FunctionComponent = () => {
   }
 
   return (
-    <Grid container>
-      <Grid className={classes.root} container direction="column" justify="center" alignItems="center">
+    <Grid container className='bg'>
+      <Grid className={classes.root} container direction="column" justifyContent="center" alignItems="center">
         <Box m={2}>
           <img src={logoImage} width={224} height={224} alt="logo" />
         </Box>
         <Box m={2}>
-          <Link underline="none" color="inherit" href="https://github.com/dbroadhurst/aws-cognito-react">
-            <Grid container direction="row" justify="center" alignItems="center">
-              <Box mr={3}>
-                <GitHubIcon fontSize="large" />
-              </Box>
+          <Link underline="none" color="inherit" href="https://summaraize.io">
+            <Grid container direction="row" justifyContent="center" alignItems="center">
               <Typography className={classes.title} variant="h3">
-                AWS Cognito Starter
+                summarAIze
               </Typography>
             </Grid>
           </Link>
@@ -56,7 +53,7 @@ const Landing: React.FunctionComponent = () => {
         </Box>
       </Grid>
     </Grid>
-  )
+  );
 }
 
 export default Landing

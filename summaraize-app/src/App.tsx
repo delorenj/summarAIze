@@ -1,10 +1,16 @@
 import React from 'react'
-import './App.css'
+import './App.scss'
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 
-import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles'
-import CssBaseline from '@material-ui/core/CssBaseline'
+import {
+  createTheme,
+  ThemeProvider,
+  StyledEngineProvider,
+  responsiveFontSizes,
+  adaptV4Theme,
+} from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'
 
 import AuthProvider, { AuthIsSignedIn, AuthIsNotSignedIn } from './contexts/authContext'
 
@@ -17,16 +23,18 @@ import ChangePassword from './routes/auth/changePassword'
 import Landing from './routes/landing'
 import Home from './routes/home'
 
-let lightTheme = createMuiTheme({
+
+
+let lightTheme = createTheme(adaptV4Theme({
   palette: {
-    type: 'light',
+    mode: 'light',
   },
-})
+}))
 lightTheme = responsiveFontSizes(lightTheme)
 
 // let darkTheme = createMuiTheme({
 //   palette: {
-//     type: 'dark',
+//     mode: 'dark',
 //   },
 // })
 // darkTheme = responsiveFontSizes(darkTheme)
@@ -54,17 +62,19 @@ const MainRoute: React.FunctionComponent = () => (
 )
 
 const App: React.FunctionComponent = () => (
-  <ThemeProvider theme={lightTheme}>
-    <CssBaseline />
-    <AuthProvider>
-      <AuthIsSignedIn>
-        <MainRoute />
-      </AuthIsSignedIn>
-      <AuthIsNotSignedIn>
-        <SignInRoute />
-      </AuthIsNotSignedIn>
-    </AuthProvider>
-  </ThemeProvider>
+  <StyledEngineProvider injectFirst>
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      <AuthProvider>
+        <AuthIsSignedIn>
+          <MainRoute />
+        </AuthIsSignedIn>
+        <AuthIsNotSignedIn>
+          <SignInRoute />
+        </AuthIsNotSignedIn>
+      </AuthProvider>
+    </ThemeProvider>
+  </StyledEngineProvider>
 )
 
 export default App

@@ -2,12 +2,12 @@ import React, { useState, useContext } from 'react'
 
 import { useHistory } from 'react-router-dom'
 
-import { makeStyles } from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
+import makeStyles from '@mui/styles/makeStyles';
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
 
 import { useValidPassword } from '../../hooks/useAuthHooks'
 import { Password } from '../../components/authComponents'
@@ -81,7 +81,7 @@ export default function ChangePassword() {
 
       {/* Buttons */}
       <Box mt={2}>
-        <Grid container direction="row" justify="center">
+        <Grid container direction="row" justifyContent="center">
           <Box m={1}>
             <Button onClick={() => history.goBack()} color="secondary" variant="contained">
               Cancel
@@ -110,13 +110,13 @@ export default function ChangePassword() {
   )
 
   return (
-    <Grid className={classes.root} container direction="row" justify="center" alignItems="center">
-      <Grid xs={11} sm={6} lg={4} container direction="row" justify="center" alignItems="center" item>
+    <Grid className={classes.root} container direction="row" justifyContent="center" alignItems="center">
+      <Grid xs={11} sm={6} lg={4} container direction="row" justifyContent="center" alignItems="center" item>
         <Paper style={{ width: '100%', padding: 16 }}>
-          <Grid container direction="column" justify="center" alignItems="center">
+          <Grid container direction="column" justifyContent="center" alignItems="center">
             {/* Title */}
             <Box m={3}>
-              <Grid container direction="row" justify="center" alignItems="center">
+              <Grid container direction="row" justifyContent="center" alignItems="center">
                 <Typography variant="h3">Change Password</Typography>
               </Grid>
             </Box>
@@ -126,5 +126,5 @@ export default function ChangePassword() {
         </Paper>
       </Grid>
     </Grid>
-  )
+  );
 }
