@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import makeStyles from '@mui/styles/makeStyles';
 
@@ -25,10 +25,10 @@ const useStyles = makeStyles((theme) => ({
 const Landing: React.FunctionComponent = () => {
   const classes = useStyles()
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const signIn = () => {
-    history.push('/signin')
+    navigate('/signin')
   }
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box'
@@ -40,7 +40,7 @@ export default function ChangePassword() {
 
   const isValid = !oldPasswordIsValid || oldPassword.length === 0 || !newPasswordIsValid || newPassword.length === 0
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const authContext = useContext(AuthContext)
 
@@ -56,7 +56,7 @@ export default function ChangePassword() {
   const signOut = async () => {
     try {
       await authContext.signOut()
-      history.push('/')
+      navigate('/')
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -83,7 +83,7 @@ export default function ChangePassword() {
       <Box mt={2}>
         <Grid container direction="row" justifyContent="center">
           <Box m={1}>
-            <Button onClick={() => history.goBack()} color="secondary" variant="contained">
+            <Button onClick={() => navigate(-1)} color="secondary" variant="contained">
               Cancel
             </Button>
           </Box>

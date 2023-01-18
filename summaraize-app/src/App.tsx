@@ -1,14 +1,13 @@
 import React from 'react'
 import './App.scss'
 
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import {
   createTheme,
   ThemeProvider,
   StyledEngineProvider,
   responsiveFontSizes,
-  adaptV4Theme,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline'
 
@@ -20,12 +19,10 @@ import RequestCode from './routes/auth/requestCode'
 import ForgotPassword from './routes/auth/forgotPassword'
 import ChangePassword from './routes/auth/changePassword'
 import Landing from './routes/landing'
-import Home from './routes/home'
+import {Home} from './routes/home'
 import AuthProvider, {AuthIsNotSignedIn, AuthIsSignedIn} from "./contexts/authContext";
 
-
-
-let lightTheme = createTheme(adaptV4Theme({
+let lightTheme = createTheme(({
   palette: {
     mode: 'light',
   },
@@ -41,23 +38,23 @@ lightTheme = responsiveFontSizes(lightTheme)
 
 const SignInRoute: React.FunctionComponent = () => (
   <Router>
-    <Switch>
-      <Route path="/signin" component={SignIn} />
-      <Route path="/signup" component={SignUp} />
-      <Route path="/verify" component={VerifyCode} />
-      <Route path="/requestcode" component={RequestCode} />
-      <Route path="/forgotpassword" component={ForgotPassword} />
-      <Route path="/" component={Landing} />
-    </Switch>
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/verify" element={<VerifyCode />} />
+      <Route path="/requestcode" element={<RequestCode />} />
+      <Route path="/forgotpassword" element={<ForgotPassword />} />
+      <Route path="/" element={<Landing />} />
+    </Routes>
   </Router>
 )
 
 const MainRoute: React.FunctionComponent = () => (
   <Router>
-    <Switch>
-      <Route path="/changepassword" component={ChangePassword} />
-      <Route path="/" component={Home} />
-    </Switch>
+    <Routes>
+      <Route path="/changepassword" element={<ChangePassword />} />
+      <Route path="/" element={<Home />} />
+    </Routes>
   </Router>
 )
 

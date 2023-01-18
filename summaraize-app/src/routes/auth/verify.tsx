@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box'
@@ -33,7 +33,7 @@ const VerifyCode: React.FunctionComponent<{}> = () => {
 
   const isValid = !emailIsValid || email.length === 0 || !codeIsValid || code.length === 0
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const authContext = useContext(AuthContext)
 
@@ -49,14 +49,14 @@ const VerifyCode: React.FunctionComponent<{}> = () => {
   const sendClicked = async () => {
     try {
       await authContext.verifyCode(email, code)
-      history.push('signin')
+      navigate('signin')
     } catch (err) {
       setError('Invalid Code')
     }
   }
 
   const passwordResetClicked = async () => {
-    history.push('/resetpassword')
+    navigate('/resetpassword')
   }
 
   return (
@@ -94,7 +94,7 @@ const VerifyCode: React.FunctionComponent<{}> = () => {
             <Box mt={2}>
               <Grid container direction="row" justifyContent="center">
                 <Box m={1}>
-                  <Button color="secondary" variant="contained" onClick={() => history.goBack()}>
+                  <Button color="secondary" variant="contained" onClick={() => navigate(-1)}>
                     Cancel
                   </Button>
                 </Box>

@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 
-import {useHistory} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -45,17 +45,17 @@ const SignIn: React.FunctionComponent<{}> = () => {
 
     const isValid = !emailIsValid || email.length === 0 || !passwordIsValid || password.length === 0
 
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const authContext = useContext(AuthContext)
 
     const signInClicked = async () => {
         try {
             await authContext.signInWithEmail(email, password)
-            history.push('home')
+            navigate('home')
         } catch (err: any) {
             if (err.code === 'UserNotConfirmedException') {
-                history.push('verify')
+                navigate('verify')
             } else {
                 setError(err.message)
             }
@@ -63,7 +63,7 @@ const SignIn: React.FunctionComponent<{}> = () => {
     }
 
     const passwordResetClicked = async () => {
-        history.push('requestcode')
+        navigate('requestcode')
     }
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -134,7 +134,7 @@ const SignIn: React.FunctionComponent<{}> = () => {
                         </Button>
                         <Grid container>
                             <Grid item>
-                                <Link variant="body2" onClick={() => history.push('signup')}>
+                                <Link variant="body2" onClick={() => navigate('signup')}>
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

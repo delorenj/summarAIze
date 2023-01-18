@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box'
@@ -35,7 +35,7 @@ export default function RequestCode() {
 
   const isValid = !emailIsValid || email.length === 0
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const authContext = useContext(AuthContext)
 
@@ -54,7 +54,7 @@ export default function RequestCode() {
         <Typography className={classes.text} variant="h5">{`Reset Code Sent to ${email}`}</Typography>
       </Box>
       <Box mt={4}>
-        <Button onClick={() => history.push('forgotpassword')} color="primary" variant="contained">
+        <Button onClick={() => navigate('forgotpassword')} color="primary" variant="contained">
           Reset Password
         </Button>
       </Box>
@@ -75,7 +75,7 @@ export default function RequestCode() {
       <Box mt={2}>
         <Grid container direction="row" justifyContent="center">
           <Box m={1}>
-            <Button color="secondary" variant="contained" onClick={() => history.goBack()}>
+            <Button color="secondary" variant="contained" onClick={() => navigate(-1)}>
               Cancel
             </Button>
           </Box>

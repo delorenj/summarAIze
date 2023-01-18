@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box'
@@ -37,7 +37,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
     !passwordIsValid ||
     password.length === 0
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const authContext = useContext(AuthContext)
 
@@ -76,7 +76,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
       <Box mt={2}>
         <Grid container direction="row" justifyContent="center">
           <Box m={1}>
-            <Button onClick={() => history.goBack()} color="secondary" variant="contained">
+            <Button onClick={() => navigate(-1)} color="secondary" variant="contained">
               Cancel
             </Button>
           </Box>
@@ -96,7 +96,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
       <Typography variant="h6">{`Verfiy Code sent to ${email}`}</Typography>
 
       <Box m={4}>
-        <Button onClick={() => history.push('/verify')} color="primary" variant="contained">
+        <Button onClick={() => navigate('/verify')} color="primary" variant="contained">
           Verify Code
         </Button>
       </Box>
