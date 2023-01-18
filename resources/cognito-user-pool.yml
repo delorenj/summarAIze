@@ -7,8 +7,9 @@ Resources:
       # Set email as an alias
       UsernameAttributes:
         - email
+        - phone
       AutoVerifiedAttributes:
-        - email
+        - phone
 
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient

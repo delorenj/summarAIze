@@ -29,21 +29,13 @@ const SignUp: React.FunctionComponent<{}> = () => {
   const [error, setError] = useState('')
   const [created, setCreated] = useState(false)
 
-  const {
-    password: passwordConfirm,
-    setPassword: setPasswordConfirm,
-    passwordIsValid: passwordConfirmIsValid,
-  } = useValidPassword('')
-
   const isValid =
     !emailIsValid ||
     email.length === 0 ||
     !phoneIsValid ||
     phone.length === 0 ||
     !passwordIsValid ||
-    password.length === 0 ||
-    !passwordConfirmIsValid ||
-    passwordConfirm.length === 0
+    password.length === 0
 
   const history = useHistory()
 
@@ -52,7 +44,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
   const signInClicked = async () => {
     try {
         if(phone.length === 10) {
-            setPhone('+1' + phone)
+            setPhone(phone)
         }
       await authContext.signUpWithEmail(phone, email, password)
       setCreated(true)
@@ -73,9 +65,6 @@ const SignUp: React.FunctionComponent<{}> = () => {
       </Box>
       <Box width="80%" m={1}>
         <Password label="Password" passwordIsValid={passwordIsValid} setPassword={setPassword} />
-      </Box>
-      <Box width="80%" m={1}>
-        <Password label="Confirm Password" passwordIsValid={passwordConfirmIsValid} setPassword={setPasswordConfirm} />
       </Box>
       <Box mt={2}>
         <Typography color="error" variant="body2">
@@ -108,7 +97,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
 
       <Box m={4}>
         <Button onClick={() => history.push('/verify')} color="primary" variant="contained">
-          Send Code
+          Verify Code
         </Button>
       </Box>
     </>

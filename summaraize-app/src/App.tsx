@@ -12,7 +12,6 @@ import {
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline'
 
-import AuthProvider, { AuthIsSignedIn, AuthIsNotSignedIn } from './contexts/authContext'
 
 import SignIn from './routes/auth/signIn'
 import SignUp from './routes/auth/signUp'
@@ -22,6 +21,7 @@ import ForgotPassword from './routes/auth/forgotPassword'
 import ChangePassword from './routes/auth/changePassword'
 import Landing from './routes/landing'
 import Home from './routes/home'
+import AuthProvider, {AuthIsNotSignedIn, AuthIsSignedIn} from "./contexts/authContext";
 
 
 

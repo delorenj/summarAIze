@@ -9,8 +9,8 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 
-import { useValidCode, useValidPassword, useValidUsername } from '../../hooks/useAuthHooks'
-import { Code, Password, Username } from '../../components/authComponents'
+import { useValidCode, useValidPassword, useValidEmail } from '../../hooks/useAuthHooks'
+import { Code, Password, Email } from '../../components/authComponents'
 
 import { AuthContext } from '../../contexts/authContext'
 
@@ -25,7 +25,7 @@ export default function ForgotPassword() {
 
   const { code, setCode, codeIsValid } = useValidCode('')
   const { password, setPassword, passwordIsValid } = useValidPassword('')
-  const { username, setUsername, usernameIsValid } = useValidUsername('')
+  const { email, setEmail, emailIsValid } = useValidEmail('')
   const [error, setError] = useState('')
   const [reset, setReset] = useState(false)
 
@@ -38,8 +38,8 @@ export default function ForgotPassword() {
   const isValid =
     !codeIsValid ||
     code.length === 0 ||
-    !usernameIsValid ||
-    username.length === 0 ||
+    !emailIsValid ||
+    email.length === 0 ||
     !passwordIsValid ||
     password.length === 0 ||
     !passwordConfirmIsValid ||
@@ -51,7 +51,7 @@ export default function ForgotPassword() {
 
   const resetPassword = async () => {
     try {
-      await authContext.forgotPassword(username, code, password)
+      await authContext.forgotPassword(email, code, password)
       setReset(true)
     } catch (err) {
       if (err instanceof Error) {
@@ -66,7 +66,7 @@ export default function ForgotPassword() {
         <Code codeIsValid={codeIsValid} setCode={setCode} />
       </Box>
       <Box width="80%" m={1}>
-        <Username usernameIsValid={usernameIsValid} setUsername={setUsername} />
+        <Email emailIsValid={emailIsValid} setEmail={setEmail} />
       </Box>
       <Box width="80%" m={1}>
         <Password label="Password" passwordIsValid={passwordIsValid} setPassword={setPassword} />

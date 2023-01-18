@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 
-import {useValidEmail, useValidPassword, useValidUsername} from '../../hooks/useAuthHooks'
+import {useValidEmail, useValidPassword} from '../../hooks/useAuthHooks'
 import {Email, Password} from '../../components/authComponents'
 
 import {AuthContext} from '../../contexts/authContext'

@@ -9,10 +9,11 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 
-import { useValidCode, useValidUsername } from '../../hooks/useAuthHooks'
-import { Code, Username } from '../../components/authComponents'
+import { useValidCode, useValidEmail } from '../../hooks/useAuthHooks'
+import { Code, Email } from '../../components/authComponents'
 
 import { AuthContext } from '../../contexts/authContext'
+import {sendCode} from "../../libs/cognito";
 
 const useStyles = makeStyles({
   root: {
@@ -26,19 +27,28 @@ const useStyles = makeStyles({
 const VerifyCode: React.FunctionComponent<{}> = () => {
   const classes = useStyles()
 
-  const { username, setUsername, usernameIsValid } = useValidUsername('')
+  const { email, setEmail, emailIsValid } = useValidEmail('')
   const { code, setCode, codeIsValid } = useValidCode('')
   const [error, setError] = useState('')
 
-  const isValid = !usernameIsValid || username.length === 0 || !codeIsValid || code.length === 0
+  const isValid = !emailIsValid || email.length === 0 || !codeIsValid || code.length === 0
 
   const history = useHistory()
 
   const authContext = useContext(AuthContext)
 
+  const resendClicked = async () => {
+    try {
+      console.log("Sending again...")
+      await sendCode(email)
+    } catch(err) {
+      setError('Error resending code')
+    }
+  }
+
   const sendClicked = async () => {
     try {
-      await authContext.verifyCode(username, code)
+      await authContext.verifyCode(email, code)
       history.push('signin')
     } catch (err) {
       setError('Invalid Code')
@@ -62,12 +72,12 @@ const VerifyCode: React.FunctionComponent<{}> = () => {
             {/* Sign In Form */}
             <Box width="80%" m={1}>
               {/* <Email emailIsValid={emailIsValid} setEmail={setEmail} /> */}
-              <Username usernameIsValid={usernameIsValid} setUsername={setUsername} />{' '}
+              <Email emailIsValid={emailIsValid} setEmail={setEmail} />{' '}
             </Box>
             <Box width="80%" m={1}>
               <Code codeIsValid={codeIsValid} setCode={setCode} />
               <Grid container direction="row" justifyContent="flex-start" alignItems="center">
-                <Box onClick={passwordResetClicked} mt={2}>
+                <Box onClick={resendClicked} mt={2}>
                   <Typography className={classes.hover} variant="body2">
                     Resend Code
                   </Typography>

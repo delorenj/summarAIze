@@ -62,7 +62,7 @@ const AuthProvider = ({ children }: Props) => {
         })
         window.localStorage.setItem('accessToken', `${session.accessToken.jwtToken}`)
         window.localStorage.setItem('refreshToken', `${session.refreshToken.token}`)
-        await setAttribute({ Name: 'website', Value: 'https://github.com/dbroadhurst/aws-cognito-react' })
+        await setAttribute({ Name: 'website', Value: 'https://summarAIze.io' })
         const attr: any = await getAttributes()
         setAttrInfo(attr)
         setAuthStatus(AuthStatus.SignedIn)
@@ -110,8 +110,7 @@ const AuthProvider = ({ children }: Props) => {
 
   async function getSession() {
     try {
-      const session = await cognito.getSession()
-      return session
+      return await cognito.getSession()
     } catch (err) {
       throw err
     }
@@ -119,8 +118,7 @@ const AuthProvider = ({ children }: Props) => {
 
   async function getAttributes() {
     try {
-      const attr = await cognito.getAttributes()
-      return attr
+      return await cognito.getAttributes()
     } catch (err) {
       throw err
     }
@@ -128,8 +126,7 @@ const AuthProvider = ({ children }: Props) => {
 
   async function setAttribute(attr: any) {
     try {
-      const res = await cognito.setAttribute(attr)
-      return res
+      return await cognito.setAttribute(attr)
     } catch (err) {
       throw err
     }
