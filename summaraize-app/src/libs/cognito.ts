@@ -68,6 +68,31 @@ export async function signUpUserWithEmail(username: string, email: string, passw
   })
 }
 
+export async function signUpUserWithEmailAndPhone(phone: string, email: string, password: string) {
+  return new Promise(function (resolve, reject) {
+    const attributeList = [
+      new CognitoUserAttribute({
+        Name: 'email',
+        Value: email,
+      }),
+      new CognitoUserAttribute({
+        Name: 'phone_number',
+        Value: phone,
+      }),
+    ]
+
+    userPool.signUp(email, password, attributeList, [], function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  }).catch((err) => {
+    throw err
+  })
+}
+
 export async function verifyCode(username: string, code: string) {
   return new Promise(function (resolve, reject) {
     const cognitoUser = getCognitoUser(username)

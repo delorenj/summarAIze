@@ -46,7 +46,7 @@ const SignUp: React.FunctionComponent<{}> = () => {
         if(phone.length === 10) {
             setPhone(phone)
         }
-      await authContext.signUpWithEmail(phone, email, password)
+      await authContext.signUpWithEmailAndPhone(phone, email, password)
       setCreated(true)
     } catch (err) {
       if (err instanceof Error) {

@@ -13,6 +13,7 @@ export interface IAuth {
   attrInfo?: any
   authStatus?: AuthStatus
   signInWithEmail?: any
+  signUpWithEmailAndPhone?: any,
   signUpWithEmail?: any
   signOut?: any
   verifyCode?: any
@@ -95,6 +96,14 @@ const AuthProvider = ({ children }: Props) => {
     }
   }
 
+  async function signUpWithEmailAndPhone(phone: string, email: string, password: string) {
+    try {
+      await cognito.signUpUserWithEmailAndPhone(phone, email, password)
+    } catch (err) {
+      throw err
+    }
+  }
+
   function signOut() {
     cognito.signOut()
     setAuthStatus(AuthStatus.SignedOut)
@@ -161,6 +170,7 @@ const AuthProvider = ({ children }: Props) => {
     sessionInfo,
     attrInfo,
     signUpWithEmail,
+    signUpWithEmailAndPhone,
     signInWithEmail,
     signOut,
     verifyCode,
