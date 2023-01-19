@@ -9,7 +9,7 @@ package:
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: prod
+  stage: dev
   region: us-east-1
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
@@ -38,9 +38,6 @@ plugins:
   - serverless-s3-local
   - serverless-offline
 custom:
-  s3:
-    host: localhost
-    directory: /tmp
   stage: ${opt:stage, self:provider.stage}
   booksTableName: ${self:custom.stage}-books
   usersTableName: ${self:custom.stage}-users
@@ -50,10 +47,22 @@ resources:
   - ${file(resources/api-gateway-errors.yml)}
   - ${file(resources/dynamodb-table.yml)}
   - ${file(resources/s3.yml)}
-  - ${file(resources/cognito-user-pool.yml)}
-  - ${file(resources/cognito-identity-pool.yml)}
+#  - ${file(resources/cognito-user-pool.yml)}
+#  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
+  getUserData:
+    handler: user.getData
+    events:
+      - http:
+          path: /user/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          authorizer: aws_iam
+
   summarizeChunk:
     handler: summarize.summarizeChunk
     events:
