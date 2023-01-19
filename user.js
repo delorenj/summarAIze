@@ -1,7 +1,9 @@
-const AWS = require('aws-sdk');
+import AWS from "aws-sdk";
+import handler from "./libs/handler-lib";
+
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-module.exports.getData = async (event) => {
+export const getUserData = handler(async (event, context) => {
   const userId = event.requestContext.identity.cognitoIdentityId;
 
   const stage = process.env.STAGE;
@@ -31,4 +33,4 @@ module.exports.getData = async (event) => {
       })
     };
   }
-}
+});
