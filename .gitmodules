@@ -1,0 +1,3 @@
+[submodule "tools/cli-test"]
+	path = tools/cli-test
+	url = git@github.com:delorenj/aws-api-gateway-cli-test
