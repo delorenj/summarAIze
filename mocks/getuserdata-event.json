@@ -3,10 +3,6 @@
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-4321"
-    },
-    "pathParameters": {
-      "userId": "123"
-    },
-    "queryStringParameters": {}
+    }
   }
 }

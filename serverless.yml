@@ -55,12 +55,9 @@ functions:
     handler: user.getData
     events:
       - http:
-          path: /user/{id}
+          path: /user
           method: get
-          request:
-            parameters:
-              paths:
-                id: true
+          cors: true
           authorizer: aws_iam
 
   summarizeChunk:
