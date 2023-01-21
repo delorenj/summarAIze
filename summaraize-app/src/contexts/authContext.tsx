@@ -9,7 +9,7 @@ export enum AuthStatus {
 }
 
 export interface IAuth {
-  sessionInfo?: { username?: string; email?: string; sub?: string; accessToken?: string; refreshToken?: string }
+  sessionInfo?: { username?: string; email?: string; sub?: string; accessToken?: string; refreshToken?: string, idToken?: string }
   attrInfo?: any
   authStatus?: AuthStatus
   signInWithEmail?: any
@@ -60,9 +60,11 @@ const AuthProvider = ({ children }: Props) => {
         setSessionInfo({
           accessToken: session.accessToken.jwtToken,
           refreshToken: session.refreshToken.token,
+          idToken: session.idToken.jwtToken
         })
         window.localStorage.setItem('accessToken', `${session.accessToken.jwtToken}`)
         window.localStorage.setItem('refreshToken', `${session.refreshToken.token}`)
+        window.localStorage.setItem('idToken', `${session.idToken.jwtToken}`)
         await setAttribute({ Name: 'website', Value: 'https://summarAIze.io' })
         const attr: any = await getAttributes()
         setAttrInfo(attr)
@@ -184,5 +186,7 @@ const AuthProvider = ({ children }: Props) => {
 
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>
 }
+
+export const useAuth = () => (useContext(AuthContext));
 
 export default AuthProvider

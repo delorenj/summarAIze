@@ -4,20 +4,35 @@ import handler from "./libs/handler-lib";
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 export const getData = handler(async (event, context) => {
-  const userId = event.requestContext.identity.cognitoIdentityId;
+  console.log("I am herehrehr");
+  console.log("context", JSON.stringify(context));
+  console.log("event", JSON.stringify(event));
 
-  const stage = process.env.STAGE;
+  const userId = event.requestContext.authorizer.claims.sub;
+  console.log("userId", userId);
+  const stage = event.requestContext.stage;
   const tableName = `${stage}-books`;
 
-  const params = {
+  const publicBooksQuery = {
     TableName: tableName,
-    FilterExpression: "(userId = :userId OR userId = :public)",
+    KeyConditionExpression: "userId = :publicUser",
     ExpressionAttributeValues: {
-      ":userId": userId,
-      ":public": "public"
+      ":publicUser": "public"
     }
   };
 
-  return dynamo.query(params).promise();
-
+  const myBooksQuery = {
+    TableName: tableName,
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: {
+      ":userId": userId
+    }
+  };
+  console.log("defined both queries");
+  const publicBooks = await dynamo.query(publicBooksQuery).promise();
+  console.log("executed q1");
+  const myBooks = await dynamo.query(myBooksQuery).promise();
+  console.log("executed q2");
+  console.log("about to return", {...myBooks, ...publicBooks});
+  return {...myBooks, ...publicBooks};
 });

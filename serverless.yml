@@ -47,10 +47,18 @@ resources:
   - ${file(resources/api-gateway-errors.yml)}
   - ${file(resources/dynamodb-table.yml)}
   - ${file(resources/s3.yml)}
+  - ${file(resources/cognito-authorizer.yml)}
 #  - ${file(resources/cognito-user-pool.yml)}
 #  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
+  proxy_function:
+    handler: proxy.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+
   getUserData:
     handler: user.getData
     events:
@@ -58,7 +66,10 @@ functions:
           path: /user
           method: get
           cors: true
-          authorizer: aws_iam
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
 
   summarizeChunk:
     handler: summarize.summarizeChunk
