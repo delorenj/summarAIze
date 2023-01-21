@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
 
-interface IBook {
+export interface IBook {
     key: string,
     bookId: string,
     format: string,
