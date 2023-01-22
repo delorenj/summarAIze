@@ -1,19 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, {useState, useEffect, useContext, useCallback} from 'react'
 
 import * as cognito from '../libs/cognito'
 import {IBook} from "../hooks/useMyData";
-
-export enum AuthStatus {
-  Loading,
-  SignedIn,
-  SignedOut,
-}
 
 export interface IHomeContext {
   summaraizeDrawerOpen: boolean,
   setSummaraizeDrawerOpen(open: boolean): void,
   activeBook?: IBook,
-  setActiveBook(book: IBook): void
+  setActiveBook(book: IBook|undefined): void,
 }
 
 const defaultState: IHomeContext = {
@@ -30,7 +24,17 @@ export const HomeContext = React.createContext(defaultState)
 
 const HomeContextProvider = ({ children }: Props) => {
   const [summaraizeDrawerOpen, setSummaraizeDrawerOpen] = useState<boolean>(false)
-  const [activeBook, setActiveBook] = useState<IBook>()
+  const [activeBook, setActiveBook] = useState<IBook|undefined>()
+
+  // Open drawer when activeBook is set
+  // Close drawer when activeBook is unset
+  useEffect(() => {
+    if (!activeBook) {
+      setSummaraizeDrawerOpen(false);
+      return;
+    }
+    setSummaraizeDrawerOpen(true);
+  }, [activeBook]);
 
   const state: IHomeContext = {
     summaraizeDrawerOpen,

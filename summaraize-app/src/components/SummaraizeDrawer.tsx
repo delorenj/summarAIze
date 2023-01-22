@@ -1,4 +1,4 @@
-import {Box, Drawer, Skeleton} from "@mui/material";
+import {Box, Divider, Drawer, Skeleton, Typography} from "@mui/material";
 import {IBook} from "../hooks/useMyData";
 import {useHomeContext} from "../contexts/homeContext";
 import {grey} from "@mui/material/colors";
@@ -10,22 +10,23 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 export const SummaraizeDrawer = () => {
-    const {summaraizeDrawerOpen, setSummaraizeDrawerOpen} = useHomeContext();
+    const {summaraizeDrawerOpen, setActiveBook, activeBook} = useHomeContext();
 
     return (
         <Drawer
             open={summaraizeDrawerOpen}
-            onClose={() => (setSummaraizeDrawerOpen(false))}
+            onClose={() => (setActiveBook(undefined))}
         >
             <StyledBox
                 sx={{
-                    px: 2,
-                    pb: 2,
+                    px: 5,
+                    py: 10,
                     height: '100%',
                     overflow: 'auto',
                 }}
             >
-                <Skeleton variant="rectangular" width="100px" height="100%"/>
+                <Typography variant={"h6"}>{activeBook?.title}</Typography>
+                <Divider></Divider>
             </StyledBox>
         </Drawer>
 

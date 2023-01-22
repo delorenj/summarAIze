@@ -11,7 +11,7 @@ interface BookCardPropsType {
 
 export const BookCard = (props: BookCardPropsType) => {
     const {book} = props;
-    const {summaraizeDrawerOpen, setSummaraizeDrawerOpen} = useHomeContext();
+    const {summaraizeDrawerOpen, setActiveBook} = useHomeContext();
 
     return (
         <>
@@ -36,7 +36,7 @@ export const BookCard = (props: BookCardPropsType) => {
                 </CardContent>
                 <CardActions>
                     <Button size="small">Original</Button>
-                    <Button size="small" onClick={() => setSummaraizeDrawerOpen(!summaraizeDrawerOpen)}>Summary</Button>
+                    <Button size="small" onClick={() => setActiveBook(book)}>Summary</Button>
                 </CardActions>
                 <SummaraizeDrawer  />
             </Card>
