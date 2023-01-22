@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import StickyFooter from "../components/StickyFooter";
 import {useMyData} from "../hooks/useMyData";
 import {BookCard} from "../components/BookCard";
+import HomeContextProvider from "../contexts/homeContext";
 
 export const Home = () => {
     const navigate = useNavigate()
@@ -23,7 +24,7 @@ export const Home = () => {
     }
 
     return (
-        <>
+        <HomeContextProvider>
             <ResponsiveAppBar/>
             <main>
                 <Container sx={{py: 8}} maxWidth="md">
@@ -37,6 +38,6 @@ export const Home = () => {
                 </Container>
             </main>
             <StickyFooter/>
-        </>)
-        ;
+        </HomeContextProvider>
+    );
 }
