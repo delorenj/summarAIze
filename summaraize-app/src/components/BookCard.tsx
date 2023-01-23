@@ -1,31 +1,37 @@
-import {Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Skeleton, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
 import {IBook} from "../hooks/useMyData";
-import {useState} from "react";
 
 import {SummaraizeDrawer} from "./SummaraizeDrawer";
 import {useHomeContext} from "../contexts/homeContext";
-
+import SummarizeTwoToneIcon from '@mui/icons-material/SummarizeTwoTone';
+import {RawOnTwoTone} from "@mui/icons-material";
+import CloudDownloadTwoToneIcon from '@mui/icons-material/CloudDownloadTwoTone';
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import RemoveRedEyeTwoToneIcon from '@mui/icons-material/RemoveRedEyeTwoTone';
 interface BookCardPropsType {
     book: IBook
 }
 
 export const BookCard = (props: BookCardPropsType) => {
     const {book} = props;
-    const {summaraizeDrawerOpen, setActiveBook} = useHomeContext();
+    const {setActiveBook} = useHomeContext();
 
     return (
         <>
-            <Card sx={{
+            <Card
+                raised
+                sx={{
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     position: 'relative',
                     zIndex: 1,
-            }}>
+                }}>
                 <CardMedia
                     component="img"
                     image={book.cover}
                     alt={book.title}
+                    height={undefined}
                 />
                 <CardContent sx={{
                     flexGrow: 1
@@ -35,10 +41,17 @@ export const BookCard = (props: BookCardPropsType) => {
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button size="small">Original</Button>
-                    <Button size="small" onClick={() => setActiveBook(book)}>Summary</Button>
+                    <IconButton>
+                        <RemoveRedEyeTwoToneIcon />
+                    </IconButton>
+                    <IconButton aria-label="add to favorites">
+                        <CloudDownloadTwoToneIcon/>
+                    </IconButton>
+                    <IconButton size="small" onClick={() => setActiveBook(book)}>
+                        <SummarizeTwoToneIcon/>
+                    </IconButton>
                 </CardActions>
-                <SummaraizeDrawer  />
+                <SummaraizeDrawer/>
             </Card>
         </>
     )
