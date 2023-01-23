@@ -35,9 +35,9 @@ export const SummaraizeDrawer = () => {
                     <MetadataEntry k="Chapters" v={43}></MetadataEntry>
                     <MetadataEntry k="Size" v={activeBook?.sizeInMB + "MB"}></MetadataEntry>
                     <MetadataEntry k="Summaries" v={0}></MetadataEntry>
-                    <MetadataEntry k="Active Jobs" v={<JobStatus ready/>}></MetadataEntry>
+                    <MetadataEntry k="Active Jobs" v={<JobStatus />}></MetadataEntry>
                 </Grid>
-                <Divider>Summaries</Divider>
+                <Divider textAlign='left'>Summaries</Divider>
                 <SummaryList/>
             </StyledBox>
         </Drawer>
