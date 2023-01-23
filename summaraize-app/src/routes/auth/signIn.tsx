@@ -27,7 +27,7 @@ function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
+            <Link color="inherit" href="https://summaraize.io/">
                 summarAIze
             </Link>{' '}
             {new Date().getFullYear()}
@@ -52,7 +52,7 @@ const SignIn: React.FunctionComponent<{}> = () => {
     const signInClicked = async () => {
         try {
             await authContext.signInWithEmail(email, password)
-            navigate('home')
+            navigate('/')
         } catch (err: any) {
             if (err.code === 'UserNotConfirmedException') {
                 navigate('verify')
