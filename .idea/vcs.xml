@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/tools/aws-api-gateway-cli-test" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tools/cli-test" vcs="Git" />
   </component>
 </project>

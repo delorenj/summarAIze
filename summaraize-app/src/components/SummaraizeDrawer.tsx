@@ -6,6 +6,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {MetadataEntry} from "./MetadataEntry";
 import {JobStatus} from "./JobStatus";
 import {SummaryList} from "./SummaryList";
+import {NewSummaryForm} from "./NewSummaryForm";
 
 
 const StyledBox = styled(Box)(({theme}) => ({
@@ -29,14 +30,16 @@ export const SummaraizeDrawer = () => {
                 }}
             >
                 <Typography variant={"h6"}>Summarize</Typography>
-                <Divider></Divider>
-                <Typography variant={"subtitle2"} my={2}>{activeBook?.title}</Typography>
-                <Grid container spacing={1} mb={2}>
+                <Divider textAlign='left'>Media</Divider>
+                <Typography variant={"subtitle2"} mt={5}>{activeBook?.title}</Typography>
+                <Grid container spacing={1} mb={5}>
                     <MetadataEntry k="Chapters" v={43}></MetadataEntry>
                     <MetadataEntry k="Size" v={activeBook?.sizeInMB + "MB"}></MetadataEntry>
                     <MetadataEntry k="Summaries" v={0}></MetadataEntry>
                     <MetadataEntry k="Active Jobs" v={<JobStatus />}></MetadataEntry>
                 </Grid>
+                <Divider textAlign='left'>Create a new summary</Divider>
+                <NewSummaryForm />
                 <Divider textAlign='left'>Summaries</Divider>
                 <SummaryList/>
             </StyledBox>
