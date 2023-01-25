@@ -4,10 +4,6 @@ import handler from "./libs/handler-lib";
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 export const getData = handler(async (event, context) => {
-  console.log("I am herehrehr");
-  console.log("context", JSON.stringify(context));
-  console.log("event", JSON.stringify(event));
-
   const userId = event.requestContext.authorizer.claims.sub;
   console.log("userId", userId);
   const stage = event.requestContext.stage;

@@ -52,13 +52,24 @@ resources:
 #  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
-  proxy_function:
-    handler: proxy.handler
+#  proxy_function:
+#    handler: proxy.handler
+#    events:
+#      - http:
+#          path: /{proxy+}
+#          method: ANY
+
+  parseBookMetadata:
+    handler: book.parseBookMetadata
     events:
       - http:
-          path: /{proxy+}
-          method: ANY
-
+          path: /book/metadata
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   getUserData:
     handler: user.getData
     events:
