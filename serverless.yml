@@ -13,8 +13,6 @@ provider:
   region: us-east-1
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
-    booksTableName: ${self:custom.booksTableName}
-    usersTableName: ${self:custom.usersTableName}
     stripeSecretKey: ${param:stripeSecretKey}
 
   iamRoleStatements:
@@ -30,35 +28,45 @@ provider:
       # Restrict our IAM role permissions to
       # the specific table for the stage
       Resource:
-        - "Fn::GetAtt": [ BooksTable, Arn ]
-        - "Fn::GetAtt": [ UsersTable, Arn ]
-
+        - arn:aws:dynamodb:us-east-1:350692246643:table/dev-books
+        - arn:aws:dynamodb:us-east-1:350692246643:table/dev-users
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+      Resource:
+        - arn:aws:s3:us-east-1:350692246643:accesspoint/summaraize-book-ap
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:DeleteObject
+      Resource:
+        - arn:aws:s3:us-east-1:350692246643:accesspoint/summaraize-book-ap
 plugins:
   - serverless-bundle
   - serverless-s3-local
   - serverless-offline
 custom:
   stage: ${opt:stage, self:provider.stage}
-  booksTableName: ${self:custom.stage}-books
-  usersTableName: ${self:custom.stage}-users
+
 
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}
-  - ${file(resources/dynamodb-table.yml)}
-  - ${file(resources/s3.yml)}
   - ${file(resources/cognito-authorizer.yml)}
+#  - ${file(resources/dynamodb-table.yml)}
+#  - ${file(resources/s3.yml)}
 #  - ${file(resources/cognito-user-pool.yml)}
 #  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
-#  proxy_function:
-#    handler: proxy.handler
-#    events:
-#      - http:
-#          path: /{proxy+}
-#          method: ANY
-
+  testS3:
+    handler: test.handler
+    events:
+      - http:
+            path: /test
+            method: get
+            cors: true
   parseBookMetadata:
     handler: book.parseBookMetadata
     events:

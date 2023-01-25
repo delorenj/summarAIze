@@ -29,14 +29,18 @@ async function readFileFromS3Bucket(url) {
 
   try {
     const object = await s3
-      .getObject({Key: url, Bucket: 'summaraize-book'})
+      .getObject({
+        Key: 'a-modern-utopia.epub',
+        Bucket: 'summaraize-book'
+      })
       .promise();
 
+    // const object = await s3.listObjects().promise();
     console.log("Got object!");
-    console.log("Returning: ", object.Body?.toString("base64"));
+    console.log("Returning: ", object);
     return {
       url: url,
-      file: object.Body?.toString("base64"),
+      file: object,
     };
 
   } catch (err) {

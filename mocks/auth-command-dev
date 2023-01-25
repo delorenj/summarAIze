@@ -5,7 +5,7 @@ npx aws-api-gateway-cli-test \
 --app-client-id='2hlqdr3kb61vn6a0gj5u9b0f3h' \
 --cognito-region='us-east-1' \
 --identity-pool-id='us-east-1:e4b5c80f-9d24-4498-a4f1-edf35a2cd18b' \
---invoke-url='https://iu8ukmknea.execute-api.us-east-1.amazonaws.com/dev' \
+--invoke-url='https://0ik4og60f4.execute-api.us-east-1.amazonaws.com/dev' \
 --api-gateway-region='us-east-1' \
 --path-template='/books' \ 
 --method='POST' \

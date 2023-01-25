@@ -23,7 +23,7 @@ export const NewSummaryForm = () => {
                 };
 
                 const {data} = await axios.post(
-                    'https://iu8ukmknea.execute-api.us-east-1.amazonaws.com/dev/book/metadata',
+                    'https://0ik4og60f4.execute-api.us-east-1.amazonaws.com/dev/book/metadata',
                     {bookUrl:"/public/a-modern-utopia.epub"},
                     {headers}
                 );
