@@ -10,6 +10,7 @@ const writeBookToTemp = async (book) => {
   console.log(`writing cached books to /tmp`);
 
   await fs.writeFile(`/tmp/${book.url}`, book.file);
+  console.log("Book written to /tmp");
 };
 
 // a function to read the cached files from tmp
@@ -24,21 +25,29 @@ async function readFileFromTemp(url) {
 
 // a function to pull the files from an s3 bucket before caching them locally
 async function readFileFromS3Bucket(url) {
-  const object = await s3
-    .getObject({Key: url, Bucket: 'summaraize-book'})
-    .promise();
+  console.log('readFileFromS3Bucket', url);
 
-  return {
-    url: url,
-    file: object.Body?.toString("base64"),
-  };
+  try {
+    const object = await s3
+      .getObject({Key: url, Bucket: 'summaraize-book'})
+      .promise();
+
+    console.log("Got object!");
+    console.log("Returning: ", object.Body?.toString("base64"));
+    return {
+      url: url,
+      file: object.Body?.toString("base64"),
+    };
+
+  } catch (err) {
+    console.log("Problem getting S3 object:", err);
+  }
 }
 
 // set this defaulted to false, and set to true when files are cached to tmp
 let filesCached = false;
 
 export const parseBookMetadata = handler(async (event, context) => {
-  console.log("BOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOGOG");
   const userId = event.requestContext.authorizer.claims.sub;
   const body = JSON.parse(event.body);
   const bookUrl = body.bookUrl;
@@ -54,7 +63,7 @@ export const parseBookMetadata = handler(async (event, context) => {
       console.log(`${prefix} files are cached - read from tmp on Lambda`);
 
       const bookFile = await readFileFromTemp(bookUrl);
-      console.log(bookFile);
+      console.log("bookFile", bookFile);
 
     } else {
       console.log(
