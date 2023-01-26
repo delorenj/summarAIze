@@ -33,15 +33,16 @@ provider:
     - Effect: Allow
       Action:
         - s3:ListBucket
+        - s3:ListObjects
       Resource:
-        - arn:aws:s3:us-east-1:350692246643:accesspoint/summaraize-book-ap
+        - arn:aws:s3:::summaraize-book/*
     - Effect: Allow
       Action:
         - s3:PutObject
         - s3:GetObject
         - s3:DeleteObject
       Resource:
-        - arn:aws:s3:us-east-1:350692246643:accesspoint/summaraize-book-ap
+        - arn:aws:s3:::summaraize-book/*
 plugins:
   - serverless-bundle
   - serverless-s3-local

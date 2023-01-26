@@ -1,15 +1,17 @@
 import * as AWS from "aws-sdk";
 import {v4 as uuid} from "uuid";
 import handler from "./libs/handler-lib";
+import { EPub } from 'epub2';
 
 const fs = require("fs").promises;
 const s3 = new AWS.S3();
+const getDirName = require('path').dirname;
 
 // a function to write the files to tmp on the lambda
 const writeBookToTemp = async (book) => {
-  console.log(`writing cached books to /tmp`);
-
-  await fs.writeFile(`/tmp/${book.url}`, book.file);
+  console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents.Body);
+  await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
+  await fs.writeFile(`/tmp/${book.url}`, book.fileContents.Body);
   console.log("Book written to /tmp");
 };
 
@@ -19,7 +21,7 @@ async function readFileFromTemp(url) {
 
   return {
     url: url,
-    file: Buffer.from(file).toString(),
+    fileContents: Buffer.from(file),
   };
 }
 
@@ -30,17 +32,16 @@ async function readFileFromS3Bucket(url) {
   try {
     const object = await s3
       .getObject({
-        Key: 'a-modern-utopia.epub',
+        Key: url,
         Bucket: 'summaraize-book'
       })
       .promise();
 
-    // const object = await s3.listObjects().promise();
     console.log("Got object!");
     console.log("Returning: ", object);
     return {
       url: url,
-      file: object,
+      fileContents: object,
     };
 
   } catch (err) {
@@ -49,7 +50,7 @@ async function readFileFromS3Bucket(url) {
 }
 
 // set this defaulted to false, and set to true when files are cached to tmp
-let filesCached = false;
+//let filesCached = false;
 
 export const parseBookMetadata = handler(async (event, context) => {
   const userId = event.requestContext.authorizer.claims.sub;
@@ -63,33 +64,54 @@ export const parseBookMetadata = handler(async (event, context) => {
 
     console.log(`${prefix} - started`);
 
-    if (filesCached) {
+    if (false) {
       console.log(`${prefix} files are cached - read from tmp on Lambda`);
 
       const bookFile = await readFileFromTemp(bookUrl);
-      console.log("bookFile", bookFile);
+      console.log("bookFile", bookFile.fileContents);
+      let book = new EPub(bookFile.fileContents);
+      console.log('Read from tmp, and EPub created...');
+      await book.ready;
+      console.log("waited for ready");
+      const title = book.metadata.title;
+      console.log(`got title: ${title}`);
+      // const c1 = await book.getChapter(0);
+      return {
+        statusCode: 200,
+        body: {title, userId}
+      };
 
     } else {
       console.log(
         `${prefix} files are not cached - read from s3 bucket and cache in tmp`
       );
-      const bookFile = await readFileFromS3Bucket(bookUrl);
-      await writeBookToTemp({
-        url: bookUrl,
-        file: bookFile
+      const bookData = await readFileFromS3Bucket(bookUrl);
+      await writeBookToTemp(bookData);
+
+      //filesCached = true; // set cached to true
+
+      let book = await EPub.createAsync(bookData.fileContents.Body);
+      console.log('Read from bucket, stored to tmp, and EPub created...');
+      console.log("waited for ready", JSON.stringify(book.metadata));
+      const title = book.metadata.title;
+      console.log(`got title: ${title}`);
+      let chapters = [];
+      book.flow.forEach(c => {
+        chapters.push(c.id);
       });
-
-      filesCached = true; // set cached to true
-
+      console.log(chapters);
+      let c1 = '';
+      book.getChapter('main3', (e,c) => {
+        c1 = c;
+        console.log(c);
+      });
       return {
-        body: {
-          userId: userId,
-          bookFile: bookFile[0]
-        },
         statusCode: 200,
+        body: {title, c1}
       };
     }
-  } catch (error) {
+  } catch
+    (error) {
     return {
       body: "An error has occurred",
       statusCode: 500,
