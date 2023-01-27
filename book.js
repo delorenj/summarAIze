@@ -9,101 +9,124 @@ const getDirName = require('path').dirname;
 
 // a function to write the files to tmp on the lambda
 const writeBookToTemp = async (book) => {
-  console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents);
-  await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
-  await fs.writeFile(`/tmp/${book.url}`, book.fileContents);
-  console.log("Book written to /tmp");
+    console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents);
+    await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
+    await fs.writeFile(`/tmp/${book.url}`, book.fileContents);
+    console.log("Book written to /tmp");
 };
 
 // a function to read the cached files from tmp
 async function readFileFromTemp(url) {
-  const file = await fs.readFile(`/tmp/${url}`);
-  console.log("readFileFromTemp", url, file);
-  return {
-    url: url,
-    fileContents: file,
-  };
+    const file = await fs.readFile(`/tmp/${url}`);
+    console.log("readFileFromTemp", url, file);
+    return {
+        url: url,
+        fileContents: file,
+    };
 }
 
 // a function to pull the files from an s3 bucket before caching them locally
 async function readFileFromS3Bucket(url) {
-  console.log('readFileFromS3Bucket', url);
+    console.log('readFileFromS3Bucket', url);
 
-  try {
-    const object = await s3
-      .getObject({
-        Key: url,
-        Bucket: 'summaraize-book'
-      })
-      .promise();
+    try {
+        const object = await s3
+            .getObject({
+                Key: url,
+                Bucket: 'summaraize-book'
+            })
+            .promise();
 
-    console.log("Got object!");
-    console.log("Returning: ", object);
-    return {
-      url: url,
-      fileContents: object.Body,
-    };
+        console.log("Got object!");
+        console.log("Returning: ", object);
+        return {
+            url: url,
+            fileContents: object.Body,
+        };
 
-  } catch (err) {
-    console.log("Problem getting S3 object:", err);
-  }
+    } catch (err) {
+        console.log("Problem getting S3 object:", err);
+    }
 }
 
 const getBookFromFileSystemOrS3 = async (url) => {
-  try {
-    const book = await readFileFromTemp(url);
-    console.log("Book read from /tmp");
-    const metadata = await getBookMetadata(book);
-    return {
-      url,
-      fileContents: book.fileContents,
-      metadata
-    };
-  } catch (err) {
-    console.log("Problem getting book from /tmp:", err);
-    const book = await readFileFromS3Bucket(url);
-    const metadata = await getBookMetadata(book);
-    await writeBookToTemp(book);
-    return {
-      url,
-      fileContents: book.fileContents,
-      metadata
-    };
-  };
+    try {
+        const book = await readFileFromTemp(url);
+        console.log("Book read from /tmp");
+        const metadata = await getBookMetadata(book);
+        return {
+            url,
+            fileContents: book.fileContents,
+            metadata
+        };
+    } catch (err) {
+        console.log("Problem getting book from /tmp:", err);
+        const book = await readFileFromS3Bucket(url);
+        const metadata = await getBookMetadata(book);
+        await writeBookToTemp(book);
+        return {
+            url,
+            fileContents: book.fileContents,
+            metadata
+        };
+    }
+    ;
 };
 
 const isEpub = (fileType) => {
-  return fileType && fileType.mime === "application/epub+zip";
+    return fileType && fileType.mime === "application/epub+zip";
+};
+
+const numberOfWords = (text) => {
+    return text.split(" ").length;
+};
+
+// This method is called by the client to get the book metadata
+const getEpubMetadata = async (book) => {
+    const epub = await EPub.createAsync(book.fileContents);
+    const title = epub.metadata.title;
+    const chapters = [];
+    epub.flow.forEach((chapter) => {
+        epub.getChapterRaw(chapter.id, (err, text) => {
+            if (err) {
+                console.log("Error getting chapter", err);
+            } else {
+                chapter.numberOfWords = numberOfWords(text);
+            }
+            chapters.push({
+                id: chapter.id,
+                title: chapter.title,
+                numWords: numberOfWords(text)
+            });
+        });
+    });
+    return {title,chapters};
 };
 
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book) => {
-  const fileType = await fileTypeFromBuffer(book.fileContents);
-  let title = "";
-  const chapters = [];
-  if(isEpub(fileType)) {
-    const epub = await EPub.createAsync(book.fileContents);
-    title = epub.metadata.title;
-    epub.flow.forEach((chapter) => {
-      chapters.push(chapter);
-    });
-  }
-  return {
-    fileType: fileType,
-    title: title,
-    chapters: chapters
-  };
+    const fileType = await fileTypeFromBuffer(book.fileContents);
+    let metadata = {};
+    if (isEpub(fileType)) {
+        metadata = await getEpubMetadata(book);
+    }
+    return {
+        fileType: fileType,
+        title: metadata.title,
+        chapters: metadata.chapters
+    };
 };
 
+//This method is called by the client to get the book metadata
 export const parseBookMetadata = handler(async (event, context) => {
-  // const userId = event.requestContext.authorizer.claims.sub;
-  const body = JSON.parse(event.body);
-  const bookUrl = body.bookUrl;
+    // const userId = event.requestContext.authorizer.claims.sub;
+    const body = JSON.parse(event.body);
+    const bookUrl = body.bookUrl;
 
-  const book = await getBookFromFileSystemOrS3(bookUrl);
-  return {
-    statusCode: 200,
-    book: book
-  };
+    const book = await getBookFromFileSystemOrS3(bookUrl);
+    return {
+        statusCode: 200,
+        book: book
+    };
 });
 
