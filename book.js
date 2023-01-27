@@ -1,6 +1,7 @@
 import * as AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
+import {EPub} from 'epub2';
 
 const fs = require("fs").promises;
 const s3 = new AWS.S3();
@@ -68,14 +69,29 @@ const getBookFromFileSystemOrS3 = async (url) => {
       fileContents: book.fileContents,
       metadata
     };
-  }
+  };
+};
+
+const isEpub = (fileType) => {
+  return fileType && fileType.mime === "application/epub+zip";
 };
 
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book) => {
   const fileType = await fileTypeFromBuffer(book.fileContents);
+  let title = "";
+  const chapters = [];
+  if(isEpub(fileType)) {
+    const epub = await EPub.createAsync(book.fileContents);
+    title = epub.metadata.title;
+    epub.flow.forEach((chapter) => {
+      chapters.push(chapter);
+    });
+  }
   return {
-    fileType: fileType
+    fileType: fileType,
+    title: title,
+    chapters: chapters
   };
 };
 
