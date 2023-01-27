@@ -14,6 +14,8 @@ provider:
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
     stripeSecretKey: ${param:stripeSecretKey}
+    booksTableName: ${self:custom.stage}-books
+    usersTableName: ${self:custom.stage}-users
 
   iamRoleStatements:
     - Effect: Allow
@@ -28,8 +30,8 @@ provider:
       # Restrict our IAM role permissions to
       # the specific table for the stage
       Resource:
-        - arn:aws:dynamodb:us-east-1:350692246643:table/dev-books
-        - arn:aws:dynamodb:us-east-1:350692246643:table/dev-users
+        - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
+        - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
     - Effect: Allow
       Action:
         - s3:ListBucket
@@ -49,8 +51,6 @@ plugins:
   - serverless-offline
 custom:
   stage: ${opt:stage, self:provider.stage}
-
-
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}

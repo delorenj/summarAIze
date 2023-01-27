@@ -25,6 +25,7 @@ import ChangePassword from './routes/auth/changePassword'
 import Landing from './routes/landing'
 import {Home} from './routes/home'
 import AuthProvider, {AuthIsNotSignedIn, AuthIsSignedIn} from "./contexts/authContext";
+import {Upload} from "./routes/upload";
 
 let lightTheme = createTheme(({
   palette: {
@@ -57,6 +58,7 @@ const MainRoute: React.FunctionComponent = () => (
   <Router>
     <Routes>
       <Route path="/changepassword" element={<ChangePassword />} />
+      <Route path="/upload" element={<Upload />} />
       <Route path="/" element={<Home />} />
     </Routes>
   </Router>

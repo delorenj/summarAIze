@@ -8,6 +8,8 @@ import StickyFooter from "../components/StickyFooter";
 import {useMyData} from "../hooks/useMyData";
 import {BookCard} from "../components/BookCard";
 import HomeContextProvider from "../contexts/homeContext";
+import {Button, Stack} from "@mui/material";
+import {Add, Logout} from "@mui/icons-material";
 
 export const Home = () => {
     const navigate = useNavigate()
@@ -23,10 +25,27 @@ export const Home = () => {
         navigate('changepassword')
     }
 
+    const addBookClicked = () => {
+        navigate('upload')
+    }
+
     return (
         <HomeContextProvider>
             <ResponsiveAppBar/>
             <main>
+                <Container sx={{py: 3}}>
+                    <Grid container spacing={2}>
+                        <Grid xs={12}>
+                            <Stack direction={"row"}>
+                                <Button variant="contained"
+                                        color={"secondary"}
+                                        sx={{alignSelf: "flex-start"}}
+                                        onClick={addBookClicked}><Add/>Add Book</Button>
+                            </Stack>
+
+                        </Grid>
+                    </Grid>
+                </Container>
                 <Container sx={{py: 8}} maxWidth="md">
                     <Grid container spacing={4}>
                         {myBooks.map((book) => (

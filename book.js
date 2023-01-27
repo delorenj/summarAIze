@@ -3,6 +3,8 @@ import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
 
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
 const fs = require("fs").promises;
 const s3 = new AWS.S3();
 const getDirName = require('path').dirname;
@@ -16,14 +18,14 @@ const writeBookToTemp = async (book) => {
 };
 
 // a function to read the cached files from tmp
-async function readFileFromTemp(url) {
-    const file = await fs.readFile(`/tmp/${url}`);
-    console.log("readFileFromTemp", url, file);
-    return {
-        url: url,
-        fileContents: file,
-    };
-}
+// async function readFileFromTemp(url) {
+//     const file = await fs.readFile(`/tmp/${url}`);
+//     console.log("readFileFromTemp", url, file);
+//     return {
+//         url: url,
+//         fileContents: file,
+//     };
+// }
 
 // a function to pull the files from an s3 bucket before caching them locally
 async function readFileFromS3Bucket(url) {
@@ -42,6 +44,7 @@ async function readFileFromS3Bucket(url) {
         return {
             url: url,
             fileContents: object.Body,
+            id: object.ETag
         };
 
     } catch (err) {
@@ -50,27 +53,28 @@ async function readFileFromS3Bucket(url) {
 }
 
 const getBookFromFileSystemOrS3 = async (url) => {
-    try {
-        const book = await readFileFromTemp(url);
-        console.log("Book read from /tmp");
-        const metadata = await getBookMetadata(book);
-        return {
-            url,
-            fileContents: book.fileContents,
-            metadata
-        };
-    } catch (err) {
-        console.log("Problem getting book from /tmp:", err);
+    // Always get the book from S3 for now
+    // try {
+    //     const book = await readFileFromTemp(url);
+    //     console.log("Book read from /tmp");
+    //     const metadata = await getBookMetadata(book);
+    //     return {
+    //         url,
+    //         fileContents: book.fileContents,
+    //         metadata
+    //     };
+    // } catch (err) {
+    //     console.log("Problem getting book from /tmp:", err);
         const book = await readFileFromS3Bucket(url);
         const metadata = await getBookMetadata(book);
         await writeBookToTemp(book);
         return {
             url,
             fileContents: book.fileContents,
-            metadata
+            metadata,
+            id: book.id
         };
-    }
-    ;
+    // };
 };
 
 const isEpub = (fileType) => {
@@ -100,7 +104,7 @@ const getEpubMetadata = async (book) => {
             });
         });
     });
-    return {title,chapters};
+    return {title, chapters};
 };
 
 //This method is called by the client to get the book metadata
@@ -117,13 +121,40 @@ const getBookMetadata = async (book) => {
     };
 };
 
+export const writeMetadataToDB = async (userId, book) => {
+    const params = {
+        TableName: process.env.booksTableName,
+        Item: {
+            // The attributes of the item to be created
+            userId: userId,
+            bookId: book.id, // The book's s3 ETag
+            format: book.metadata.fileType.ext,
+            title: book.metadata.title,
+            chapters: JSON.stringify(book.metadata.chapters),
+            key: book.url.split("/").pop(),
+            sizeInBytes: book.fileContents.length,
+            createdAt: Date.now(), // Current Unix timestamp
+        },
+    };
+
+    try {
+        console.log("Writing to DB", params);
+        await dynamoDb.put(params).promise();
+    } catch (err) {
+        console.log("Problem writing to DB:", err);
+    }
+
+
+};
+
 //This method is called by the client to get the book metadata
 export const parseBookMetadata = handler(async (event, context) => {
-    // const userId = event.requestContext.authorizer.claims.sub;
+    const userId = event.requestContext.authorizer.claims.sub;
     const body = JSON.parse(event.body);
     const bookUrl = body.bookUrl;
 
     const book = await getBookFromFileSystemOrS3(bookUrl);
+    await writeMetadataToDB(userId, book);
     return {
         statusCode: 200,
         book: book
