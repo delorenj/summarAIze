@@ -1,6 +1,6 @@
 import * as AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
-import { EPub } from 'epub2';
+import {fileTypeFromBuffer} from 'file-type';
 
 const fs = require("fs").promises;
 const s3 = new AWS.S3();
@@ -8,9 +8,9 @@ const getDirName = require('path').dirname;
 
 // a function to write the files to tmp on the lambda
 const writeBookToTemp = async (book) => {
-  console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents.Body);
+  console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents);
   await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
-  await fs.writeFile(`/tmp/${book.url}`, book.fileContents.Body);
+  await fs.writeFile(`/tmp/${book.url}`, book.fileContents);
   console.log("Book written to /tmp");
 };
 
@@ -40,7 +40,7 @@ async function readFileFromS3Bucket(url) {
     console.log("Returning: ", object);
     return {
       url: url,
-      fileContents: object,
+      fileContents: object.Body,
     };
 
   } catch (err) {
@@ -48,74 +48,46 @@ async function readFileFromS3Bucket(url) {
   }
 }
 
-// set this defaulted to false, and set to true when files are cached to tmp
-let filesCached = false;
+const getBookFromFileSystemOrS3 = async (url) => {
+  try {
+    const book = await readFileFromTemp(url);
+    console.log("Book read from /tmp");
+    const metadata = await getBookMetadata(book);
+    return {
+      url,
+      fileContents: book.fileContents,
+      metadata
+    };
+  } catch (err) {
+    console.log("Problem getting book from /tmp:", err);
+    const book = await readFileFromS3Bucket(url);
+    const metadata = await getBookMetadata(book);
+    await writeBookToTemp(book);
+    return {
+      url,
+      fileContents: book.fileContents,
+      metadata
+    };
+  }
+};
+
+//This method is called by the client to get the book metadata
+const getBookMetadata = async (book) => {
+  const fileType = await fileTypeFromBuffer(book.fileContents);
+  return {
+    fileType: fileType
+  };
+};
 
 export const parseBookMetadata = handler(async (event, context) => {
   // const userId = event.requestContext.authorizer.claims.sub;
   const body = JSON.parse(event.body);
   const bookUrl = body.bookUrl;
-  let title = '';
-  let c1 = '';
-  let chapters = [];
-  try {
 
-    if (filesCached) {
-      console.log(`files are cached - read from tmp on Lambda`);
-      const bookFile = await readFileFromTemp(bookUrl);
-      console.log("bookFile", bookFile.fileContents);
-      let book = await EPub.createAsync(bookFile.fileContents);
-      console.log('Read from tmp, and EPub created...');
-      title = book.metadata.title;
-      console.log(`got title: ${title}`);
-      let chapters = [];
-      book.flow.forEach(c => {
-        chapters.push(c.id);
-      });
-      console.log(chapters);
-      book.getChapter('main3', (e,c) => {
-        c1 = c;
-        console.log(c);
-      });
-      return {
-        statusCode: 200,
-        body: {title, c1, cached: true}
-      };
-
-    } else {
-      console.log(
-        `files are not cached - read from s3 bucket and cache in tmp`
-      );
-      const bookData = await readFileFromS3Bucket(bookUrl);
-      await writeBookToTemp(bookData);
-
-      filesCached = true; // set cached to true
-
-      let book = await EPub.createAsync(bookData.fileContents.Body);
-      console.log('Read from bucket, stored to tmp, and EPub created...');
-      console.log("waited for ready", JSON.stringify(book.metadata));
-      title = book.metadata.title;
-      console.log(`got title: ${title}`);
-      chapters = [];
-      book.flow.forEach(c => {
-        chapters.push(c.id);
-      });
-      console.log(chapters);
-      book.getChapter('main3', (e,c) => {
-        c1 = c;
-        console.log(c);
-      });
-      return {
-        statusCode: 200,
-        body: {title, c1, cached: false}
-      };
-    }
-  } catch
-    (error) {
-    return {
-      body: "An error has occurred",
-      statusCode: 500,
-    };
-  }
+  const book = await getBookFromFileSystemOrS3(bookUrl);
+  return {
+    statusCode: 200,
+    book: book
+  };
 });
 
