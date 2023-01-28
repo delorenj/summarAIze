@@ -57,12 +57,17 @@
   background: rgb(238,174,202);
   background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
   height: inherit;
+  border-radius: .6rem .6rem 0 0;
 }
-
+.upload-modal-left {
+  background: rgb(238,174,202);
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  height: inherit;
+  border-radius: .6rem 0 0 .6rem;
+}
 
 @media (min-width: 769px) {
   .upload-modal-top {
-    border-radius: .6rem .6rem 0 0;
   }
 }
 
