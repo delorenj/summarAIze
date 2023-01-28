@@ -3,9 +3,10 @@ import {useMediaQuery} from "@mui/material";
 import Dropzone from "react-dropzone";
 import {useCallback} from "react";
 import {useUploadContext} from "../contexts/uploadContext";
+import {VERTICAL_BREAKPOINT} from "../constants";
 
 export const DragDropBox = () => {
-    const mediaQuery = useMediaQuery('(max-height: 800px)')
+    const mediaQuery = useMediaQuery(`(max-height: ${VERTICAL_BREAKPOINT}px)`)
     const {addAcceptedFiles, acceptedFiles} = useUploadContext();
     const accept = {
         'application/epub+zip': [],

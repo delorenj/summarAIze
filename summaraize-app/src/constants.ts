@@ -1,0 +1,1 @@
+export const VERTICAL_BREAKPOINT = 768;

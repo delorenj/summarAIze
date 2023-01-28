@@ -1,6 +1,6 @@
 import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js'
 
-const userPoolId = process.env.REACT_APP_USERPOOL_ID
+export const userPoolId = process.env.REACT_APP_USERPOOL_ID
 const clientId = process.env.REACT_APP_CLIENT_ID
 
 const poolData = {

@@ -1,14 +1,14 @@
-import {Box, Divider, Fade, Stack, Typography, useTheme} from "@mui/material";
+import {Box, Divider, Fade, List, ListItem, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import {BorderLinearProgress} from "./LandscapeModal";
 
 export const PortraitModal = () => {
-
-    const {uploadDialogOpen} = useUploadContext();
+    const {uploadDialogOpen, acceptedFiles} = useUploadContext();
     return (
         <Fade in={uploadDialogOpen}>
             <Box sx={{
@@ -38,6 +38,25 @@ export const PortraitModal = () => {
                             margin: '0px',
                         }}/>
                         <DragDropBox/>
+                        <List sx={{
+                            position: 'relative',
+                            transform: 'translate(-181px, 50px)',
+                            p: '0px',
+                            m: '0px',
+                            top: '50%',
+                        }}>
+                            {acceptedFiles.map((file: any) => (
+                                <ListItem key={file.path} sx={{
+                                    padding: '0px',
+                                }}>
+                                    <Stack>
+                                        <Typography>{file.name}</Typography>
+                                        <BorderLinearProgress variant="determinate" value={50}/>
+                                    </Stack>
+                                </ListItem>
+                            ))}
+                        </List>
+
                         <em style={{
                             flex: 'none',
                             width: '350px',
