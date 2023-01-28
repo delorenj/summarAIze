@@ -1,62 +1,52 @@
-import React, {useState, useEffect, useContext, useCallback} from 'react'
-import {useDropzone} from "react-dropzone";
+import React, {useContext, useState} from 'react'
+
 export interface IUploadContext {
-  uploadDialogOpen: boolean,
-  setUploadDialogOpen(open: boolean): void,
-  getRootProps(): any,
-  getInputProps(): any
-  isDragActive: boolean,
-  acceptedFiles: any,
-  fileRejections: any
+    uploadDialogOpen: boolean,
+    setUploadDialogOpen(open: boolean): void,
+    acceptedFiles: IFile[],
+    addAcceptedFiles(files: IFile[]): IFile[]
+}
+
+export interface IFile {
+    path: string,
+    lastModified: number,
+    lastModifiedDate: Date,
+    name: string,
+    size: number,
+    type: string,
+    webkitRelativePath: string
 }
 
 const defaultState: IUploadContext = {
-  acceptedFiles: [], fileRejections: [],
-  getInputProps(): any {
-  }, getRootProps(): any {
-  },
-  isDragActive: false,
-  setUploadDialogOpen(open: boolean): void {},
-  uploadDialogOpen: true
+    setUploadDialogOpen(open: boolean): void {
+    },
+    uploadDialogOpen: true,
+    acceptedFiles: [],
+    addAcceptedFiles(files: IFile[]): IFile[] {
+        return []
+    }
 }
 
 type Props = {
-  children?: React.ReactNode
+    children?: React.ReactNode
 }
 
 export const UploadContext = React.createContext(defaultState)
 
-const UploadContextProvider = ({ children }: Props) => {
-  const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(true)
-  const onDrop = useCallback((acceptedFiles: any) => {
-    console.log("File drop!", acceptedFiles);
-  }, [])
-    const {
-        acceptedFiles,
-        fileRejections,
-        getRootProps,
-        getInputProps,
-        isDragActive,
-    } = useDropzone({
-        onDrop,
-        accept: {
-            'epub': [],
-            'pdf': [],
-            'txt': [],
-            'mobi': []
-        }
-    });
-  const state: IUploadContext = {
-    acceptedFiles,
-    fileRejections,
-    getInputProps,
-    getRootProps,
-    isDragActive,
-    uploadDialogOpen,
-    setUploadDialogOpen
+const UploadContextProvider = ({children}: Props) => {
+    const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(true)
+    const [acceptedFiles, setAcceptedFiles] = useState<IFile[]>([]);
 
-  }
-  return <UploadContext.Provider value={state}>{children}</UploadContext.Provider>
+    const state: IUploadContext = {
+        uploadDialogOpen,
+        setUploadDialogOpen,
+        acceptedFiles,
+        addAcceptedFiles: (files: IFile[]) => {
+            setAcceptedFiles([...acceptedFiles, ...files])
+            return acceptedFiles
+        }
+    }
+    return <UploadContext.Provider value={state}>{children}</UploadContext.Provider>
 }
 
 export const useUploadContext = () => (useContext(UploadContext));

@@ -1,11 +1,35 @@
-import {Box, Button, Divider, Fade, Stack, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button, Divider,
+    Fade,
+    LinearProgress,
+    linearProgressClasses,
+    List,
+    ListItem,
+    Stack, TextField,
+    Typography
+} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import {styled} from "@mui/material/styles";
+
+const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
+    height: 10,
+    borderRadius: 5,
+    width: '100px',
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+        backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+        borderRadius: 5,
+        backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+    },
+}));
 
 export const LandscapeModal = () => {
-    const {uploadDialogOpen} = useUploadContext();
+    const {uploadDialogOpen, acceptedFiles} = useUploadContext();
     return (
         <Fade in={uploadDialogOpen}>
             <Box sx={{
@@ -33,6 +57,23 @@ export const LandscapeModal = () => {
                             margin: '0px',
                         }}/>
                         <DragDropBox/>
+                        <List sx={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translate(-160px, 50px)',
+                            top: '50%',
+                        }}>
+                            {acceptedFiles.map((file: any) => (
+                                <ListItem key={file.path} sx={{
+                                    padding: '0px',
+                                }}>
+                                    <Stack>
+                                        <Typography>{file.name}</Typography>
+                                        <BorderLinearProgress variant="determinate" value={50}/>
+                                    </Stack>
+                                </ListItem>
+                                ))}
+                        </List>
                         <em style={{
                             flex: 'none',
                             width: '350px',
@@ -70,7 +111,7 @@ export const LandscapeModal = () => {
                                 my: '10px',
                                 color: 'white',
                                 "#outlined-basic-label": {
-                                  color: 'white'
+                                    color: 'white'
                                 },
                                 ".MuiFormLabel-root-MuiInputLabel-root": {
                                     color: 'success.main',
@@ -82,13 +123,13 @@ export const LandscapeModal = () => {
                                     color: 'white'
                                 },
                                 "MuiFormLabel-root-MuiInputLabel-root": {
-                                  color: 'white'
+                                    color: 'white'
                                 },
                             }} inputProps={{
                                 style: {
                                     color: 'white',
                                 }
-                            }}  />
+                            }}/>
                             <Divider sx={{
                                 width: '35%',
                                 "&::before, &::after": {
@@ -100,7 +141,8 @@ export const LandscapeModal = () => {
                                 }}>or</Typography>
                             </Divider>
                             <Stack direction={'row'} spacing={4} p={4}>
-                                <Button variant={"contained"}><img src="/Google_Drive_icon.png " alt="" width={40}/>Google Drive</Button>
+                                <Button variant={"contained"}><img src="/Google_Drive_icon.png " alt="" width={40}/>Google
+                                    Drive</Button>
                                 <Button variant={"contained"}><img src="/Dropbox_Icon.svg.png" alt="" width={40}/>Dropbox</Button>
                             </Stack>
                         </Stack>

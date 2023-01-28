@@ -1,11 +1,25 @@
 import Box from "@mui/material/Box";
 import {useMediaQuery} from "@mui/material";
-import Dropzone, {useDropzone} from "react-dropzone";
+import Dropzone from "react-dropzone";
 import {useCallback} from "react";
+import {useUploadContext} from "../contexts/uploadContext";
 
 export const DragDropBox = () => {
     const mediaQuery = useMediaQuery('(max-height: 800px)')
-    
+    const {addAcceptedFiles, acceptedFiles} = useUploadContext();
+    const accept = {
+        'application/epub+zip': [],
+        'application/pdf': [],
+        'text/plain': [],
+        'application/vnd.openxmlformats': [],
+        'application/x-mobipocket-ebook': [],
+    }
+
+    const onDrop = useCallback((acceptedFiles: any) => {
+        console.log("File drop!", acceptedFiles);
+        addAcceptedFiles(acceptedFiles);
+    }, []);
+
     const PortraitMode = () => (
         <Box sx={{
             border: '3px dashed #FeFeFe',
@@ -42,7 +56,7 @@ export const DragDropBox = () => {
 
     const Content = mediaQuery ? () => <LandscapeMode/> : () => <PortraitMode/>
     return (
-        <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+        <Dropzone onDrop={onDrop} accept={accept} maxFiles={3 - acceptedFiles.length} disabled={acceptedFiles.length > 2}>
             {({getRootProps, getInputProps}) => (
                 <section style={{display: 'flex'}}>
                     <div {...getRootProps()} style={{display: 'flex'}}>
@@ -52,6 +66,5 @@ export const DragDropBox = () => {
                 </section>
             )}
         </Dropzone>
-
     )
 };
