@@ -3,7 +3,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
-import {red} from "@mui/material/colors";
 
 export const LandscapeModal = () => {
     const {uploadDialogOpen} = useUploadContext();
@@ -34,7 +33,14 @@ export const LandscapeModal = () => {
                             margin: '0px',
                         }}/>
                         <DragDropBox/>
-
+                        <em style={{
+                            flex: 'none',
+                            width: '350px',
+                            position: 'absolute',
+                            left: '0',
+                            margin: 'auto',
+                            bottom: '0',
+                        }}>(Only *.jpeg and *.png images will be accepted)</em>
                     </Grid>
                     <Grid xs={6} className={'upload-modal-bottom'} sx={{
                         backgroundColor: 'secondary',
@@ -78,6 +84,10 @@ export const LandscapeModal = () => {
                                 "MuiFormLabel-root-MuiInputLabel-root": {
                                   color: 'white'
                                 },
+                            }} inputProps={{
+                                style: {
+                                    color: 'white',
+                                }
                             }}  />
                             <Divider sx={{
                                 width: '35%',
