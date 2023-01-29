@@ -70,6 +70,14 @@ const UploadContextProvider = ({children}: Props) => {
         });
     }, [uploadTasks]);
 
+    useEffect(() => {
+        console.log("Upload progress", uploadProgress);
+    }, [uploadProgress]);
+
+    useEffect(() => {
+        console.log("Upload error", uploadError);
+    }, [uploadError]);
+
     const state: IUploadContext = {
         uploadDialogOpen,
         setUploadDialogOpen,
