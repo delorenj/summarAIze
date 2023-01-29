@@ -12,21 +12,22 @@ export function useS3Upload() {
     const s3 = new AWS.S3({
       region: 'us-east-1',
       credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: identityPoolId,
+        IdentityPoolId: identityPoolId || "ass",
         Logins: {
-          [`cognit o-idp.us-east-1.amazonaws.com/${userPoolId}`]: sessionInfo.idToken
+          [`cognito-idp.us-east-1.amazonaws.com/${userPoolId}`]: sessionInfo?.idToken || "balls"
         }
       })
     });
+    console.log("AWS.S3", s3, sessionInfo);
 
     const params = {
       Bucket: 'your-bucket-name',
-      Key: `${user.username}/${file.name}`,
+      Key: `${sessionInfo?.username}/${file.name}`,
       Body: file,
       ContentType: file.type
     };
 
-    s3.upload(params, (err, data) => {
+    s3.upload(params, (err: any, data: any) => {
       if (err) {
         setUploadError(err);
       } else {
