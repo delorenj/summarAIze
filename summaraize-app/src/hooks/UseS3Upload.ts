@@ -1,7 +1,9 @@
 import {useState} from 'react';
-import AWS from 'aws-sdk';
 import {useAuth} from "../contexts/authContext";
 import {IFile} from "../contexts/uploadContext";
+import S3 from 'react-aws-s3';
+window.Buffer = window.Buffer || require("buffer").Buffer;
+
 
 export const useS3Upload = () => {
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -15,38 +17,41 @@ export const useS3Upload = () => {
             attribute.getName() === 'sub')[0].getValue();
     }
     const uploadFile = (file: IFile) => {
-        const s3 = new AWS.S3({
-            region: 'us-east-1',
-            credentials: new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: identityPoolId as string,
-                Logins: {
-                    [`cognito-idp.us-east-1.amazonaws.com/${userPoolId}`]: sessionInfo?.idToken as string
-                }
-            })
-        });
-        console.log("AWS.S3", s3, sessionInfo);
-        const attributes = attrInfo;
-        console.log("attributes", attributes);
-        const username = getSubAttribute(attributes);
-        console.log("username", username);
+        // const s3 = new AWS.S3({
+        //     region: 'us-east-1',
+        //     credentials: new AWS.CognitoIdentityCredentials({
+        //         secretAccessKey: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_KEY,
+        //         IdentityPoolId: identityPoolId as string,
+        //         Logins: {
+        //             [`cognito-idp.us-east-1.amazonaws.com/${userPoolId}`]: sessionInfo?.idToken as string
+        //         }
+        //     })
+        // });
+        const username = getSubAttribute(attrInfo);
 
-        const params = {
-            Bucket: process.env.REACT_APP_BOOK_BUCKET as string,
-            Key: `${username}/${file.name}`,
-            Body: file,
-            ContentType: file.type
+        const config = {
+            bucketName: process.env.REACT_APP_BOOK_BUCKET as string,
+            dirName: username,
+            // region: 'us-east-1',
+            accessKeyId: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_KEY,
+            secretAccessKey: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_SECRET,
         };
 
-        console.log("S3 params", params);
 
-        s3.upload(params, (err: any, data: any) => {
-            if (err) {
-                setUploadError(err);
+        console.log("S3 params", config);
+        const s3upload = new S3(config);
+
+        s3upload.uploadFile(file).then((data: any) => {
+            console.log(data);
+            if (data.status === 204) {
+                console.log("success");
+
             } else {
-                setUploadProgress(100);
-            }
-        }).on('httpUploadProgress', (progress) => {
-            setUploadProgress(Math.round((progress.loaded * 100) / progress.total));
+                console.log("fail");
+             }
+        }).catch((err: any) => {
+            console.log(err);
+            setUploadError(err);
         });
     }
 
