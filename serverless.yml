@@ -61,11 +61,11 @@ resources:
 #  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
-  testS3:
-    handler: test.handler
+  s3SignedUrl:
+    handler: s3SignedUrl.handler
     events:
       - http:
-            path: /test
+            path: /signed/upload
             method: get
             cors: true
   parseBookMetadata:

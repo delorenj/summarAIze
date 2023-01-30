@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
-import {useS3Upload} from "../hooks/UseS3Upload";
+import {useS3Upload} from "../hooks/useS3Upload";
 
 export interface IUploadContext {
     uploadDialogOpen: boolean,

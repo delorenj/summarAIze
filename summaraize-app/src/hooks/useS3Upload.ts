@@ -17,6 +17,8 @@ export const useS3Upload = () => {
             attribute.getName() === 'sub')[0].getValue();
     }
     const uploadFile = (file: IFile) => {
+            console.log("chops");
+
         // const s3 = new AWS.S3({
         //     region: 'us-east-1',
         //     credentials: new AWS.CognitoIdentityCredentials({
