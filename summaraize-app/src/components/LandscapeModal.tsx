@@ -16,6 +16,7 @@ import {IUploadTask, useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import {styled} from "@mui/material/styles";
+import {useState} from "react";
 
 export const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
     height: 10,
@@ -59,7 +60,7 @@ export const LandscapeModal = () => {
                             padding: '0px',
                             margin: '0px',
                         }}/>
-                        <DragDropBox/>
+                        <DragDropBox />
                         <List sx={{
                             position: 'absolute',
                             left: '50%',
@@ -97,21 +98,6 @@ export const LandscapeModal = () => {
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
-                            <Button sx={{
-                                textTransform: 'inherit'
-                            }}>
-                                <DriveFolderUploadIcon sx={{mr: '10px'}}/>Choose a document
-                            </Button>
-                            <Divider sx={{
-                                width: '35%',
-                                "&::before, &::after": {
-                                    borderColor: "rgba(255, 255, 255, 0.35)",
-                                }
-                            }}>
-                                <Typography sx={{
-                                    mx: '10px',
-                                }}>or</Typography>
-                            </Divider>
                             <TextField id="outlined-basic" label="Paste a URL" variant="outlined" sx={{
                                 my: '10px',
                                 color: 'white',

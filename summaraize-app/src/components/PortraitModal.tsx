@@ -1,14 +1,17 @@
 import {Box, Divider, Fade, List, ListItem, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {useUploadContext} from "../contexts/uploadContext";
+import {IUploadTask, useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {BorderLinearProgress} from "./LandscapeModal";
+import {useCallback, useState} from "react";
+import {Simulate} from "react-dom/test-utils";
+import drop = Simulate.drop;
 
 export const PortraitModal = () => {
-    const {uploadDialogOpen, acceptedFiles} = useUploadContext();
+    const {uploadDialogOpen, uploadTasks} = useUploadContext();
     return (
         <Fade in={uploadDialogOpen}>
             <Box sx={{
@@ -37,7 +40,7 @@ export const PortraitModal = () => {
                             padding: '0px',
                             margin: '0px',
                         }}/>
-                        <DragDropBox/>
+                        <DragDropBox />
                         <List sx={{
                             position: 'relative',
                             transform: 'translate(-181px, 50px)',
@@ -45,18 +48,19 @@ export const PortraitModal = () => {
                             m: '0px',
                             top: '50%',
                         }}>
-                            {acceptedFiles.map((file: any) => (
-                                <ListItem key={file.path} sx={{
-                                    padding: '0px',
-                                }}>
-                                    <Stack>
-                                        <Typography>{file.name}</Typography>
-                                        <BorderLinearProgress variant="determinate" value={50}/>
-                                    </Stack>
-                                </ListItem>
+                            {uploadTasks.map((task: IUploadTask) => (
+                                <Fade in={true}>
+                                    <ListItem key={task.file.path} sx={{
+                                        padding: '0px',
+                                    }}>
+                                        <Stack>
+                                            <Typography>{task.file.name}</Typography>
+                                            <BorderLinearProgress variant="determinate" value={task.progress}/>
+                                        </Stack>
+                                    </ListItem>
+                                </Fade>
                             ))}
                         </List>
-
                         <em style={{
                             flex: 'none',
                             width: '350px',
@@ -64,7 +68,7 @@ export const PortraitModal = () => {
                             right: '283px',
                             margin: 'auto',
                             top: '46%',
-                        }}>(Only *.jpeg and *.png images will be accepted)</em>
+                        }}>(Only *.epub,*.txt, and *.pdf files)</em>
                     </Grid>
                 </Grid>
                 <Grid xs={6} className={'upload-modal-bottom'} sx={{
@@ -76,21 +80,6 @@ export const PortraitModal = () => {
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}>
-                        <Button sx={{
-                            textTransform: 'inherit'
-                        }}>
-                            <DriveFolderUploadIcon sx={{mr: '10px'}}/>Choose a document
-                        </Button>
-                        <Divider sx={{
-                            width: '35%',
-                            "&::before, &::after": {
-                                borderColor: "rgba(255, 255, 255, 0.35)",
-                            }
-                        }}>
-                            <Typography sx={{
-                                mx: '10px',
-                            }}>or</Typography>
-                        </Divider>
                         <TextField id="outlined-basic" label="Paste a URL" variant="outlined" sx={{
                             my: '10px',
                             color: 'white',

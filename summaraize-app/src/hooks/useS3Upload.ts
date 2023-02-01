@@ -1,6 +1,8 @@
 import {useEffect, useState} from 'react';
 import {IFile, useUploadContext} from "../contexts/uploadContext";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
+import {useAuth} from "../contexts/authContext";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -9,6 +11,8 @@ export const useS3Upload = (setStatusByFile: any) => {
     const [blobData, setBlobData] = useState<Blob>();
     const [uploadUrl, setUploadUrl] = useState<string>();
     const [file, setFile] = useState<IFile>();
+    const navigate = useNavigate();
+    const {signOut} = useAuth();
 
     const signedUploadUrl = `${process.env.REACT_APP_INVOKE_URL}/${process.env.REACT_APP_STAGE}/signed/upload`
     //this is a function the takes an array of CognitoUserAttribute objects and returns the value of 'sub'
@@ -49,26 +53,36 @@ export const useS3Upload = (setStatusByFile: any) => {
     const uploadFile = async (file: IFile) => {
         const customSignedUploadUrl = `${signedUploadUrl}?ft=${file.type}&fn=${file.name}`;
         setFile(file);
-        const response = await axios({
-            method: 'GET',
-            url: customSignedUploadUrl,
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('idToken')
-            }
-        });
-        console.log("signedUploadURL Response:", response);
+        let response = {};
+        try {
+            response = await axios({
+                method: 'GET',
+                url: customSignedUploadUrl,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+                }
+            });
+            console.log("signedUploadURL Response:", response);
 
-        // @ts-ignore
-        setUploadUrl(response.data.uploadURL)
-
-        const reader = new FileReader();
-        // @ts-ignore
-        reader.readAsArrayBuffer(file);
-        reader.onloadend = function () {
-            console.log("About to set blobData with reader result", reader.result)
             // @ts-ignore
-            setBlobData(new Blob([reader.result], {type: file.type}));
-        };
+            setUploadUrl(response.data.uploadURL)
+
+            const reader = new FileReader();
+            // @ts-ignore
+            reader.readAsArrayBuffer(file);
+            reader.onloadend = function () {
+                console.log("About to set blobData with reader result", reader.result)
+                // @ts-ignore
+                setBlobData(new Blob([reader.result], {type: file.type}));
+            };
+        } catch (e: any) {
+            console.log("Error getting signedUploadURL", e);
+            if (e.response.status === 401) {
+                await signOut();
+                navigate('/signin', {replace: true});
+            }
+        }
+
     }
 
     return {uploadFile};
