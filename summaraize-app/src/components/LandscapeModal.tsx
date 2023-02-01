@@ -1,16 +1,18 @@
 import {
     Box,
-    Button, Divider,
+    Button,
+    Divider,
     Fade,
     LinearProgress,
     linearProgressClasses,
     List,
     ListItem,
-    Stack, TextField,
+    Stack,
+    TextField,
     Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {useUploadContext} from "../contexts/uploadContext";
+import {IUploadTask, useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import {styled} from "@mui/material/styles";
@@ -29,7 +31,8 @@ export const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
 }));
 
 export const LandscapeModal = () => {
-    const {uploadDialogOpen, acceptedFiles} = useUploadContext();
+    const {uploadDialogOpen, acceptedFiles, uploadTasks} = useUploadContext();
+
     return (
         <Fade in={uploadDialogOpen}>
             <Box sx={{
@@ -63,16 +66,18 @@ export const LandscapeModal = () => {
                             transform: 'translate(-160px, 50px)',
                             top: '50%',
                         }}>
-                            {acceptedFiles.map((file: any) => (
-                                <ListItem key={file.path} sx={{
-                                    padding: '0px',
-                                }}>
-                                    <Stack>
-                                        <Typography>{file.name}</Typography>
-                                        <BorderLinearProgress variant="determinate" value={50}/>
-                                    </Stack>
-                                </ListItem>
-                                ))}
+                            {uploadTasks.map((task: IUploadTask) => (
+                                <Fade in={true}>
+                                    <ListItem key={task.file.path} sx={{
+                                        padding: '0px',
+                                    }}>
+                                        <Stack>
+                                            <Typography>{task.file.name}</Typography>
+                                            <BorderLinearProgress variant="determinate" value={task.progress}/>
+                                        </Stack>
+                                    </ListItem>
+                                </Fade>
+                            ))}
                         </List>
                         <em style={{
                             flex: 'none',
@@ -81,7 +86,7 @@ export const LandscapeModal = () => {
                             left: '0',
                             margin: 'auto',
                             bottom: '0',
-                        }}>(Only *.jpeg and *.png images will be accepted)</em>
+                        }}>(Only *.epub,*.txt, and *.pdf files)</em>
                     </Grid>
                     <Grid xs={6} className={'upload-modal-bottom'} sx={{
                         backgroundColor: 'secondary',

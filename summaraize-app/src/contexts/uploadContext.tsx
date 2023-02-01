@@ -3,10 +3,15 @@ import {useS3Upload} from "../hooks/useS3Upload";
 
 export interface IUploadContext {
     uploadDialogOpen: boolean,
+
     setUploadDialogOpen(open: boolean): void,
+
     acceptedFiles: IFile[],
     uploadTasks: IUploadTask[],
-    addAcceptedFiles(files: IFile[]): IFile[]
+
+    addAcceptedFiles(files: IFile[]): IFile[],
+
+    setStatusByFile(file: IFile, status: string): void
 }
 
 export interface IUploadTask {
@@ -34,6 +39,8 @@ const defaultState: IUploadContext = {
     uploadTasks: [],
     addAcceptedFiles(files: IFile[]): IFile[] {
         return []
+    },
+    setStatusByFile(file: IFile, status: string): void {
     }
 }
 
@@ -43,11 +50,26 @@ type Props = {
 
 export const UploadContext = React.createContext(defaultState)
 
+
 const UploadContextProvider = ({children}: Props) => {
     const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(true)
     const [acceptedFiles, setAcceptedFiles] = useState<IFile[]>([]);
     const [uploadTasks, setUploadTasks] = useState<IUploadTask[]>([]);
-    const {uploadFile, uploadProgress, uploadError} = useS3Upload();
+
+    const setStatusByFile = (file: IFile, status: string): void => {
+        const task = uploadTasks.find((t: IUploadTask) => t.file.name === file.name);
+        console.log("Setting status", status, "for", file.name, "task", task)
+        const newTasks = uploadTasks.map((t: IUploadTask) => {
+            if (t.file.name === file.name) {
+                return {...t, status};
+            }
+            return t;
+        })
+        console.log("New tasks", newTasks);
+        setUploadTasks(newTasks);
+    };
+
+    const {uploadFile} = useS3Upload(setStatusByFile);
 
     useEffect(() => {
         console.log("Files accepted", acceptedFiles);
@@ -59,24 +81,34 @@ const UploadContextProvider = ({children}: Props) => {
                 error: ''
             }
             setUploadTasks([...uploadTasks, uploadTask])
+            //Remove from acceptedFiles
+            setAcceptedFiles(acceptedFiles.filter((f: IFile) => f.name !== file.name));
         })
     }, [acceptedFiles]);
 
     useEffect(() => {
         console.log("Upload tasks", uploadTasks);
         uploadTasks.forEach((uploadTask: IUploadTask) => {
-            const {file} = uploadTask;
-            uploadFile(file);
+            if (uploadTask.status === 'uploading' || uploadTask.status === 'removing') return;
+            if (uploadTask.status === 'complete') {
+                uploadTask.status = 'removing';
+                uploadTask.progress = 100;
+                setUploadTasks([...uploadTasks]);
+                setTimeout(() => {
+                    console.log("Removing from uploadTasks", uploadTask)
+                    setUploadTasks(uploadTasks.filter(
+                        (t: IUploadTask) => t.file.name !== uploadTask.file.name));
+                }, 3000);
+                return;
+            }
+            if (uploadTask.status === 'pending') {
+                const {file} = uploadTask;
+                uploadTask.status = 'uploading';
+                uploadTask.progress = 58
+                uploadFile(file);
+            }
         });
     }, [uploadTasks]);
-
-    useEffect(() => {
-        console.log("Upload progress", uploadProgress);
-    }, [uploadProgress]);
-
-    useEffect(() => {
-        console.log("Upload error", uploadError);
-    }, [uploadError]);
 
     const state: IUploadContext = {
         uploadDialogOpen,
@@ -86,7 +118,8 @@ const UploadContextProvider = ({children}: Props) => {
         addAcceptedFiles: (files: IFile[]) => {
             setAcceptedFiles([...acceptedFiles, ...files])
             return acceptedFiles
-        }
+        },
+        setStatusByFile
     }
     return <UploadContext.Provider value={state}>{children}</UploadContext.Provider>
 }

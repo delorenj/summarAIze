@@ -62,12 +62,16 @@ resources:
 
 functions:
   s3SignedUrl:
-    handler: s3SignedUrl.handler
+    handler: s3SignedUrl.getUploadUrl
     events:
       - http:
             path: /signed/upload
             method: get
             cors: true
+            authorizer:
+              type: COGNITO_USER_POOLS
+              authorizerId:
+                Ref: ApiGatewayAuthorizer
   parseBookMetadata:
     handler: book.parseBookMetadata
     events:

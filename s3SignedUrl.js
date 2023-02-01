@@ -1,37 +1,36 @@
-const AWS = require('aws-sdk')
-AWS.config.update({ region: process.env.COGNITO_REGION })
-const s3 = new AWS.S3()
+const AWS = require('aws-sdk');
+import handler from "./libs/handler-lib";
+require('dotenv').config();
+AWS.config.update({region: 'us-east-1'});
+const s3 = new AWS.S3();
 
 // Change this value to adjust the signed URL's expiration
-const URL_EXPIRATION_SECONDS = 300
+const URL_EXPIRATION_SECONDS = 300;
 
-// Main Lambda entry point
-exports.handler = async (event) => {
-  return await getUploadURL(event)
-}
-
-const getUploadURL = async function(event) {
-  const randomID = parseInt(Math.random() * 10000000)
-  const Key = `${randomID}.jpg`
+export const getUploadUrl = handler(async (event, context) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+  const querystring = event.queryStringParameters;
+  const fileName = querystring.fn;
+  const fileType = querystring.ft;
+  console.log("Query Params:", fileName, fileType);
+  const Key = `${userId}/${fileName}`;
+  console.log("Upload Key:", Key);
+  const ContentType = fileType;
 
   // Get signed URL from S3
   const s3Params = {
     Bucket: 'summaraize-book',
     Key,
     Expires: URL_EXPIRATION_SECONDS,
-    ContentType: 'application/pdf',
-
-    // This ACL makes the uploaded object publicly readable. You must also uncomment
-    // the extra permission for the Lambda function in the SAM template.
-
+    ContentType,
     // ACL: 'public-read'
-  }
+  };
 
-  console.log('Params: ', s3Params)
-  const uploadURL = await s3.getSignedUrlPromise('putObject', s3Params)
-
-  return JSON.stringify({
-    uploadURL: uploadURL,
+  console.log('Params: ', s3Params);
+  const uploadURL = await s3.getSignedUrlPromise('putObject', s3Params);
+  console.log('Upload URL: ', uploadURL);
+  return {
+    uploadURL,
     Key
-  })
-};
+  };
+});

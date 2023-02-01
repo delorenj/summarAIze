@@ -1,61 +1,75 @@
-import {useState} from 'react';
-import {useAuth} from "../contexts/authContext";
-import {IFile} from "../contexts/uploadContext";
-import S3 from 'react-aws-s3';
+import {useEffect, useState} from 'react';
+import {IFile, useUploadContext} from "../contexts/uploadContext";
+import axios from "axios";
+
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
-export const useS3Upload = () => {
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [uploadError, setUploadError] = useState(null);
-    const {sessionInfo, attrInfo} = useAuth();
-    const identityPoolId = process.env.REACT_APP_IDENTITY_POOL_ID;
-    const userPoolId = process.env.REACT_APP_USERPOOL_ID;
+export const useS3Upload = (setStatusByFile: any) => {
+    const [blobData, setBlobData] = useState<Blob>();
+    const [uploadUrl, setUploadUrl] = useState<string>();
+    const [file, setFile] = useState<IFile>();
+
+    const signedUploadUrl = `${process.env.REACT_APP_INVOKE_URL}/${process.env.REACT_APP_STAGE}/signed/upload`
     //this is a function the takes an array of CognitoUserAttribute objects and returns the value of 'sub'
     const getSubAttribute = (attributes: any) => {
         return attributes.filter((attribute: any) =>
             attribute.getName() === 'sub')[0].getValue();
     }
-    const uploadFile = (file: IFile) => {
-            console.log("chops");
 
-        // const s3 = new AWS.S3({
-        //     region: 'us-east-1',
-        //     credentials: new AWS.CognitoIdentityCredentials({
-        //         secretAccessKey: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_KEY,
-        //         IdentityPoolId: identityPoolId as string,
-        //         Logins: {
-        //             [`cognito-idp.us-east-1.amazonaws.com/${userPoolId}`]: sessionInfo?.idToken as string
-        //         }
-        //     })
-        // });
-        const username = getSubAttribute(attrInfo);
+    useEffect(() => {
+        console.log("Blob & Upload", blobData, uploadUrl);
+        if (!blobData || !uploadUrl) return;
+        const upload = async () => {
+            console.log("About to call fetch on uploadUrl", uploadUrl);
+            fetch(uploadUrl, {
+                method: 'PUT',
+                body: blobData
+            }).then(() => {
+                console.log("Setting file to complete (inner) for file", file);
+                setStatusByFile(file as IFile, 'complete');
 
-        const config = {
-            bucketName: process.env.REACT_APP_BOOK_BUCKET as string,
-            dirName: username,
-            // region: 'us-east-1',
-            accessKeyId: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_KEY,
-            secretAccessKey: process.env.REACT_APP_AWS_CLIENTUSER_CLIENT_SECRET,
+            });
+            setBlobData(undefined);
+            setUploadUrl(undefined);
         };
-
-
-        console.log("S3 params", config);
-        const s3upload = new S3(config);
-
-        s3upload.uploadFile(file).then((data: any) => {
-            console.log(data);
-            if (data.status === 204) {
-                console.log("success");
-
-            } else {
-                console.log("fail");
-             }
-        }).catch((err: any) => {
-            console.log(err);
-            setUploadError(err);
+        console.log("About to upload file to S3", blobData, uploadUrl);
+        upload().then(() => {
+            console.log("Setting file to complete (outer)")
+            setStatusByFile(file as IFile, 'complete');
+            setFile(undefined);
+        }).catch((err) => {
+            console.log("Error uploading file to S3", err);
+            setStatusByFile(file as IFile, 'error');
+            setFile(undefined);
+            setUploadUrl(undefined);
         });
+
+    }, [blobData, uploadUrl, file]);
+    const uploadFile = async (file: IFile) => {
+        const customSignedUploadUrl = `${signedUploadUrl}?ft=${file.type}&fn=${file.name}`;
+        setFile(file);
+        const response = await axios({
+            method: 'GET',
+            url: customSignedUploadUrl,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+            }
+        });
+        console.log("signedUploadURL Response:", response);
+
+        // @ts-ignore
+        setUploadUrl(response.data.uploadURL)
+
+        const reader = new FileReader();
+        // @ts-ignore
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = function () {
+            console.log("About to set blobData with reader result", reader.result)
+            // @ts-ignore
+            setBlobData(new Blob([reader.result], {type: file.type}));
+        };
     }
 
-    return {uploadFile, uploadProgress, uploadError};
+    return {uploadFile};
 }
