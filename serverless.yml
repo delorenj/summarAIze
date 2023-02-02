@@ -51,6 +51,10 @@ plugins:
   - serverless-offline
 custom:
   stage: ${opt:stage, self:provider.stage}
+  bundle:
+    includeModules: true
+    externals:
+      - pdf-parse
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}
@@ -72,13 +76,13 @@ functions:
     handler: s3SignedUrl.getUploadUrl
     events:
       - http:
-            path: /signed/upload
-            method: get
-            cors: true
-            authorizer:
-              type: COGNITO_USER_POOLS
-              authorizerId:
-                Ref: ApiGatewayAuthorizer
+          path: /signed/upload
+          method: get
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   parseBookMetadata:
     handler: book.parseBookMetadata
     events:
