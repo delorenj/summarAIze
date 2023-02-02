@@ -2,6 +2,7 @@ import * as AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
+import pdf from 'pdf-parse';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -81,6 +82,10 @@ const isEpub = (fileType) => {
   return fileType && fileType.mime === "application/epub+zip";
 };
 
+const isPdf = (fileType) => {
+  return fileType && fileType.mime === "application/pdf";
+};
+
 const numberOfWords = (text) => {
   return text.split(" ").length;
 };
@@ -107,12 +112,45 @@ const getEpubMetadata = async (book) => {
   return {title, chapters};
 };
 
+const getPdfMetadata = async (book) => {
+  const doc = await pdf(book.fileContents);
+  const title = doc.info.Title;
+  const chapters = [{
+    id: 1,
+    title: 'main',
+    numWords: numberOfWords(doc.text)
+  }];
+  const info = doc.info;
+  const metadata = doc.metadata;
+  console.log("PDF metadata", {title, chapters, info, metadata});
+  return {
+    title,
+    chapters
+  };
+};
+
+const getGenericMetadata = (book) => {
+  return {
+    title: book.url.split("/").pop(),
+    chapters: [{
+      id: 1,
+      title: 'main',
+      numWords: numberOfWords(book.fileContents)
+    }]
+  };
+};
+
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book) => {
   const fileType = await fileTypeFromBuffer(book.fileContents);
   let metadata = {};
   if (isEpub(fileType)) {
     metadata = await getEpubMetadata(book);
+  } else if(isPdf(fileType)) {
+    metadata = await getPdfMetadata(book);
+  } else {
+   //Generic metadata for other file types
+   metadata = getGenericMetadata(book);
   }
   return {
     fileType: fileType,
@@ -173,28 +211,5 @@ export const onUpload = handler(async (event, context) => {
     statusCode: 200,
     book: book
   };
-  //Insert into DB
-  // const params = {
-  //     TableName: process.env.booksTableName,
-  //     Item: {
-  //         // The attributes of the item to be created
-  //         userId: userId,
-  //         bookId: etag, // The book's s3 ETag
-  //         key: bookUrl,
-  //         sizeInBytes: sizeInBytes,
-  //         createdAt: Date.now(), // Current Unix timestamp
-  //     },
-  // };
-  // // Call DynamoDB to add the item to the table
-  // try {
-  //     console.log("Writing to DB", params);
-  //     await dynamoDb.put(params).promise();
-  // } catch (err) {
-  //     console.log("Problem writing to DB:", err);
-  // }
-  // return {
-  //     userId,
-  //     bookUrl,
-  // };
 });
 
