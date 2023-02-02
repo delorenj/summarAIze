@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 export const Upload = () => {
     const navigate = useNavigate()
     const auth = useContext(AuthContext)
-    const {myBooks} = useMyData();
+    const {myBooks} = useMyData({skipCache: true});
 
     return (
         <UploadContextProvider>

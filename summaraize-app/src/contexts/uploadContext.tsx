@@ -99,6 +99,7 @@ const UploadContextProvider = ({children}: Props) => {
                     setUploadTasks(uploadTasks.filter(
                         (t: IUploadTask) => t.file.name !== uploadTask.file.name));
                 }, 3000);
+                localStorage.removeItem('books');
                 return;
             }
             if (uploadTask.status === 'pending') {

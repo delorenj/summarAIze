@@ -14,7 +14,7 @@ import {Add, Logout} from "@mui/icons-material";
 export const Home = () => {
     const navigate = useNavigate()
     const auth = useContext(AuthContext)
-    const {myBooks} = useMyData();
+    const {myBooks} = useMyData({skipCache: true});
 
     function signOutClicked() {
         auth.signOut()

@@ -1,6 +1,8 @@
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
+import {signOut} from "../libs/cognito";
+import {useNavigate} from "react-router-dom";
 
 export interface IBook {
     cacheKey?: string,
@@ -22,9 +24,7 @@ const defaultBook: IBook = {
 }
 
 interface IGetUserDataResponse {
-    Items: IBook[],
-    Count: number,
-    ScannedCount: number
+    books: IBook[]
 }
 
 interface UploadBookProps {
@@ -39,10 +39,15 @@ export const createBook = (props: IBook) => {
 export const uploadBook = (props: UploadBookProps): IBook => {
     return createBook({...{title: "Ass"}, ...defaultBook})
 }
+export interface UseMyDataProps {
+    skipCache?: boolean
+}
 
-export const useMyData = () => {
+export const useMyData = (props: UseMyDataProps) => {
     const {sessionInfo} = useAuth();
     const [myBooks, setMyBooks] = useState<IBook[]>([])
+    const navigate = useNavigate();
+    const {skipCache} = props || false;
 
     useEffect(() => {
         const storedBooks = localStorage.getItem("books");
@@ -61,16 +66,21 @@ export const useMyData = () => {
                     {headers}
                 );
 
-                console.log("fetchData()", data);
-                setMyBooks(data.Items);
-                localStorage.setItem("books", JSON.stringify(data.Items));
-                console.log("set localStorage to:", JSON.stringify(data.Items));
+                console.log("data", data);
+                setMyBooks(data.books);
+                localStorage.setItem("books", JSON.stringify(data.books));
+                console.log("set localStorage to:", JSON.stringify(data.books));
             } catch (err) {
                 console.log(err);
+                // @ts-ignore
+                if (err.response.status === 401) {
+                    signOut();
+                    navigate('/signin', {replace: true});
+                }
             }
         };
 
-        if (!storedBooks) {
+        if (!storedBooks || skipCache) {
             console.log("No stored book found. About to call fetchData()...")
             fetchData();
         } else {

@@ -61,6 +61,13 @@ resources:
 #  - ${file(resources/cognito-identity-pool.yml)}
 
 functions:
+  onS3Upload:
+    handler: book.onUpload
+    events:
+      - s3:
+          bucket: summaraize-book
+          event: s3:ObjectCreated:*
+          existing: true
   s3SignedUrl:
     handler: s3SignedUrl.getUploadUrl
     events:

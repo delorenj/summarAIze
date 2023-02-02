@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import handler from "./libs/handler-lib";
+  import handler from "./libs/handler-lib";
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -26,9 +26,11 @@ export const getData = handler(async (event, context) => {
   };
   console.log("defined both queries");
   const publicBooks = await dynamo.query(publicBooksQuery).promise();
-  console.log("executed q1");
   const myBooks = await dynamo.query(myBooksQuery).promise();
-  console.log("executed q2");
-  console.log("about to return", {...myBooks, ...publicBooks});
-  return {...myBooks, ...publicBooks};
+  console.log("myBooksQuery", myBooksQuery);
+  console.log("myBooks", myBooks);
+  console.log("about to return", [...publicBooks.Items, ...myBooks.Items]);
+  return {
+    books: [...publicBooks.Items, ...myBooks.Items]
+  };
 });
