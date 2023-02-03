@@ -2,7 +2,7 @@ import * as AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
-import pdf from 'pdf-parse';
+import pdf from 'fork-pdf-parse-with-pagepertext';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -113,24 +113,26 @@ const getEpubMetadata = async (book) => {
   return {title, chapters};
 };
 
-const findChapterBreaks = async (pdf) => {
-  const numPages = pdf.numPages;
+const findChapterBreaks = async (doc) => {
+  const numPages = doc.textPerPage.length;
   console.log("Number of pages", numPages);
-  const chapterBreaks = [];
+  let chapterBreaks = [];
 
-  for (let i = 1; i <= numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-    const items = textContent.items;
+  for (let i = 0; i < numPages; i++) {
+    const page = doc.textPerPage[i];
+    console.log("Page", i, page.text);
+    const lines = page.text.match(/[^\r\n]+/g);
 
-    // Loop through the items on the page and look for "Chapter" keyword
-    for (const item of items) {
-      if (item.str.includes('Chapter')) {
+    // Loop through the lines on the page and look for "Chapter" keyword
+    for (const line of lines) {
+      if (line.toLowerCase().includes('chapter')) {
         chapterBreaks.push(i);
+        console.log("Found chapter break on page", i, line);
         break;
       }
     }
   }
+  console.log("Chapter breaks", JSON.stringify(chapterBreaks));
   return chapterBreaks;
 };
 
