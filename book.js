@@ -105,7 +105,8 @@ const getEpubMetadata = async (book) => {
       chapters.push({
         id: chapter.id,
         title: chapter.title,
-        numWords: numberOfWords(text)
+        numWords: numberOfWords(text),
+        firstFewWords: text.split(" ").slice(0, 50).join(" ")
       });
     });
   });
@@ -114,11 +115,12 @@ const getEpubMetadata = async (book) => {
 
 const getPdfMetadata = async (book) => {
   const doc = await pdf(book.fileContents);
-  const title = doc.info.Title;
+  const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
   const chapters = [{
     id: 1,
     title: 'main',
-    numWords: numberOfWords(doc.text)
+    numWords: numberOfWords(doc.text),
+    firstFewWords: doc.text.split(" ").slice(0, 50).join(" ")
   }];
   const info = doc.info;
   const metadata = doc.metadata;
@@ -129,9 +131,17 @@ const getPdfMetadata = async (book) => {
   };
 };
 
+const getTitleFromUrl = (url) => {
+  return url.split("/").pop().split(".")[0];
+};
+
+const getKeyFromUrl = (url) => {
+  return url.split("/").pop();
+};
+
 const getGenericMetadata = (book) => {
   return {
-    title: book.url.split("/").pop(),
+    title: getTitleFromUrl(book.url),
     chapters: [{
       id: 1,
       title: 'main',
@@ -169,7 +179,7 @@ export const writeMetadataToDB = async (userId, book) => {
       format: book.metadata.fileType.ext,
       title: book.metadata.title,
       chapters: JSON.stringify(book.metadata.chapters),
-      key: book.url.split("/").pop(),
+      key: getKeyFromUrl(book.url),
       sizeInBytes: book.fileContents.length,
       createdAt: Date.now(), // Current Unix timestamp
     },

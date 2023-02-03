@@ -33,8 +33,8 @@ export const SummaraizeDrawer = () => {
                 <Divider textAlign='left'>Media</Divider>
                 <Typography variant={"subtitle2"} mt={5}>{activeBook?.title}</Typography>
                 <Grid container spacing={1} mb={5}>
-                    <MetadataEntry k="Chapters" v={43}></MetadataEntry>
-                    <MetadataEntry k="Size" v={activeBook?.sizeInMB + "MB"}></MetadataEntry>
+                    <MetadataEntry k="Chapters" v={activeBook?.chapters.length}></MetadataEntry>
+                    <MetadataEntry k="Size" v={activeBook?.sizeInBytes + " Bytes"}></MetadataEntry>
                     <MetadataEntry k="Summaries" v={0}></MetadataEntry>
                     <MetadataEntry k="Active Jobs" v={<JobStatus />}></MetadataEntry>
                 </Grid>

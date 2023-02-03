@@ -4,14 +4,21 @@ import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
 
+export interface IChapter {
+    id: number,
+    title: string,
+    numWords: number,
+    firstFewWords: string,
+}
 export interface IBook {
     cacheKey?: string,
     key: string,
     bookId: string,
     format: string,
+    chapters: IChapter[],
     title: string,
     cover: string,
-    sizeInMB: number
+    sizeInBytes: number
 }
 
 const defaultBook: IBook = {
@@ -19,8 +26,9 @@ const defaultBook: IBook = {
     bookId: '',
     format: 'epub',
     title: '',
+    chapters: [],
     cover: '',
-    sizeInMB: 0
+    sizeInBytes: 0
 }
 
 interface IGetUserDataResponse {
