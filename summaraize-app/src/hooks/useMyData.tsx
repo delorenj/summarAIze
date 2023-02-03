@@ -70,7 +70,7 @@ export const useMyData = (props: UseMyDataProps) => {
                 };
 
                 const {data} = await axios.get<IGetUserDataResponse>(
-                    'https://0ik4og60f4.execute-api.us-east-1.amazonaws.com/dev/user',
+                    'https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/user',
                     {headers}
                 );
 

@@ -17,34 +17,36 @@ provider:
     booksTableName: ${self:custom.stage}-books
     usersTableName: ${self:custom.stage}-users
 
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:DescribeTable
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      # Restrict our IAM role permissions to
-      # the specific table for the stage
-      Resource:
-        - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
-        - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
-    - Effect: Allow
-      Action:
-        - s3:ListBucket
-        - s3:ListObjects
-      Resource:
-        - arn:aws:s3:::summaraize-book/*
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:GetObject
-        - s3:DeleteObject
-      Resource:
-        - arn:aws:s3:::summaraize-book/*
+  iam:
+    role:
+      statements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DescribeTable
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+        # Restrict our IAM role permissions to
+        # the specific table for the stage
+        Resource:
+          - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
+          - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
+      - Effect: Allow
+        Action:
+          - s3:ListBucket
+          - s3:ListObjects
+        Resource:
+          - arn:aws:s3:::summaraize-book/*
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:DeleteObject
+        Resource:
+          - arn:aws:s3:::summaraize-book/*
 plugins:
   - serverless-bundle
   - serverless-s3-local

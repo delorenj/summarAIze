@@ -2,7 +2,7 @@ import * as AWS from "aws-sdk";
 import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
-import pdf from 'pdf-parse';
+import {PdfReader} from 'pdfreader';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -113,21 +113,50 @@ const getEpubMetadata = async (book) => {
   return {title, chapters};
 };
 
+// const findChapterBreaks = async (pdf) => {
+//   const numPages = pdf.numPages;
+//   console.log("Number of pages", numPages);
+//   const chapterBreaks = [];
+//
+//   for (let i = 1; i <= numPages; i++) {
+//     const page = await pdf.getPage(i);
+//     const textContent = await page.getTextContent();
+//     const items = textContent.items;
+//
+//     // Loop through the items on the page and look for "Chapter" keyword
+//     for (const item of items) {
+//       if (item.str.includes('Chapter')) {
+//         chapterBreaks.push(i);
+//         break;
+//       }
+//     }
+//   }
+//   return chapterBreaks;
+// };
+
 const getPdfMetadata = async (book) => {
-  const doc = await pdf(book.fileContents);
-  const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
-  const chapters = [{
-    id: 1,
-    title: 'main',
-    numWords: numberOfWords(doc.text),
-    firstFewWords: doc.text.split(" ").slice(0, 50).join(" ")
-  }];
-  const info = doc.info;
-  const metadata = doc.metadata;
-  console.log("PDF metadata", {title, chapters, info, metadata});
+  //const doc = await getDocument({data: book.fileContents}).promise;
+  new PdfReader().parseBuffer(book.fileContents, (err, item) => {
+    if (err) console.error("error:", err);
+    else if (!item) console.warn("end of file");
+    else if (item.text) console.log(item.text);
+  });
+  //console.log("PDF doc", JSON.stringify(doc));
+  // const title = doc.info.title || getTitleFromUrl(book.url) || "Untitled";
+  // const chapterBreaks = findChapterBreaks(doc);
+  // console.log("Chapter breaks", chapterBreaks);
+  // const chapters = [{
+  //   id: 1,
+  //   title: 'main',
+  //   numWords: numberOfWords(doc.text),
+  //   firstFewWords: doc.text.split(" ").slice(0, 50).join(" ")
+  // }];
+  // const info = doc.info;
+  // const metadata = doc.metadata;
+  // console.log("PDF metadata", {title, chapters, info, metadata});
   return {
-    title,
-    chapters
+    title: 'test',
+    chapters: []
   };
 };
 
