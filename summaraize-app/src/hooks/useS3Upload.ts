@@ -51,7 +51,7 @@ export const useS3Upload = (setStatusByFile: any) => {
 
     }, [blobData, uploadUrl, file]);
     const uploadFile = async (file: IFile) => {
-        const customSignedUploadUrl = `${signedUploadUrl}?ft=${file.type}&fn=${file.name}`;
+        const customSignedUploadUrl = `${signedUploadUrl}?ft=${encodeURIComponent(file.type)}&fn=${encodeURIComponent(file.name)}`;
         setFile(file);
         let response = {};
         try {

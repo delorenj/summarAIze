@@ -95,19 +95,24 @@ const getEpubMetadata = async (book) => {
     const epub = await EPub.createAsync(book.fileContents);
     const title = epub.metadata.title;
     const chapters = [];
+    let chapterCount = 0;
     epub.flow.forEach((chapter) => {
+        chapterCount += 1;
         epub.getChapterRaw(chapter.id, (err, text) => {
             if (err) {
-                console.log("Error getting chapter", err);
+                console.log("Error getting raw chapter", err);
             } else {
                 chapter.numberOfWords = numberOfWords(text);
             }
-            chapters.push({
+            const chapterResult = {
                 id: chapter.id,
+                chapter: chapterCount,
                 title: chapter.title,
                 numWords: numberOfWords(text),
                 firstFewWords: text.split(" ").slice(0, 50).join(" ")
-            });
+            };
+            chapters.push(chapterResult);
+            console.log("chapter result", chapterResult);
         });
     });
     return {title, chapters};
@@ -176,7 +181,7 @@ const getGenericMetadata = (book) => {
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book) => {
     const fileType = await fileTypeFromBuffer(book.fileContents);
-    let metadata = {};
+    let metadata;
     if (isEpub(fileType)) {
         metadata = await getEpubMetadata(book);
     } else if (isPdf(fileType)) {
@@ -220,12 +225,10 @@ export const writeMetadataToDB = async (userId, book) => {
     } catch (err) {
         console.log("Problem writing to DB:", err);
     }
-
-
 };
 
 //This method is called by the client to get the book metadata
-export const parseBookMetadata = handler(async (event, context) => {
+export const parseBookMetadata = handler(async (event) => {
     const userId = event.requestContext.authorizer.claims.sub;
     const body = JSON.parse(event.body);
     const bookUrl = body.bookUrl;
@@ -238,7 +241,7 @@ export const parseBookMetadata = handler(async (event, context) => {
     };
 });
 
-export const onUpload = handler(async (event, context) => {
+export const onUpload = handler(async (event) => {
     const object = event.Records[0].s3.object;
     const key = object.key;
     const userId = key.split("/")[0];

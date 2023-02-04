@@ -51,12 +51,12 @@ plugins:
   - serverless-bundle
   - serverless-s3-local
   - serverless-offline
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   bundle:
     includeModules: true
     externals:
-      - pdf-parse
       - fork-pdf-parse-with-pagepertext
 
 resources:
@@ -115,15 +115,6 @@ functions:
       - http:
           path: /sc
           method: get
-          authorizer: aws_iam
-
-  create:
-    handler: create.main
-    events:
-      - http:
-          path: notes
-          cors: true
-          method: post
           authorizer: aws_iam
 
   billing:
