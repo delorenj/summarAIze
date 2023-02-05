@@ -79,6 +79,9 @@ const getBookFromFileSystemOrS3 = async (url) => {
     // };
 };
 
+const isPlainText = (fileType) => {
+    return fileType && fileType.mime === "text/plain";
+};
 const isEpub = (fileType) => {
     return fileType && fileType.mime === "application/epub+zip";
 };
@@ -125,29 +128,12 @@ const findChapterBreaks = (doc) => {
         let chapterBreaks = [];
 
         for (let i = 0; i < numPages; i++) {
-            let consecutiveEmptyLineCount = 0;
             const page = doc.textPerPage[i];
             const lines = page.text.match(/[^\r\n]+/g);
             let chapterCount = 0;
             // Loop through the lines on the page and look for "Chapter" keyword
             for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
                 const line = lines[lineIndex];
-                if (stripNewlinesAndCollapseSpaces(line) === "") {
-                    consecutiveEmptyLineCount += 1;
-                    if (consecutiveEmptyLineCount > 3) {
-                        chapterCount += 1;
-                        chapterBreaks.push({
-                            page: i,
-                            chapter: chapterCount,
-                            firstFewWords: lines.slice(lineIndex, lineIndex + 3).join(" ")
-                        });
-                        console.log("Found mid-page chapter break", chapterBreaks);
-                        break;
-                    }
-                    continue;
-                } else {
-                    consecutiveEmptyLineCount = 0;
-                }
                 if (line.toLowerCase().includes('chapter')) {
                     chapterCount += 1;
                     chapterBreaks.push({
@@ -162,11 +148,16 @@ const findChapterBreaks = (doc) => {
         }
         if (chapterBreaks.length === 0) {
             console.log("No chapter breaks found, adding one at the beginning of the book");
-            console.log('first few words', doc.textPerPage[0].text);
+            let firstFewWords = '';
+            try {
+                firstFewWords = doc.textPerPage[0].text.split(" ").slice(0, 250).join(" ");
+            } catch (err) {
+                console.log("Problem getting first few words", err);
+            }
             chapterBreaks.push({
                 page: 1,
                 chapter: 1,
-                firstFewWords: doc.textPerPage[0].text.slice(0, 250).join(" ")
+                firstFewWords
             });
         }
         console.log("Chapter breaks", chapterBreaks);
@@ -225,6 +216,7 @@ const getGenericMetadata = async (book) => {
         ...book,
         ...{textPerPage}
     };
+    console.log('paginatedBook', paginatedBook);
     const chapters = findChapterBreaks(paginatedBook);
     return {
         title: getTitleFromUrl(book.url),
@@ -234,10 +226,10 @@ const getGenericMetadata = async (book) => {
 
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book) => {
-    const fileType = await fileTypeFromBuffer(book.fileContents);
+    const fileType = await fileTypeFromBuffer(book.fileContents) || {mime: "plain/text"};
     console.log("fileTypeFromBuffer", fileType);
     let metadata;
-    if (!fileType) {
+    if (isPlainText(fileType)) {
         //Generic metadata for other file types
         console.log("Generic metatdata detected...");
         metadata = await getGenericMetadata(book);
@@ -255,7 +247,7 @@ const getBookMetadata = async (book) => {
         title: metadata.title,
         chapters: metadata.chapters
     });
-    console.log("chapters", JSON.stringify(metadata.chapters));
+
     return {
         fileType: fileType,
         title: metadata.title,
