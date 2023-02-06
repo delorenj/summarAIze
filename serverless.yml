@@ -86,6 +86,17 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+  parseAllBooks:
+    handler: book.parseAllBooks
+    events:
+      - :
+          path: /book/parse
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   parseBookMetadata:
     handler: book.parseBookMetadata
     events:

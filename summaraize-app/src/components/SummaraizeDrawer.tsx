@@ -35,6 +35,7 @@ export const SummaraizeDrawer = () => {
             <Typography variant={"subtitle2"} mt={5}>{activeBook?.title}</Typography>
             <Grid container spacing={1} mb={5}>
                 <MetadataEntry k="Chapters" v={activeBook?.chapters.length}></MetadataEntry>
+                <MetadataEntry k="Total Words" v={activeBook?.chapters.reduce((acc, chapter) => acc + chapter.numWords || 0, 0)}></MetadataEntry>
                 <MetadataEntry k="Size" v={activeBook?.sizeInBytes + " Bytes"}></MetadataEntry>
                 <MetadataEntry k="Summaries" v={0}></MetadataEntry>
                 <MetadataEntry k="Active Jobs" v={<JobStatus/>}></MetadataEntry>

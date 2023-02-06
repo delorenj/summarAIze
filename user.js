@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-  import handler from "./libs/handler-lib";
+import handler from "./libs/handler-lib";
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -14,7 +14,7 @@ export const getData = handler(async (event, context) => {
     KeyConditionExpression: "userId = :publicUser",
     ExpressionAttributeValues: {
       ":publicUser": "public"
-    }
+    },
   };
 
   const myBooksQuery = {
@@ -22,7 +22,7 @@ export const getData = handler(async (event, context) => {
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
       ":userId": userId
-    }
+    },
   };
   console.log("defined both queries");
   const publicBooks = await dynamo.query(publicBooksQuery).promise();
