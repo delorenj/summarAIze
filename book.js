@@ -308,19 +308,19 @@ export const onUpload = handler(async (event) => {
 });
 
 export const parseAllBooks = handler(async (event) => {
+    // //ensure the user is an admin
+    // await ensureAdmin(event.requestContext);
+
     //first, get all the books from the DB
     const params = {
-        TableName: process.env.booksTableName,
-        ProjectionExpression: "userId, bookId, key"
+        TableName: "dev-books",
     };
     const books = await dynamoDb.scan(params).promise();
     console.log("books", books);
     for (const book of books.Items) {
-        const bookUrl = book.key;
-        const userId = book.userId;
-        console.log("book", book);
+        const bookUrl = `${book.userId}/${book.key}`;
         const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
-        await writeMetadataToDB(userId, bookFromS3);
+        await writeMetadataToDB(book.userId, bookFromS3);
     }
 });
 

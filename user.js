@@ -3,6 +3,28 @@ import handler from "./libs/handler-lib";
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
+export const ensureAdmin = async (context) => {
+  const userId = context.authorizer.claims.sub;
+  const stage = context.stage;
+  const user = await getUser(userId, `${stage}-users`);
+  if (!user.isAdmin) {
+    throw new Error("User is not an admin");
+  }
+};
+export const getUser = async (userId, userTable) => {
+  const params = {
+    TableName: userTable,
+    Key: {
+      userId: userId
+    }
+  };
+  const user = await dynamo.get(params).promise();
+  if (!user.Item) {
+    console.log("user", userId, "does not exist in table", userTable, "");
+    return null;
+  }
+  return user.Item;
+};
 const getOrCreateUser = async (userId, userTable) => {
   const params = {
     TableName: userTable,
