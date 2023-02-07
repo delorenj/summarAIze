@@ -58,6 +58,7 @@ custom:
     includeModules: true
     externals:
       - fork-pdf-parse-with-pagepertext
+      - pdf-parse
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}
