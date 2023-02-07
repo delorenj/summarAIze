@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 
 export interface ISummaryFormContext {
@@ -6,7 +6,8 @@ export interface ISummaryFormContext {
     complexity: number, setComplexity: (complexity: number) => void, handleSetComplexity: (event: Event, newValue: number | number[]) => void,
     depth: number, setDepth: (depth: number) => void, handleSetDepth: (event: Event, newValue: number | number[]) => void,
     includeCharacterGlossary: boolean, setIncludeCharacterGlossary: (includeCharacterGlossary: boolean) => void,
-    chapters: string[], setChapters: (chapters: string[]) => void,
+    selectedChapters: string[], setSelectedChapters: (chapters: string[]) => void,
+    numWordsSelected: number
 }
 
 const defaultState: ISummaryFormContext = {
@@ -14,7 +15,8 @@ const defaultState: ISummaryFormContext = {
     complexity: 50, setComplexity: () => { throw new Error("implement me")}, handleSetComplexity: () => { throw new Error("implement me")},
     depth: 50, setDepth: () => { throw new Error("implement me")}, handleSetDepth: () => { throw new Error("implement me")},
     includeCharacterGlossary: false, setIncludeCharacterGlossary: () => { throw new Error("implement me")},
-    chapters: [], setChapters: () => { throw new Error("implement me")},
+    selectedChapters: [], setSelectedChapters: () => { throw new Error("implement me")},
+    numWordsSelected: 0
 }
 
 type Props = {
@@ -28,7 +30,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
     const [includeCharacterGlossary, setIncludeCharacterGlossary] = useState<boolean>(defaultState.includeCharacterGlossary);
-    const [chapters, setChapters] = useState<string[]>(defaultState.chapters);
+    const [selectedChapters, setSelectedChapters] = useState<string[]>(defaultState.selectedChapters);
     const [bookId, setBookId] = useState<string>(activeBook?.bookId || defaultState.bookId);
 
     const handleSetComplexity = (event: Event, newValue: number | number[]) => {
@@ -38,12 +40,20 @@ const SummaryFormContextProvider = ({children}: Props) => {
         setDepth(newValue as number);
     }
 
+    const numWordsSelected = useMemo(() => {
+        return selectedChapters.reduce((acc, chapterId) => {
+            const chapter = activeBook?.chapters.find(chapter => chapter.id === chapterId);
+            return acc + (chapter?.numWords || 0);
+        }, 0);
+    }, [selectedChapters, activeBook]);
+
     const initialState = {
         bookId, setBookId,
         complexity, setComplexity, handleSetComplexity,
         depth, setDepth, handleSetDepth,
         includeCharacterGlossary, setIncludeCharacterGlossary,
-        chapters, setChapters
+        selectedChapters, setSelectedChapters,
+        numWordsSelected
     }
     return <SummaryFormContext.Provider value={initialState}>{children}</SummaryFormContext.Provider>
 }

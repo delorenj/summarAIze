@@ -5,7 +5,7 @@ import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
 
 export interface IChapter {
-    id: number,
+    id: string,
     title: string,
     numWords: number,
     firstFewWords: string,

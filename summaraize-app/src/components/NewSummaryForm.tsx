@@ -6,6 +6,7 @@ import {useAuth} from "../contexts/authContext";
 import {ChapterSelect} from "./ChapterSelect";
 import SummaryFormContextProvider, {useSummaryFormContext} from "../contexts/SummaryFormContext";
 import {SummaryFormSliderSection} from "./SummaryFormSliderSection";
+import Typography from "@mui/material/Typography";
 
 export const NewSummaryForm = () => {
     const {activeBook} = useHomeContext();
@@ -15,12 +16,7 @@ export const NewSummaryForm = () => {
         <SummaryFormContextProvider>
             <Grid container my={5}>
                 <SummaryFormSliderSection />
-                <Grid xs={12}>
-                    <ChapterSelect/>
-                </Grid>
-                <Grid xs={12}>
-                    <Checkbox/><FormLabel>Include character glossary</FormLabel>
-                </Grid>
+                <ChapterSelect />
                 <Grid xs={12} pt={3}>
                     <Button variant="contained" color='primary'>Generate summary</Button>
                 </Grid>
