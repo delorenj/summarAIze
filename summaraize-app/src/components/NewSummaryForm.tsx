@@ -20,7 +20,6 @@ export const NewSummaryForm = () => {
                 <Grid xs={12} pt={3}>
                     <Button variant="contained" color='primary'>Generate summary</Button>
                 </Grid>
-
             </Grid>
         </SummaryFormContextProvider>
     );

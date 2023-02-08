@@ -6,9 +6,10 @@ export const SummaryList = () => {
 
     return (
       <List>
-          <ListItemButton>Summary 1</ListItemButton>
-          <ListItemButton>Summary 2</ListItemButton>
-          <ListItemButton>Summary 3</ListItemButton>
+          {!activeBook?.summaries && <ListItem>No summaries yet</ListItem>}
+          {activeBook?.summaries?.map((summary) => (
+              <ListItemButton key={summary.id}>{summary.title}</ListItemButton>
+            ))}
       </List>
     );
 }

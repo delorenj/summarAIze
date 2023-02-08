@@ -10,12 +10,26 @@ export interface IChapter {
     numWords: number,
     firstFewWords: string,
 }
+
+export interface ISummary {
+    id: string,
+    title: string,
+    complexity: number,
+    depth: number,
+    numWords: number,
+    fileUrl: string,
+    fileFormat: string,
+    createdAt: string,
+    status: string,
+}
+
 export interface IBook {
     cacheKey?: string,
     key: string,
     bookId: string,
     format: string,
     chapters: IChapter[],
+    summaries: ISummary[],
     title: string,
     cover: string,
     sizeInBytes: number
@@ -27,6 +41,7 @@ const defaultBook: IBook = {
     format: 'epub',
     title: '',
     chapters: [],
+    summaries: [],
     cover: '',
     sizeInBytes: 0
 }

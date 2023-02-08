@@ -62,8 +62,8 @@ export const ChapterSelect = () => {
                     </FormControl>
                 </div>
             </Grid>
-            <Grid xs={3} alignItems={"center"} direction={"column"} justifyContent={"center"}>
-                <Typography variant='subtitle2'>Words: {numWordsSelected}</Typography>
+            <Grid xs={3} margin={'auto'} alignItems={"center"} direction={"column"} justifyContent={"center"}>
+                <Typography top={'50%'} textAlign={"center"} variant='subtitle2'>Words: {numWordsSelected}</Typography>
             </Grid>
         </>
 
