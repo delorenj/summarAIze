@@ -2,7 +2,7 @@ import * as AWS from "aws-sdk";
 
 const s3 = new AWS.S3();
 
-export const handler = async (event) => {
+export const handler = async (event:any) => {
     const fetch = async () => {
         try {
             const thefile = await s3
