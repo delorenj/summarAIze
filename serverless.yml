@@ -122,14 +122,17 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
-  summarizeChunk:
-    handler: summarize.summarizeChunk
+  onGenerateSummary:
+    handler: summarize.onGenerateSummary
     events:
       - http:
-          path: /sc
-          method: get
-          authorizer: aws_iam
-
+          path: /summarize
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   billing:
     handler: billing.main
     events:

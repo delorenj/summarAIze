@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
+import axios from "axios";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -7,7 +8,16 @@ export interface ISummaryFormContext {
     depth: number, setDepth: (depth: number) => void, handleSetDepth: (event: Event, newValue: number | number[]) => void,
     includeCharacterGlossary: boolean, setIncludeCharacterGlossary: (includeCharacterGlossary: boolean) => void,
     selectedChapters: string[], setSelectedChapters: (chapters: string[]) => void,
-    numWordsSelected: number
+    numWordsSelected: number,
+    onGenerateSummary: () => void,
+}
+
+export interface ISummaryFormPayload {
+    bookId: string,
+    complexity: number,
+    depth: number,
+    includeCharacterGlossary: boolean,
+    selectedChapters: string[]
 }
 
 const defaultState: ISummaryFormContext = {
@@ -16,8 +26,9 @@ const defaultState: ISummaryFormContext = {
     depth: 50, setDepth: () => { throw new Error("implement me")}, handleSetDepth: () => { throw new Error("implement me")},
     includeCharacterGlossary: false, setIncludeCharacterGlossary: () => { throw new Error("implement me")},
     selectedChapters: [], setSelectedChapters: () => { throw new Error("implement me")},
-    numWordsSelected: 0
-}
+    numWordsSelected: 0,
+    onGenerateSummary: () => { throw new Error("implement me")}
+};
 
 type Props = {
     children?: React.ReactNode
@@ -35,9 +46,48 @@ const SummaryFormContextProvider = ({children}: Props) => {
 
     const handleSetComplexity = (event: Event, newValue: number | number[]) => {
         setComplexity(newValue as number);
-    }
+    };
+
     const handleSetDepth = (event: Event, newValue: number | number[]) => {
         setDepth(newValue as number);
+    };
+
+    const onCompleteGenerateSummary = (response:any) => {
+        console.log("onCompletedGenerateSummary", response);
+    };
+
+    const onErrorGenerateSummary = (error: Error) => {
+        console.log("onErrorGenerateSummary", error);
+    };
+
+    const onGenerateSummary = () => {
+        const data: ISummaryFormPayload = {
+            bookId,
+            complexity,
+            depth,
+            includeCharacterGlossary,
+            selectedChapters
+        }
+
+        axios.post("https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/summarize", data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "POST,OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            })
+            .then(response => {
+                onCompleteGenerateSummary(response);
+            })
+            .catch(error => {
+                onErrorGenerateSummary(error);
+            })
+            .finally(() => {
+                console.log("finally");
+            });
     }
 
     const numWordsSelected = useMemo(() => {
@@ -53,7 +103,8 @@ const SummaryFormContextProvider = ({children}: Props) => {
         depth, setDepth, handleSetDepth,
         includeCharacterGlossary, setIncludeCharacterGlossary,
         selectedChapters, setSelectedChapters,
-        numWordsSelected
+        numWordsSelected,
+        onGenerateSummary
     }
     return <SummaryFormContext.Provider value={initialState}>{children}</SummaryFormContext.Provider>
 }
