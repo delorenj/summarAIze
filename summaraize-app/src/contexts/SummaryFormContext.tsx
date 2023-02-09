@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 import axios from "axios";
+import {useAuth} from "./authContext";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -37,6 +38,7 @@ type Props = {
 export const SummaryFormContext = React.createContext(defaultState)
 
 const SummaryFormContextProvider = ({children}: Props) => {
+    const {sessionInfo} = useAuth();
     const {activeBook} = useHomeContext();
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
@@ -69,25 +71,27 @@ const SummaryFormContextProvider = ({children}: Props) => {
             selectedChapters
         }
 
-        axios.post("https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/summarize", data,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "POST,OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
-                    Authorization: "Bearer " + localStorage.getItem("token")
-                }
-            })
-            .then(response => {
-                onCompleteGenerateSummary(response);
-            })
-            .catch(error => {
-                onErrorGenerateSummary(error);
-            })
-            .finally(() => {
-                console.log("finally");
-            });
+        try {
+            if (!sessionInfo || !sessionInfo.idToken) return;
+            axios.post("https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/summarize", data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${sessionInfo.idToken}`
+                    }
+                })
+                .then(response => {
+                    onCompleteGenerateSummary(response);
+                })
+                .catch(error => {
+                    onErrorGenerateSummary(error);
+                })
+                .finally(() => {
+                    console.log("finally");
+                });
+        } catch (error) {
+            onErrorGenerateSummary(new Error("Error generating summary"));
+        }
     }
 
     const numWordsSelected = useMemo(() => {

@@ -78,7 +78,7 @@ export const useMyData = (props: UseMyDataProps) => {
 
         const fetchData = async () => {
             try {
-                if (!sessionInfo || !sessionInfo.accessToken) return;
+                if (!sessionInfo || !sessionInfo.idToken) return;
                 // Create the headers object with the cognito token
                 const headers = {
                     'Authorization': `Bearer ${sessionInfo.idToken}`
