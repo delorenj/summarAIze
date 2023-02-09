@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 import axios from "axios";
 import {useAuth} from "./authContext";
+import {ISummaryFormPayload} from "../../../types/summaraizeTypes";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -13,13 +14,6 @@ export interface ISummaryFormContext {
     onGenerateSummary: () => void,
 }
 
-export interface ISummaryFormPayload {
-    bookId: string,
-    complexity: number,
-    depth: number,
-    includeCharacterGlossary: boolean,
-    selectedChapters: string[]
-}
 
 const defaultState: ISummaryFormContext = {
     bookId: "unset", setBookId: () => { throw new Error("implement me")},

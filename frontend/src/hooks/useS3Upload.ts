@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {IFile, useUploadContext} from "../contexts/uploadContext";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/authContext";
+import {IFile} from "../../../types/summaraizeTypes";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -15,11 +15,6 @@ export const useS3Upload = (setStatusByFile: any) => {
     const {signOut} = useAuth();
 
     const signedUploadUrl = `${process.env.REACT_APP_INVOKE_URL}/${process.env.REACT_APP_STAGE}/signed/upload`
-    //this is a function the takes an array of CognitoUserAttribute objects and returns the value of 'sub'
-    const getSubAttribute = (attributes: any) => {
-        return attributes.filter((attribute: any) =>
-            attribute.getName() === 'sub')[0].getValue();
-    }
 
     useEffect(() => {
         console.log("Blob & Upload", blobData, uploadUrl);

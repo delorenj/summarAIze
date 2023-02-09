@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="summaraize">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/.serverless/summaraize.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

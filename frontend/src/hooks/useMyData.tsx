@@ -3,37 +3,8 @@ import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
+import {IBook, ISummary, IChapter, IUploadBookProps, IGetUserDataResponse} from "../../../types/summaraizeTypes";
 
-export interface IChapter {
-    id: string,
-    title: string,
-    numWords: number,
-    firstFewWords: string,
-}
-
-export interface ISummary {
-    id: string,
-    title: string,
-    complexity: number,
-    depth: number,
-    numWords: number,
-    fileUrl: string,
-    fileFormat: string,
-    createdAt: string,
-    status: string,
-}
-
-export interface IBook {
-    cacheKey?: string,
-    key: string,
-    bookId: string,
-    format: string,
-    chapters: IChapter[],
-    summaries: ISummary[],
-    title: string,
-    cover: string,
-    sizeInBytes: number
-}
 
 const defaultBook: IBook = {
     key: '',
@@ -46,20 +17,11 @@ const defaultBook: IBook = {
     sizeInBytes: 0
 }
 
-interface IGetUserDataResponse {
-    books: IBook[]
-}
-
-interface UploadBookProps {
-    title?: string,
-    localFilePath?: string,
-}
-
 export const createBook = (props: IBook) => {
     return defaultBook
 }
 
-export const uploadBook = (props: UploadBookProps): IBook => {
+export const uploadBook = (props: IUploadBookProps): IBook => {
     return createBook({...{title: "Ass"}, ...defaultBook})
 }
 export interface UseMyDataProps {

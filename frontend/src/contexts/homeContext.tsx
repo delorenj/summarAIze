@@ -1,7 +1,5 @@
-import React, {useState, useEffect, useContext, useCallback} from 'react'
-
-import * as cognito from '../libs/cognito'
-import {IBook} from "../hooks/useMyData";
+import React, {useState, useEffect, useContext} from 'react'
+import {IBook} from "../../../types/summaraizeTypes";
 
 export interface IHomeContext {
   summaraizeDrawerOpen: boolean,

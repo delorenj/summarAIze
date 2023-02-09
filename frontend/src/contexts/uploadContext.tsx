@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useS3Upload} from "../hooks/useS3Upload";
+import {IFile, IUploadTask} from "../../../types/summaraizeTypes";
 
 export interface IUploadContext {
     uploadDialogOpen: boolean,
@@ -14,22 +15,6 @@ export interface IUploadContext {
     setStatusByFile(file: IFile, status: string): void
 }
 
-export interface IUploadTask {
-    file: IFile,
-    progress: number,
-    status: string,
-    error: string
-}
-
-export interface IFile {
-    path: string,
-    lastModified: number,
-    lastModifiedDate: Date,
-    name: string,
-    size: number,
-    type: string,
-    webkitRelativePath: string
-}
 
 const defaultState: IUploadContext = {
     setUploadDialogOpen(open: boolean): void {
