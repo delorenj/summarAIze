@@ -5,11 +5,11 @@ import {ISummaryFormPayload} from "../types/summaraizeTypes";
 
 export const onGenerateSummary = handler(async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
-    console.log("requestContext", event.requestContext);
 
     try {
         const payload: ISummaryFormPayload = JSON.parse(event.body as string);
         console.log("payload", payload);
+
         const response = await OpenAILib().summarize(payload);
         return {
             statusCode: 200,

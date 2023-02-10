@@ -1,5 +1,4 @@
 import * as AWS from "aws-sdk";
-import handler from "./libs/handler-lib";
 import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
 import pdf from 'fork-pdf-parse-with-pagepertext';
@@ -13,8 +12,60 @@ const fs = require("fs").promises;
 const s3 = new AWS.S3();
 const getDirName = require('path').dirname;
 
+export const getBookFromFileSystemOrS3 = async (url:string) => {
+  // Always get the book from S3 for now
+  // try {
+  //     const book = await readFileFromTemp(url);
+  //     console.log("Book read from /tmp");
+  //     const metadata = await getBookMetadata(book);
+  //     return {
+  //         url,
+  //         fileContents: book.fileContents,
+  //         metadata
+  //     };
+  // } catch (err) {
+  //     console.log("Problem getting book from /tmp:", err);
+  const book = await readFileFromS3Bucket(url);
+  const metadata = await getBookMetadata(book);
+  await writeBookToTemp(book);
+  return {
+    url,
+    fileContents: book?.fileContents,
+    metadata,
+    id: book?.id
+  };
+  // };
+};
+
+export const writeMetadataToDB = async (userId:string, book:any) => {
+  const params:any = {
+    TableName: process.env.booksTableName,
+    Item: {
+      // The attributes of the item to be created
+      userId: userId,
+      bookId: book.id, // The book's s3 ETag
+      format: book.metadata.fileType.ext,
+      title: book.metadata.title,
+      chapters: book.metadata.chapters,
+      numWords: book.metadata.numWords,
+      key: getKeyFromUrl(book.url),
+      sizeInBytes: book.fileContents.length,
+      createdAt: Date.now(), // Current Unix timestamp
+    },
+  };
+
+  try {
+    console.log("Writing to DB", params);
+    await dynamoDb.put(params).promise();
+  } catch (err) {
+    console.log("Problem writing to DB:", err);
+  }
+};
+
+///////////// Private functions
+
 // a function to write the files to tmp on the lambda
-const writeBookToTemp = async (book) => {
+const writeBookToTemp = async (book: any) => {
   console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents);
   await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
   await fs.writeFile(`/tmp/${book.url}`, book.fileContents);
@@ -32,7 +83,7 @@ const writeBookToTemp = async (book) => {
 // }
 
 // a function to pull the files from an s3 bucket before caching them locally
-async function readFileFromS3Bucket(url) {
+const readFileFromS3Bucket = async (url:string) => {
   console.log('readFileFromS3Bucket', url);
 
   try {
@@ -56,52 +107,27 @@ async function readFileFromS3Bucket(url) {
   }
 }
 
-const getBookFromFileSystemOrS3 = async (url) => {
-  // Always get the book from S3 for now
-  // try {
-  //     const book = await readFileFromTemp(url);
-  //     console.log("Book read from /tmp");
-  //     const metadata = await getBookMetadata(book);
-  //     return {
-  //         url,
-  //         fileContents: book.fileContents,
-  //         metadata
-  //     };
-  // } catch (err) {
-  //     console.log("Problem getting book from /tmp:", err);
-  const book = await readFileFromS3Bucket(url);
-  const metadata = await getBookMetadata(book);
-  await writeBookToTemp(book);
-  return {
-    url,
-    fileContents: book.fileContents,
-    metadata,
-    id: book.id
-  };
-  // };
-};
-
-const isPlainText = (fileType) => {
+const isPlainText = (fileType: any) => {
   return fileType && fileType.mime === "text/plain";
 };
-const isEpub = (fileType) => {
+const isEpub = (fileType: any) => {
   return fileType && fileType.mime === "application/epub+zip";
 };
 
-const isPdf = (fileType) => {
+const isPdf = (fileType: any) => {
   return fileType && fileType.mime === "application/pdf";
 };
 
-const numberOfWords = (text) => {
+const numberOfWords = (text:string) => {
   return text?.split(" ").length || 0;
 };
 
-const stripNewlinesAndCollapseSpaces = (str) => {
+const stripNewlinesAndCollapseSpaces = (str:string) => {
   return str.replace(/(\r\n|\n|\r|\t|\s{2,})/gm, " ").trim();
 };
 
 // This method is called by the client to get the book metadata
-const getEpubMetadata = async (book) => {
+const getEpubMetadata = async (book:any) => {
   const epub = await EPub.createAsync(book.fileContents);
   const title = epub.metadata.title;
   const chapters = [];
@@ -130,7 +156,7 @@ const getEpubMetadata = async (book) => {
   };
 };
 
-const findChapterBreaks = (doc, fullDoc) => {
+const findChapterBreaks = (doc:any, fullDoc:any) => {
     const numPages = doc.textPerPage.length;
     console.log("Number of pages", numPages);
     let chapterBreaks = [];
@@ -181,7 +207,7 @@ const findChapterBreaks = (doc, fullDoc) => {
   }
 ;
 
-const getPdfMetadata = async (book) => {
+const getPdfMetadata = async (book:any) => {
   const doc = await pdf(book.fileContents);
   console.log("Got PDF doc");
   const fullDoc = await fullPdf(book.fileContents);
@@ -199,15 +225,16 @@ const getPdfMetadata = async (book) => {
   };
 };
 
-const getTitleFromUrl = (url) => {
+const getTitleFromUrl = (url:string) => {
+  // @ts-ignore
   return url.split("/").pop().split(".")[0];
 };
 
-const getKeyFromUrl = (url) => {
+const getKeyFromUrl = (url:string) => {
   return url.split("/").pop();
 };
 
-const splitStringIntoArray = (str) => {
+const splitStringIntoArray = (str:string) => {
   const words = str.split(' ');
   let wordCount = 0;
   let result = [];
@@ -228,7 +255,7 @@ const splitStringIntoArray = (str) => {
   return result;
 };
 
-const getGenericMetadata = async (book) => {
+const getGenericMetadata = async (book:any) => {
   const text = book.fileContents.toString();
 
   const textPerPage = splitStringIntoArray(text);
@@ -250,7 +277,7 @@ const getGenericMetadata = async (book) => {
 };
 
 //This method is called by the client to get the book metadata
-const getBookMetadata = async (book) => {
+const getBookMetadata = async (book:any) => {
   const fileType = await fileTypeFromBuffer(book.fileContents) || {ext: "txt", mime: "plain/text"};
   console.log("fileTypeFromBuffer", fileType);
   let metadata;
@@ -281,71 +308,4 @@ const getBookMetadata = async (book) => {
     chapters: metadata.chapters
   };
 };
-
-export const writeMetadataToDB = async (userId, book) => {
-  const params = {
-    TableName: process.env.booksTableName,
-    Item: {
-      // The attributes of the item to be created
-      userId: userId,
-      bookId: book.id, // The book's s3 ETag
-      format: book.metadata.fileType.ext,
-      title: book.metadata.title,
-      chapters: book.metadata.chapters,
-      numWords: book.metadata.numWords,
-      key: getKeyFromUrl(book.url),
-      sizeInBytes: book.fileContents.length,
-      createdAt: Date.now(), // Current Unix timestamp
-    },
-  };
-
-  try {
-    console.log("Writing to DB", params);
-    await dynamoDb.put(params).promise();
-  } catch (err) {
-    console.log("Problem writing to DB:", err);
-  }
-};
-
-//This method is called by the client to get the book metadata
-export const parseBookMetadata = handler(async (event) => {
-    const userId = event.requestContext.authorizer.claims.sub;
-    const body = JSON.parse(event.body);
-    const bookUrl = body.bookUrl;
-
-    const book = await getBookFromFileSystemOrS3(bookUrl);
-    await writeMetadataToDB(userId, book);
-    return {
-        statusCode: 200,
-        book: book
-    };
-});
-
-export const onUpload = handler(async (event) => {
-    const object = event.Records[0].s3.object;
-    const key = object.key;
-    const userId = key.split("/")[0];
-    console.log("onUpload things", userId, key);
-    const book = await getBookFromFileSystemOrS3(key);
-    console.log("got book", book);
-    await writeMetadataToDB(userId, book);
-    return {
-        statusCode: 200,
-        book: book
-    };
-});
-
-export const parseAllBooks = handler(async (event) => {
-    //first, get all the books from the DB
-    const params = {
-        TableName: "dev-books",
-    };
-    const books = await dynamoDb.scan(params).promise();
-    console.log("books", books);
-    for (const book of books.Items) {
-        const bookUrl = `${book.userId}/${book.key}`;
-        const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
-        await writeMetadataToDB(book.userId, bookFromS3);
-    }
-});
 

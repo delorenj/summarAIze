@@ -5,23 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/fork-pdf-parse-with-pagepertext.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/billing.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/billing.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/book.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/openai-lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/openai-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/book.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/s3SignedUrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/s3SignedUrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/summarize.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test" beforeDir="false" afterPath="$PROJECT_DIR$/tools/cli-test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/package.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,9 +52,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="TypeScript File" />
         <option value="React Contect TypeScript JSX File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -71,16 +71,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="feature/summary" />
+                    <option name="lastUsedInstant" value="1676055239" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="feature/typescript" />
                     <option name="lastUsedInstant" value="1675954217" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />
                     <option name="lastUsedInstant" value="1675877360" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="feature/summaraize-drawer" />
-                    <option name="lastUsedInstant" value="1675611889" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/chapter-split-strat1" />
@@ -111,42 +111,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "javascript.nodejs.core.library.configured.version": "14.15.0",
-    "javascript.nodejs.core.library.typings.version": "14.18.36",
-    "jdk.selected.JAVA_MODULE": "corretto-17",
-    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "ruby.rails.projectView.checked": "true",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;14.15.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;14.18.36&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jarad/code/summarAIze/server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "JSON"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;JSON&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/libs" />
@@ -182,7 +182,7 @@
       <workItem from="1675780719745" duration="20716000" />
       <workItem from="1675985911466" duration="316000" />
       <workItem from="1675986240957" duration="1558000" />
-      <workItem from="1676038291564" duration="6226000" />
+      <workItem from="1676038291564" duration="11674000" />
     </task>
     <servers />
   </component>
