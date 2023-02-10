@@ -1,5 +1,7 @@
 // const {Configuration, OpenAIApi} = require("openai");
 
+import { ISummaryFormPayload } from "../../types/summaraizeTypes";
+
 // const configuration = new Configuration({
 //   apiKey: process.env.OPENAI_API_KEY
 // });
@@ -7,7 +9,7 @@
 //const openai = new OpenAIApi(configuration);
 
 const OpenAILib = (defaultValues = {}) => {
-  const summarize = async input => {
+  const summarize = async (input:ISummaryFormPayload) => {
     console.log("About to summarize", input);
 
     // const response = await openai.createCompletion({

@@ -52,37 +52,37 @@ const getOrCreateUser = async (userId, userTable) => {
 };
 
 export const getData = handler(async (event, context) => {
-  const userId = event.requestContext.authorizer.claims.sub;
-  console.log("userId", userId);
-  console.log("event.requestContext", JSON.stringify(event.requestContext));
-  const stage = event.requestContext.stage;
-  const tableNameBook = `${stage}-books`;
-  const tableNameUser = `${stage}-users`;
-  const user = await getOrCreateUser(userId, tableNameUser);
+    const userId = event.requestContext.authorizer.claims.sub;
+    console.log("userId", userId);
+    console.log("event.requestContext", JSON.stringify(event.requestContext));
+    const stage = event.requestContext.stage;
+    const tableNameBook = `${stage}-books`;
+    const tableNameUser = `${stage}-users`;
+    const user = await getOrCreateUser(userId, tableNameUser);
 
-  const publicBooksQuery = {
-    TableName: tableNameBook,
-    KeyConditionExpression: "userId = :publicUser",
-    ExpressionAttributeValues: {
-      ":publicUser": "public"
-    },
-  };
+    const publicBooksQuery = {
+        TableName: tableNameBook,
+        KeyConditionExpression: "userId = :publicUser",
+        ExpressionAttributeValues: {
+            ":publicUser": "public"
+        },
+    };
 
-  const myBooksQuery = {
-    TableName: tableNameBook,
-    KeyConditionExpression: "userId = :userId",
-    ExpressionAttributeValues: {
-      ":userId": userId
-    },
-  };
-  console.log("defined both queries");
-  const publicBooks = await dynamo.query(publicBooksQuery).promise();
-  const myBooks = await dynamo.query(myBooksQuery).promise();
-  console.log("myBooksQuery", myBooksQuery);
-  console.log("myBooks", myBooks);
-  console.log("about to return", [...publicBooks.Items, ...myBooks.Items]);
-  return {
-    user,
-    books: [...publicBooks.Items, ...myBooks.Items]
-  };
+    const myBooksQuery = {
+        TableName: tableNameBook,
+        KeyConditionExpression: "userId = :userId",
+        ExpressionAttributeValues: {
+            ":userId": userId
+        },
+    };
+    console.log("defined both queries");
+    const publicBooks = await dynamo.query(publicBooksQuery).promise();
+    const myBooks = await dynamo.query(myBooksQuery).promise();
+    console.log("myBooksQuery", myBooksQuery);
+    console.log("myBooks", myBooks);
+    console.log("about to return", [...publicBooks.Items, ...myBooks.Items]);
+    return {
+        user,
+        books: [...publicBooks.Items, ...myBooks.Items]
+    };
 });

@@ -1,6 +1,6 @@
 import {Box, Divider, Fade, List, ListItem, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {IUploadTask, useUploadContext} from "../contexts/uploadContext";
+import {useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import Button from "@mui/material/Button";
@@ -9,6 +9,7 @@ import {BorderLinearProgress} from "./LandscapeModal";
 import {useCallback, useState} from "react";
 import {Simulate} from "react-dom/test-utils";
 import drop = Simulate.drop;
+import { IUploadTask } from "../../../types/summaraizeTypes";
 
 export const PortraitModal = () => {
     const {uploadDialogOpen, uploadTasks} = useUploadContext();

@@ -12,11 +12,12 @@ import {
     Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {IUploadTask, useUploadContext} from "../contexts/uploadContext";
+import {useUploadContext} from "../contexts/uploadContext";
 import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import {styled} from "@mui/material/styles";
 import {useState} from "react";
+import { IUploadTask } from "../../../types/summaraizeTypes";
 
 export const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
     height: 10,

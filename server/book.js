@@ -309,43 +309,43 @@ export const writeMetadataToDB = async (userId, book) => {
 
 //This method is called by the client to get the book metadata
 export const parseBookMetadata = handler(async (event) => {
-  const userId = event.requestContext.authorizer.claims.sub;
-  const body = JSON.parse(event.body);
-  const bookUrl = body.bookUrl;
+    const userId = event.requestContext.authorizer.claims.sub;
+    const body = JSON.parse(event.body);
+    const bookUrl = body.bookUrl;
 
-  const book = await getBookFromFileSystemOrS3(bookUrl);
-  await writeMetadataToDB(userId, book);
-  return {
-    statusCode: 200,
-    book: book
-  };
+    const book = await getBookFromFileSystemOrS3(bookUrl);
+    await writeMetadataToDB(userId, book);
+    return {
+        statusCode: 200,
+        book: book
+    };
 });
 
 export const onUpload = handler(async (event) => {
-  const object = event.Records[0].s3.object;
-  const key = object.key;
-  const userId = key.split("/")[0];
-  console.log("onUpload things", userId, key);
-  const book = await getBookFromFileSystemOrS3(key);
-  console.log("got book", book);
-  await writeMetadataToDB(userId, book);
-  return {
-    statusCode: 200,
-    book: book
-  };
+    const object = event.Records[0].s3.object;
+    const key = object.key;
+    const userId = key.split("/")[0];
+    console.log("onUpload things", userId, key);
+    const book = await getBookFromFileSystemOrS3(key);
+    console.log("got book", book);
+    await writeMetadataToDB(userId, book);
+    return {
+        statusCode: 200,
+        book: book
+    };
 });
 
 export const parseAllBooks = handler(async (event) => {
-  //first, get all the books from the DB
-  const params = {
-    TableName: "dev-books",
-  };
-  const books = await dynamoDb.scan(params).promise();
-  console.log("books", books);
-  for (const book of books.Items) {
-    const bookUrl = `${book.userId}/${book.key}`;
-    const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
-    await writeMetadataToDB(book.userId, bookFromS3);
-  }
+    //first, get all the books from the DB
+    const params = {
+        TableName: "dev-books",
+    };
+    const books = await dynamoDb.scan(params).promise();
+    console.log("books", books);
+    for (const book of books.Items) {
+        const bookUrl = `${book.userId}/${book.key}`;
+        const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
+        await writeMetadataToDB(book.userId, bookFromS3);
+    }
 });
 

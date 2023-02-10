@@ -5,10 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/server.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/BookCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/BookCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/billing.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/billing.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/book.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/openai-lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/openai-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/s3SignedUrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/s3SignedUrl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/summarize.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,25 +119,27 @@
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "javascript.nodejs.core.library.configured.version": "18.12.0",
-    "javascript.nodejs.core.library.typings.version": "18.11.18",
+    "javascript.nodejs.core.library.configured.version": "14.15.0",
+    "javascript.nodejs.core.library.typings.version": "14.18.36",
     "jdk.selected.JAVA_MODULE": "corretto-17",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/libs",
+    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "/Users/jaraddelorenzo/.nvm/versions/node/v18.12.0/bin/node",
+    "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
     "ruby.rails.projectView.checked": "true",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib"
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
@@ -167,6 +182,7 @@
       <workItem from="1675780719745" duration="20716000" />
       <workItem from="1675985911466" duration="316000" />
       <workItem from="1675986240957" duration="1558000" />
+      <workItem from="1676038291564" duration="6226000" />
     </task>
     <servers />
   </component>

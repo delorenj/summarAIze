@@ -31,6 +31,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.110",
     "aws-sdk": "^2.1291.0",
     "gradle": "^1.2.4",
     "serverless-bundle": "^6.0.0",
