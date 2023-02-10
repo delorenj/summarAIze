@@ -1,13 +1,12 @@
-import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
-import {IBook} from "../hooks/useMyData";
+import {Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
 
 import {SummaraizeDrawer} from "./SummaraizeDrawer";
 import {useHomeContext} from "../contexts/homeContext";
 import SummarizeTwoToneIcon from '@mui/icons-material/SummarizeTwoTone';
-import {RawOnTwoTone} from "@mui/icons-material";
 import CloudDownloadTwoToneIcon from '@mui/icons-material/CloudDownloadTwoTone';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
 import RemoveRedEyeTwoToneIcon from '@mui/icons-material/RemoveRedEyeTwoTone';
+import { IBook } from "../../../types/summaraizeTypes";
 interface BookCardPropsType {
     book: IBook
 }
