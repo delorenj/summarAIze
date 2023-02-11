@@ -1,11 +1,17 @@
 import * as Buffer from "buffer";
 
+export interface IUser {
+    userId: string,
+    email?: string,
+    isAdmin?: boolean,
+}
+
 export interface IPagePerText {
     text: string,
 }
 
 export interface IChapter {
-    id?: string,
+    id: string,
     page?: number,
     chapter?: number,
     title?: string,

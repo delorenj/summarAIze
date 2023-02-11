@@ -11,16 +11,15 @@ export const onGenerateSummary = handler(async (event: APIGatewayProxyWithCognit
         console.log("payload", payload);
 
         const response = await OpenAILib().summarize(payload);
-        return {
+        return JSON.stringify({
             statusCode: 200,
-            userId,
             body: response
-        };
+        });
     } catch (e) {
         console.log("Error parsing summaryform payload", e);
-        return {
+        return JSON.stringify({
             statusCode: 400,
             body: {error: "Error parsing summary form payload"}
-        }
+        })
     }
 });

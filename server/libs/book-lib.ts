@@ -4,16 +4,14 @@ import {EPub} from 'epub2';
 import pdf from 'fork-pdf-parse-with-pagepertext';
 import striptags from "striptags";
 import { IBookMetadata, IChapter, IFileType, IPagePerText, IRawBook } from "../../types/summaraizeTypes";
-
-const fullPdf = require('pdf-parse');
-
+import fullPdf from 'pdf-parse';
+import {promises as fs} from "fs";
+import {dirname as getDirName} from "path";
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-const fs = require("fs").promises;
 const s3 = new AWS.S3();
-const getDirName = require('path').dirname;
 
-export const getBookFromFileSystemOrS3 = async (url:string) => {
+export const getBookFromFileSystemOrS3 = async (url:string) : Promise<IRawBook> => {
   // Always get the book from S3 for now
   // try {
   //     const book = await readFileFromTemp(url);
@@ -30,7 +28,7 @@ export const getBookFromFileSystemOrS3 = async (url:string) => {
   if (!book) {
     throw new Error(`Could not find book at ${url}`);
   }
-  const metadata = await getBookMetadata(book);
+  const metadata:IBookMetadata = await getBookMetadata(book);
   await writeBookToTemp(book);
   return {
     url,
@@ -173,7 +171,7 @@ const getEpubMetadata = async (book:IRawBook) : Promise<IBookMetadata> => {
 const findChapterBreaks = (doc:any, fullDoc:any) : IChapter[] => {
     const numPages = doc.textPerPage.length;
     console.log("Number of pages", numPages);
-    let chapterBreaks : IChapter[] = [];
+    const chapterBreaks : IChapter[] = [];
     const numWords = numberOfWords(fullDoc.text);
     for (let i = 0; i < numPages; i++) {
       let numWordsPerChapter = 0;
@@ -188,6 +186,7 @@ const findChapterBreaks = (doc:any, fullDoc:any) : IChapter[] => {
           if (line.toLowerCase().includes('chapter')) {
             chapterCount += 1;
             chapterBreaks.push({
+              id: `page-${i}-line-${lineIndex}`,
               page: i,
               chapter: chapterCount,
               numWords: numWordsPerChapter,
@@ -210,6 +209,7 @@ const findChapterBreaks = (doc:any, fullDoc:any) : IChapter[] => {
         console.log("Problem getting first few words", err);
       }
       chapterBreaks.push({
+        id: "all",
         page: 1,
         chapter: 1,
         numWords,
@@ -254,7 +254,7 @@ const getKeyFromUrl = (url:string) : string | undefined => {
 const splitStringIntoArray = (str:string) : IPagePerText[] => {
   const words = str.split(' ');
   let wordCount = 0;
-  let result = [];
+  const result = [];
   let currentString = "";
   for (const word of words) {
     wordCount += 1;
@@ -297,7 +297,7 @@ const getGenericMetadata = async (book:IRawBook) => {
 };
 
 //This method is called by the client to get the book metadata
-const getBookMetadata = async (book:IRawBook) => {
+const getBookMetadata = async (book:IRawBook) : Promise<IBookMetadata> => {
   if (!book.fileContents) {
     throw new Error("No file contents");
   }
@@ -326,7 +326,7 @@ const getBookMetadata = async (book:IRawBook) => {
 
   return {
     fileType: fileType,
-    title: metadata.title,
+    title: metadata.title || "Untitled",
     numWords: metadata.numWords,
     chapters: metadata.chapters
   };

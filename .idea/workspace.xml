@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/libs/user-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +115,7 @@
     "javascript.nodejs.core.library.configured.version": "14.15.0",
     "javascript.nodejs.core.library.typings.version": "14.18.36",
     "jdk.selected.JAVA_MODULE": "corretto-17",
-    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server",
+    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -137,11 +138,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server/libs" />
       <recent name="$PROJECT_DIR$/libs" />
       <recent name="$PROJECT_DIR$/summaraize-app/src/contexts" />
       <recent name="$PROJECT_DIR$/summaraize-app/src/components" />
       <recent name="$PROJECT_DIR$/mocks" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RubyModuleManagerSettings">
