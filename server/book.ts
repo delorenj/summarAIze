@@ -2,14 +2,19 @@ import handler, {invokeHandler, s3handler} from "./libs/handler-lib";
 import {getBookFromFileSystemOrS3, writeMetadataToDB} from "./libs/book-lib";
 import {APIGatewayProxyWithCognitoAuthorizerEvent, S3CreateEvent} from "aws-lambda";
 import * as AWS from "aws-sdk";
+import { IBook, IRawBook } from "../types/summaraizeTypes";
+
+export interface IParseBookMetadataPayload {
+    bookUrl: string;
+}
 
 //This method is called by the client to get the book metadata
 export const parseBookMetadata = handler(async (event:APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
-    const body = JSON.parse(event.body as string);
+    const body : IParseBookMetadataPayload = JSON.parse(event.body as string);
     const bookUrl = body.bookUrl;
 
-    const book = await getBookFromFileSystemOrS3(bookUrl);
+    const book : IRawBook = await getBookFromFileSystemOrS3(bookUrl);
     await writeMetadataToDB(userId, book);
     return JSON.stringify({
         book

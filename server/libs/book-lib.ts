@@ -3,6 +3,7 @@ import {fileTypeFromBuffer} from 'file-type';
 import {EPub} from 'epub2';
 import pdf from 'fork-pdf-parse-with-pagepertext';
 import striptags from "striptags";
+import { IBookMetadata, IChapter, IFileType, IPagePerText, IRawBook } from "../../types/summaraizeTypes";
 
 const fullPdf = require('pdf-parse');
 
@@ -25,31 +26,34 @@ export const getBookFromFileSystemOrS3 = async (url:string) => {
   //     };
   // } catch (err) {
   //     console.log("Problem getting book from /tmp:", err);
-  const book = await readFileFromS3Bucket(url);
+  const book : IRawBook = await readFileFromS3Bucket(url);
+  if (!book) {
+    throw new Error(`Could not find book at ${url}`);
+  }
   const metadata = await getBookMetadata(book);
   await writeBookToTemp(book);
   return {
     url,
-    fileContents: book?.fileContents,
+    fileContents: book.fileContents,
     metadata,
-    id: book?.id
+    id: book.id
   };
   // };
 };
 
-export const writeMetadataToDB = async (userId:string, book:any) => {
+export const writeMetadataToDB = async (userId:string, book:IRawBook) => {
   const params:any = {
     TableName: process.env.booksTableName,
     Item: {
       // The attributes of the item to be created
       userId: userId,
       bookId: book.id, // The book's s3 ETag
-      format: book.metadata.fileType.ext,
-      title: book.metadata.title,
-      chapters: book.metadata.chapters,
-      numWords: book.metadata.numWords,
+      format: book.metadata?.fileType.ext,
+      title: book.metadata?.title,
+      chapters: book.metadata?.chapters,
+      numWords: book.metadata?.numWords,
       key: getKeyFromUrl(book.url),
-      sizeInBytes: book.fileContents.length,
+      sizeInBytes: book.fileContents?.length,
       createdAt: Date.now(), // Current Unix timestamp
     },
   };
@@ -65,7 +69,7 @@ export const writeMetadataToDB = async (userId:string, book:any) => {
 ///////////// Private functions
 
 // a function to write the files to tmp on the lambda
-const writeBookToTemp = async (book: any) => {
+const writeBookToTemp = async (book: IRawBook) => {
   console.log(`writing cached books to /tmp`, `/tmp/${book.url}`, book.fileContents);
   await fs.mkdir(`/tmp/${getDirName(book.url)}`, {recursive: true});
   await fs.writeFile(`/tmp/${book.url}`, book.fileContents);
@@ -83,7 +87,7 @@ const writeBookToTemp = async (book: any) => {
 // }
 
 // a function to pull the files from an s3 bucket before caching them locally
-const readFileFromS3Bucket = async (url:string) => {
+const readFileFromS3Bucket = async (url:string) : Promise<IRawBook> => {
   console.log('readFileFromS3Bucket', url);
 
   try {
@@ -98,39 +102,45 @@ const readFileFromS3Bucket = async (url:string) => {
     console.log("Returning: ", object);
     return {
       url: url,
-      fileContents: object.Body,
+      fileContents: object.Body as Buffer,
       id: object.ETag
     };
 
   } catch (err) {
     console.log("Problem getting S3 object:", err);
+    throw err;
   }
 }
 
-const isPlainText = (fileType: any) => {
+const isPlainText = (fileType: IFileType) => {
   return fileType && fileType.mime === "text/plain";
 };
-const isEpub = (fileType: any) => {
+
+const isEpub = (fileType: IFileType) => {
   return fileType && fileType.mime === "application/epub+zip";
 };
 
-const isPdf = (fileType: any) => {
+const isPdf = (fileType: IFileType) => {
   return fileType && fileType.mime === "application/pdf";
 };
 
-const numberOfWords = (text:string) => {
+const numberOfWords = (text:string) : number => {
   return text?.split(" ").length || 0;
 };
 
-const stripNewlinesAndCollapseSpaces = (str:string) => {
+const stripNewlinesAndCollapseSpaces = (str:string) : string => {
   return str.replace(/(\r\n|\n|\r|\t|\s{2,})/gm, " ").trim();
 };
 
 // This method is called by the client to get the book metadata
-const getEpubMetadata = async (book:any) => {
-  const epub = await EPub.createAsync(book.fileContents);
+const getEpubMetadata = async (book:IRawBook) : Promise<IBookMetadata> => {
+  if (!book.fileContents) {
+    throw new Error("No file contents");
+  }
+  
+  const epub = await EPub.createAsync(book.fileContents as unknown as string);
   const title = epub.metadata.title;
-  const chapters = [];
+  const chapters : IChapter[] = [];
   let totalNumWords = 0;
   let chapterCount = 0;
   for (const chapter of epub.flow) {
@@ -152,14 +162,18 @@ const getEpubMetadata = async (book:any) => {
   return {
     title,
     numWords: totalNumWords,
-    chapters
+    chapters, 
+    fileType: {
+        ext: "epub",
+        mime: "application/epub+zip"
+    }
   };
 };
 
-const findChapterBreaks = (doc:any, fullDoc:any) => {
+const findChapterBreaks = (doc:any, fullDoc:any) : IChapter[] => {
     const numPages = doc.textPerPage.length;
     console.log("Number of pages", numPages);
-    let chapterBreaks = [];
+    let chapterBreaks : IChapter[] = [];
     const numWords = numberOfWords(fullDoc.text);
     for (let i = 0; i < numPages; i++) {
       let numWordsPerChapter = 0;
@@ -207,7 +221,7 @@ const findChapterBreaks = (doc:any, fullDoc:any) => {
   }
 ;
 
-const getPdfMetadata = async (book:any) => {
+const getPdfMetadata = async (book:IRawBook) : Promise<IBookMetadata> => {
   const doc = await pdf(book.fileContents);
   console.log("Got PDF doc");
   const fullDoc = await fullPdf(book.fileContents);
@@ -222,19 +236,22 @@ const getPdfMetadata = async (book:any) => {
     title,
     numWords: numberOfWords(fullDoc.text),
     chapters,
+    fileType: {
+        ext: "pdf",
+        mime: "application/pdf"
+    }
   };
 };
 
-const getTitleFromUrl = (url:string) => {
-  // @ts-ignore
-  return url.split("/").pop().split(".")[0];
+const getTitleFromUrl = (url:string) : string | undefined => {
+  return url.split("/").pop()?.split(".")[0];
 };
 
-const getKeyFromUrl = (url:string) => {
+const getKeyFromUrl = (url:string) : string | undefined => {
   return url.split("/").pop();
 };
 
-const splitStringIntoArray = (str:string) => {
+const splitStringIntoArray = (str:string) : IPagePerText[] => {
   const words = str.split(' ');
   let wordCount = 0;
   let result = [];
@@ -255,7 +272,10 @@ const splitStringIntoArray = (str:string) => {
   return result;
 };
 
-const getGenericMetadata = async (book:any) => {
+const getGenericMetadata = async (book:IRawBook) => {
+  if (!book.fileContents) {
+    throw new Error("No file contents");
+  }
   const text = book.fileContents.toString();
 
   const textPerPage = splitStringIntoArray(text);
@@ -268,7 +288,7 @@ const getGenericMetadata = async (book:any) => {
     text
   };
   console.log('paginatedBook', paginatedBook);
-  const chapters = findChapterBreaks(paginatedBook, fullDoc);
+  const chapters : IChapter[] = findChapterBreaks(paginatedBook, fullDoc);
   return {
     title: getTitleFromUrl(book.url),
     numWords: numberOfWords(fullDoc.text),
@@ -277,7 +297,10 @@ const getGenericMetadata = async (book:any) => {
 };
 
 //This method is called by the client to get the book metadata
-const getBookMetadata = async (book:any) => {
+const getBookMetadata = async (book:IRawBook) => {
+  if (!book.fileContents) {
+    throw new Error("No file contents");
+  }
   const fileType = await fileTypeFromBuffer(book.fileContents) || {ext: "txt", mime: "plain/text"};
   console.log("fileTypeFromBuffer", fileType);
   let metadata;

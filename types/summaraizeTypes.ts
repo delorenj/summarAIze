@@ -1,8 +1,17 @@
+import * as Buffer from "buffer";
+
+export interface IPagePerText {
+    text: string,
+}
+
 export interface IChapter {
-    id: string,
-    title: string,
+    id?: string,
+    page?: number,
+    chapter?: number,
+    title?: string,
     numWords: number,
     firstFewWords: string,
+
 }
 
 export interface ISummary {
@@ -17,6 +26,28 @@ export interface ISummary {
     status: string,
 }
 
+export interface IBookMetadata {
+    title: string,
+    fileType: {
+        ext: string,
+        mime: string
+    },
+    numWords: number,
+    chapters: IChapter[],
+}
+
+export interface IFileType {
+    ext: string,
+    mime: string
+}
+
+export interface IRawBook {
+    id: string | undefined,
+    url: string,
+    fileContents: Buffer,
+    metadata?: IBookMetadata
+}
+
 export interface IBook {
     cacheKey?: string,
     key: string,
@@ -28,13 +59,16 @@ export interface IBook {
     cover: string,
     sizeInBytes: number
 }
+
 export interface IGetUserDataResponse {
     books: IBook[]
 }
+
 export interface IUploadBookProps {
     title?: string,
     localFilePath?: string,
 }
+
 export interface ISummaryFormPayload {
     bookId: string,
     complexity: number,
@@ -42,6 +76,7 @@ export interface ISummaryFormPayload {
     includeCharacterGlossary: boolean,
     selectedChapters: string[]
 }
+
 export interface IUploadTask {
     file: IFile,
     progress: number,
