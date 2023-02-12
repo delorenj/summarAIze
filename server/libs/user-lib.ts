@@ -18,16 +18,16 @@ export const getBooks = async (userId: string, bookTable: string): Promise<IBook
         TableName: bookTable,
         KeyConditionExpression: "userId = :publicUser",
         ExpressionAttributeValues: {
-            ":publicUser": {S: "public"}
-        },
+            ":publicUser": "public"
+        } as any,
     };
 
     const myBooksQuery: QueryInput = {
         TableName: bookTable,
         KeyConditionExpression: "userId = :userId",
         ExpressionAttributeValues: {
-            ":userId": {S: userId}
-        },
+            ":userId": userId
+        } as any,
     };
     console.log("defined both queries");
 
