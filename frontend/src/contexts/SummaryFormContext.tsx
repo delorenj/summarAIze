@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {useAuth} from "./authContext";
 import {ISummaryFormPayload} from "../../../types/summaraizeTypes";
+import {useNavigate} from "react-router-dom";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -32,6 +33,7 @@ type Props = {
 export const SummaryFormContext = React.createContext(defaultState)
 
 const SummaryFormContextProvider = ({children}: Props) => {
+    const navigate = useNavigate();
     const {sessionInfo} = useAuth();
     const {activeBook} = useHomeContext();
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
@@ -52,8 +54,12 @@ const SummaryFormContextProvider = ({children}: Props) => {
         console.log("onCompletedGenerateSummary", response);
     };
 
-    const onErrorGenerateSummary = (error: Error) => {
+    const onErrorGenerateSummary = (error: AxiosError) => {
         console.log("onErrorGenerateSummary", error);
+        if(error?.response?.status === 401) {
+            console.log("token expired");
+            navigate("/")
+        }
     };
 
     const onGenerateSummary = () => {
@@ -84,7 +90,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
                     console.log("finally");
                 });
         } catch (error) {
-            onErrorGenerateSummary(new Error("Error generating summary"));
+            onErrorGenerateSummary(new AxiosError("Error generating summary"));
         }
     }
 

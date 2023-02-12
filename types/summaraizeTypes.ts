@@ -10,6 +10,28 @@ export interface IPagePerText {
     text: string,
 }
 
+export interface IBookRow {
+    userId: string,
+    key: string,
+    bookId: string,
+    title: string,
+    chapters: [{
+        id: string,
+        chapter: number,
+        numWords: number,
+        firstFewWords: string,
+    }],
+    format: string,
+    cover: string,
+    numWords: number,
+    sizeInBytes: number,
+    createdAt: string,
+}
+export interface IChapterText {
+    chapter: IChapter, // chapter metadata
+    text: string, // text of the chapter
+}
+
 export interface IChapter {
     id: string,
     page?: number,
@@ -47,9 +69,17 @@ export interface IFileType {
     mime: string
 }
 
+export enum FileType {
+    EPUB = "epub",
+    PDF = "pdf",
+    MOBI = "mobi",
+    TEXT = "txt",
+}
+
 export interface IRawBook {
     id: string | undefined,
     url: string,
+    fileType: string,
     fileContents: Buffer,
     metadata?: IBookMetadata
 }

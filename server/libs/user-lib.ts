@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import {IBook, IUser} from "../../types/summaraizeTypes";
+import {IBook, IBookRow, IUser} from "../../types/summaraizeTypes";
 import {APIGatewayEventRequestContextWithAuthorizer, APIGatewayProxyCognitoAuthorizer,} from "aws-lambda";
 import {QueryInput} from "aws-sdk/clients/dynamodb";
 
@@ -13,9 +13,9 @@ export const ensureAdmin = async (context: APIGatewayEventRequestContextWithAuth
         throw new Error("User is not an admin");
     }
 };
-export const getBooks = async (userId: string, bookTable: string): Promise<IBook[]> => {
+export const getBooks = async (userId: string, bookTable: string): Promise<IBookRow[]> => {
     const publicBooksQuery: QueryInput = {
-        TableName: bookTable,
+        TableName: process.env.booksTableName as string,
         KeyConditionExpression: "userId = :publicUser",
         ExpressionAttributeValues: {
             ":publicUser": "public"
@@ -23,7 +23,7 @@ export const getBooks = async (userId: string, bookTable: string): Promise<IBook
     };
 
     const myBooksQuery: QueryInput = {
-        TableName: bookTable,
+        TableName: process.env.booksTableName as string,
         KeyConditionExpression: "userId = :userId",
         ExpressionAttributeValues: {
             ":userId": userId
@@ -35,16 +35,16 @@ export const getBooks = async (userId: string, bookTable: string): Promise<IBook
       const publicBooks = await dynamo.query(publicBooksQuery).promise();
       const myBooks = await dynamo.query(myBooksQuery).promise();
       await Promise.all([publicBooks, myBooks]).catch((e) => {
-        console.log("error", e);
+        console.log("tom error", e);
         throw new Error("Error getting books");
       });
 
-      const combinedBooks = [...publicBooks.Items as IBook[], ...myBooks.Items as IBook[]];
+      const combinedBooks = [...publicBooks.Items as IBookRow[], ...myBooks.Items as IBookRow[]];
       console.log("about to return", combinedBooks);
 
       return combinedBooks;
     } catch (e) {
-        console.log("error", e);
+        console.log("jote error", e);
         throw new Error("Error getting books");
     }
 };

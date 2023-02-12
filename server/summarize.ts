@@ -2,6 +2,7 @@ import handler from "./libs/handler-lib";
 import OpenAILib from "./libs/openai-lib";
 import {APIGatewayProxyWithCognitoAuthorizerEvent} from "aws-lambda";
 import {ISummaryFormPayload} from "../types/summaraizeTypes";
+import {getChapterTextByPayload} from "./libs/book-lib";
 
 export const onGenerateSummary = handler(async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
@@ -9,6 +10,8 @@ export const onGenerateSummary = handler(async (event: APIGatewayProxyWithCognit
     try {
         const payload: ISummaryFormPayload = JSON.parse(event.body as string);
         console.log("payload", payload);
+        const textToSummarize = await getChapterTextByPayload(payload, userId);
+        console.log("textToSummarize", textToSummarize);
 
         const response = await OpenAILib().summarize(payload);
         return JSON.stringify({
