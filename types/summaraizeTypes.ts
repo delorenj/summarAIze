@@ -105,6 +105,24 @@ export interface IUploadBookProps {
     localFilePath?: string,
 }
 
+export interface ISummarizeResult {
+    summarizationId: string,
+    userId: string,
+    bookId: string,
+    options: ISummarizeOptions,
+    summary: IChapterText,
+    createdAt: string,
+}
+
+export interface ISummarizeOptions {
+      model: "text-davinci-003",
+      prompt: "",
+      temperature: 0.5,
+      max_tokens: 60,
+      top_p: 1.0,
+      frequency_penalty: 0.8,
+      presence_penalty: 0.0,
+}
 export interface ISummaryFormPayload {
     bookId: string,
     complexity: number,

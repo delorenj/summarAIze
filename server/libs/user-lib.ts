@@ -8,7 +8,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 export const ensureAdmin = async (context: APIGatewayEventRequestContextWithAuthorizer<APIGatewayProxyCognitoAuthorizer>) => {
     const userId = context.authorizer.claims.sub;
     const stage = context.stage;
-    const user = await getUser(userId, `${stage}-users`);
+    const user = await getUser(userId);
     if (!user?.isAdmin) {
         throw new Error("User is not an admin");
     }
@@ -49,16 +49,16 @@ export const getBooks = async (userId: string, bookTable: string): Promise<IBook
     }
 };
 
-export const getUser = async (userId: string, userTable: string): Promise<IUser | null> => {
+export const getUser = async (userId: string): Promise<IUser | null> => {
     const params = {
-        TableName: userTable,
+        TableName: process.env.usersTableName as string,
         Key: {
             userId
         }
     };
     const user = await dynamo.get(params).promise();
     if (!user.Item) {
-        console.log("user", userId, "does not exist in table", userTable, "");
+        console.log("user", userId, "does not exist in table", process.env.usersTableName, "");
         return null;
     }
     return user.Item as IUser;

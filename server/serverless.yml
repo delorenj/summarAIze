@@ -114,6 +114,7 @@ functions:
 
   onGenerateSummary:
     handler: summarize.onGenerateSummary
+    timeout: 300
     events:
       - http:
           path: /summarize
