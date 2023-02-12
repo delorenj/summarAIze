@@ -13,6 +13,7 @@ provider:
     stripeSecretKey: ${param:stripeSecretKey}
     booksTableName: ${self:custom.stage}-books
     usersTableName: ${self:custom.stage}-users
+    jobsTableName: ${self:custom.stage}-jobs
 
   iam:
     role:
@@ -31,6 +32,7 @@ provider:
           Resource:
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
+            - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-jobs
         - Effect: Allow
           Action:
             - s3:ListBucket
@@ -48,7 +50,7 @@ plugins:
   - serverless-bundle
   - serverless-s3-local
   - serverless-offline
-
+  - serverless-lift
 custom:
   stage: ${opt:stage, self:provider.stage}
   bundle:
@@ -58,10 +60,15 @@ custom:
       - fork-pdf-parse-with-pagepertext
       - pdf-parse
 
+constructs:
+    summaryQueue:
+        type: queue
+        worker:
+            handler: summaryQueue.handler
 resources:
   - ${file(resources/api-gateway-errors.yml)}
   - ${file(resources/cognito-authorizer.yml)}
-#  - ${file(resources/dynamodb-table.yml)}
+  - ${file(resources/dynamodb-table.yml)}
 #  - ${file(resources/s3.yml)}
 #  - ${file(resources/cognito-user-pool.yml)}
 #  - ${file(resources/cognito-identity-pool.yml)}
@@ -112,9 +119,10 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
-  onGenerateSummary:
-    handler: summarize.onGenerateSummary
-    timeout: 300
+  publishSummaryJob:
+    handler: summarize.publishSummaryJob
+    environment:
+      QUEUE_URL: ${construct:summaryQueue.queueUrl}
     events:
       - http:
           path: /summarize

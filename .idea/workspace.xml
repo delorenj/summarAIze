@@ -5,11 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/openai-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/openai-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/user-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/user-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test" beforeDir="false" afterPath="$PROJECT_DIR$/tools/cli-test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/cli-test/package.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,6 +70,10 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="dev" />
+                    <option name="lastUsedInstant" value="1676232546" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="feature/summary" />
                     <option name="lastUsedInstant" value="1676055239" />
                   </RecentBranch>
@@ -74,10 +88,6 @@
                   <RecentBranch>
                     <option name="branchName" value="feature/chapter-split-strat1" />
                     <option name="lastUsedInstant" value="1675517859" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="dev" />
-                    <option name="lastUsedInstant" value="1674324186" />
                   </RecentBranch>
                 </list>
               </option>
@@ -119,7 +129,7 @@
     "javascript.nodejs.core.library.configured.version": "14.15.0",
     "javascript.nodejs.core.library.typings.version": "14.18.36",
     "jdk.selected.JAVA_MODULE": "corretto-17",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs",
+    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server/libs",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -131,7 +141,7 @@
     "project.structure.side.proportion": "0.2",
     "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "preferences.lookFeel",
-    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
+    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -142,11 +152,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jarad\code\summarAIze\server\libs" />
+      <recent name="C:\Users\jarad\code\summarAIze\server" />
       <recent name="$PROJECT_DIR$/server/libs" />
       <recent name="$PROJECT_DIR$/libs" />
       <recent name="$PROJECT_DIR$/summaraize-app/src/contexts" />
-      <recent name="$PROJECT_DIR$/summaraize-app/src/components" />
-      <recent name="$PROJECT_DIR$/mocks" />
     </key>
   </component>
   <component name="RubyModuleManagerSettings">

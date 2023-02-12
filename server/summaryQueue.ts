@@ -1,26 +1,14 @@
 import handler from "./libs/handler-lib";
 import OpenAILib from "./libs/openai-lib";
 import {APIGatewayProxyWithCognitoAuthorizerEvent} from "aws-lambda";
-import {ISummarizeResult, ISummaryFormPayload, IUser} from "../types/summaraizeTypes";
+import {ISummarizeResult, ISummaryFormPayload} from "../types/summaraizeTypes";
 import {getChapterTextByPayload} from "./libs/book-lib";
 import {getUser} from "./libs/user-lib";
-import {publishToSummaryQueue} from "./libs/sqs-lib";
 
-const generateSummaries = async (payload: ISummaryFormPayload, user: IUser) => {
-    const textToSummarize = await getChapterTextByPayload(payload, user.userId);
-    console.log("textToSummarize", textToSummarize);
-    const oai = OpenAILib({user});
-    const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
-    console.log("summarizations", summarizations);
-    return summarizations
-}
-
-export const publishSummaryJob = handler(async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
+export const onGenerateSummary = handler(async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
     const user = await getUser(userId);
-    console.log("queue url", process.env.QUEUE_URL);
-
-    if (!user) {
+    if(!user) {
         return JSON.stringify({
             statusCode: 400,
             body: {error: "Error getting user"}
@@ -30,8 +18,12 @@ export const publishSummaryJob = handler(async (event: APIGatewayProxyWithCognit
     try {
         const payload: ISummaryFormPayload = JSON.parse(event.body as string);
         console.log("payload", payload);
+        const textToSummarize = await getChapterTextByPayload(payload, userId);
+        console.log("textToSummarize", textToSummarize);
 
-        const summarizations = await publishToSummaryQueue(payload, user);
+        const oai = OpenAILib({user});
+        const summarizations : ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
+        console.log("summarizations", summarizations);
 
         return JSON.stringify({
             statusCode: 200,

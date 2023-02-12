@@ -1,4 +1,5 @@
 import * as Buffer from "buffer";
+import { JobStatus } from "../server/libs/sqs-lib";
 
 export interface IUser {
     userId: string,
@@ -8,6 +9,19 @@ export interface IUser {
 
 export interface IPagePerText {
     text: string,
+}
+
+export interface ISummaryJobPayload {
+    payload: ISummaryFormPayload,
+    userId: string,
+}
+
+export interface ISummaryJobStatus {
+    jobId: string,
+    status: JobStatus,
+    userId: string,
+    payload: ISummaryFormPayload,
+    createdAt: string,
 }
 
 export interface IBookRow {

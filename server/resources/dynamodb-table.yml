@@ -3,7 +3,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     Properties:
-      TableName: ${self:custom.usersTableName}
+      TableName: ${self:provider.environment.usersTableName}
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
@@ -16,7 +16,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     Properties:
-      TableName: ${self:custom.booksTableName}
+      TableName: ${self:provider.environment.booksTableName}
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
@@ -26,6 +26,29 @@ Resources:
         - AttributeName: userId
           KeyType: HASH
         - AttributeName: bookId
+          KeyType: RANGE
+      # Set the capacity to auto-scale
+      BillingMode: PAY_PER_REQUEST
+  JobsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: ${self:provider.environment.jobsTableName}
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: payload
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+        - AttributeName: userId
           KeyType: RANGE
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST
