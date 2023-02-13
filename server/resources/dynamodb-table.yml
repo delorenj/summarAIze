@@ -35,14 +35,14 @@ Resources:
     Properties:
       TableName: ${self:provider.environment.jobsTableName}
       AttributeDefinitions:
-        - AttributeName: jobId
-          AttributeType: S
         - AttributeName: userId
+          AttributeType: S
+        - AttributeName: jobId
           AttributeType: S
       KeySchema:
-        - AttributeName: jobId
-          KeyType: RANGE
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: jobId
+          KeyType: RANGE
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST

@@ -13,7 +13,7 @@ provider:
     stripeSecretKey: ${param:stripeSecretKey}
     booksTableName: ${self:custom.stage}-books
     usersTableName: ${self:custom.stage}-users
-    jobsTableName: ${self:custom.stage}-jobs
+    jobsTableName: ${self:custom.stage}-summaryjobs
 
   iam:
     role:
@@ -32,7 +32,7 @@ provider:
           Resource:
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
-            - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-jobs
+            - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-summaryjobs
         - Effect: Allow
           Action:
             - s3:ListBucket
