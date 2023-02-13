@@ -41,8 +41,8 @@ Resources:
           AttributeType: S
       KeySchema:
         - AttributeName: jobId
-          KeyType: HASH
-        - AttributeName: userId
           KeyType: RANGE
+        - AttributeName: userId
+          KeyType: HASH
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST

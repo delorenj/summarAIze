@@ -57,7 +57,7 @@ export const getJobs = async (userId: string): Promise<ISummaryJobStatus[]> => {
             ":userId": userId,
         } as any,
     };
-    console.log("params", params);
+    console.log("getJob params", params);
     try {
         const jobs = await dynamo.query(params).promise();
         return jobs.Items as ISummaryJobStatus[];

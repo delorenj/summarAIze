@@ -56,9 +56,7 @@ export const useMyData = (props: UseMyDataProps) => {
                 setMyBooks(data.books);
                 setMyJobs(data.jobs);
                 localStorage.setItem("books", JSON.stringify(data.books));
-                localStorage.setItem("jobs", JSON.stringify(data.jobs));
                 console.log("set localStorage to:", JSON.stringify(data.books));
-                console.log("set localStorage to:", JSON.stringify(data.jobs));
 
             } catch (err) {
                 console.log(err);

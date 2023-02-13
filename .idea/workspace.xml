@@ -5,20 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaraizeDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaraizeDrawer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/libs/cognito.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/libs/cognito.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/sqs-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/user-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/user-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test" beforeDir="false" afterPath="$PROJECT_DIR$/tools/cli-test" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/.gitignore" beforeDir="false" />
@@ -27,7 +17,6 @@
       <change beforePath="$PROJECT_DIR$/tools/cli-test/index.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/package-lock.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
