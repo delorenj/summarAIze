@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAuth} from "./authContext";
-import {ISummaryFormPayload} from "../../../types/summaraizeTypes";
+import {ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
 import {useNavigate} from "react-router-dom";
+import {useMyData} from "../hooks/useMyData";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -35,6 +36,7 @@ export const SummaryFormContext = React.createContext(defaultState)
 const SummaryFormContextProvider = ({children}: Props) => {
     const navigate = useNavigate();
     const {sessionInfo} = useAuth();
+    const {setMyJobs, myJobs} = useMyData({skipCache: true});
     const {activeBook} = useHomeContext();
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
@@ -50,8 +52,9 @@ const SummaryFormContextProvider = ({children}: Props) => {
         setDepth(newValue as number);
     };
 
-    const onCompleteGenerateSummary = (response:any) => {
+    const onCompleteGenerateSummary = (response:AxiosResponse<ISummaryJobStatus>) => {
         console.log("onCompletedGenerateSummary", response);
+        setMyJobs([...myJobs, response.data]);
     };
 
     const onErrorGenerateSummary = (error: AxiosError) => {

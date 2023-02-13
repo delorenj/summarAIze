@@ -4,6 +4,7 @@ import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
 import {IBook, IUploadBookProps, IGetUserDataResponse, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {useHomeContext} from "../contexts/homeContext";
 
 
 const defaultBook: IBook = {
@@ -29,9 +30,9 @@ export interface UseMyDataProps {
 }
 
 export const useMyData = (props: UseMyDataProps) => {
+    const {myJobs, setMyJobs} = useHomeContext();
     const {sessionInfo} = useAuth();
     const [myBooks, setMyBooks] = useState<IBook[]>([])
-    const [myJobs, setMyJobs] = useState<ISummaryJobStatus[]>([])
     const navigate = useNavigate();
     const {skipCache} = props || false;
 
@@ -78,5 +79,5 @@ export const useMyData = (props: UseMyDataProps) => {
         }
     }, [])
 
-    return {myBooks, myJobs}
+    return {myBooks, myJobs, setMyJobs}
 }

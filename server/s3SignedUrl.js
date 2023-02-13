@@ -1,13 +1,12 @@
 const AWS = require('aws-sdk');
 import handler from "./libs/handler-lib";
-require('dotenv').config();
 AWS.config.update({region: 'us-east-1'});
 const s3 = new AWS.S3();
 
 // Change this value to adjust the signed URL's expiration
 const URL_EXPIRATION_SECONDS = 300;
 
-export const getUploadUrl = handler(async (event, context) => {
+export const getUploadUrl = handler(async (event) => {
     const userId = event.requestContext.authorizer.claims.sub;
     const querystring = event.queryStringParameters;
     const fileName = querystring.fn;

@@ -33,15 +33,9 @@ export const publishSummaryJob = handler(async (event: APIGatewayProxyWithCognit
 
         const jobStatus = await publishToSummaryQueue(payload, user);
 
-        return JSON.stringify({
-            statusCode: 200,
-            body: jobStatus
-        });
+        return JSON.stringify(jobStatus);
     } catch (e) {
         console.log("Error parsing summaryform payload", e);
-        return JSON.stringify({
-            statusCode: 400,
-            body: {error: "Error parsing summary form payload"}
-        })
+        throw new Error("Error parsing summary form payload");
     }
 });

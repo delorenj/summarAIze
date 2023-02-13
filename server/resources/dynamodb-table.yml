@@ -29,20 +29,20 @@ Resources:
 #          KeyType: RANGE
 #      # Set the capacity to auto-scale
 #      BillingMode: PAY_PER_REQUEST
-  JobsTable:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: ${self:provider.environment.jobsTableName}
-      AttributeDefinitions:
-        - AttributeName: userId
-          AttributeType: S
-        - AttributeName: jobId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-        - AttributeName: jobId
-          KeyType: RANGE
-      # Set the capacity to auto-scale
-      BillingMode: PAY_PER_REQUEST
+#  JobsTable:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: ${self:provider.environment.jobsTableName}
+#      AttributeDefinitions:
+#        - AttributeName: userId
+#          AttributeType: S
+#        - AttributeName: jobId
+#          AttributeType: S
+#      KeySchema:
+#        - AttributeName: userId
+#          KeyType: HASH
+#        - AttributeName: jobId
+#          KeyType: RANGE
+#      # Set the capacity to auto-scale
+#      BillingMode: PAY_PER_REQUEST

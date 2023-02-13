@@ -2,7 +2,7 @@ import {
   APIGatewayProxyWithCognitoAuthorizerEvent,
   APIGatewayProxyWithCognitoAuthorizerHandler,
   Callback,
-  Context, S3CreateEvent,
+  Context, S3CreateEvent, SQSEvent,
 } from "aws-lambda";
 
 export default function handler(lambda: (event: APIGatewayProxyWithCognitoAuthorizerEvent) =>
@@ -34,6 +34,27 @@ export default function handler(lambda: (event: APIGatewayProxyWithCognitoAuthor
 export function s3handler(lambda: (event: S3CreateEvent) =>
     Promise<string>) {
   return async function (event:S3CreateEvent) {
+    let body, statusCode;
+
+    try {
+      // Run the Lambda
+      await lambda(event);
+      body = "Success";
+      statusCode = 200;
+    } catch (e: any) {
+      body = { error: e.message };
+      statusCode = 500;
+    }
+
+    // Return HTTP response
+    return {
+      body,
+      statusCode
+    };
+  };
+}
+export function sqsHandler(lambda: (event: SQSEvent) => Promise<string>) {
+  return async function (event:SQSEvent) {
     let body, statusCode;
 
     try {
