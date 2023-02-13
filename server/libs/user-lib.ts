@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import {IBook, IBookRow, IUser} from "../../types/summaraizeTypes";
+import {IBook, IBookRow, ISummaryJobStatus, IUser} from "../../types/summaraizeTypes";
 import {APIGatewayEventRequestContextWithAuthorizer, APIGatewayProxyCognitoAuthorizer,} from "aws-lambda";
 import {QueryInput} from "aws-sdk/clients/dynamodb";
 
@@ -13,7 +13,7 @@ export const ensureAdmin = async (context: APIGatewayEventRequestContextWithAuth
         throw new Error("User is not an admin");
     }
 };
-export const getBooks = async (userId: string, bookTable: string): Promise<IBookRow[]> => {
+export const getBooks = async (userId: string): Promise<IBookRow[]> => {
     const publicBooksQuery: QueryInput = {
         TableName: process.env.booksTableName as string,
         KeyConditionExpression: "userId = :publicUser",
@@ -49,6 +49,24 @@ export const getBooks = async (userId: string, bookTable: string): Promise<IBook
     }
 };
 
+export const getJobs = async (userId: string): Promise<ISummaryJobStatus[]> => {
+    const params = {
+        TableName: process.env.jobsTableName as string,
+        KeyConditionExpression: "userId = :userId",
+        ExpressionAttributeValues: {
+            ":userId": userId,
+        } as any,
+    };
+    console.log("params", params);
+    try {
+        const jobs = await dynamo.query(params).promise();
+        return jobs.Items as ISummaryJobStatus[];
+    } catch (e) {
+        console.log("error", e);
+        throw new Error("Error getting jobs");
+    }
+}
+
 export const getUser = async (userId: string): Promise<IUser | null> => {
     const params = {
         TableName: process.env.usersTableName as string,
@@ -64,29 +82,28 @@ export const getUser = async (userId: string): Promise<IUser | null> => {
     return user.Item as IUser;
 };
 
-export const getOrCreateUser = async (userId: string, userTable: string): Promise<IUser> => {
+export const getOrCreateUser = async (userId: string): Promise<IUser> => {
     const params = {
-        TableName: userTable,
+        TableName: process.env.usersTableName as string,
         Key: {
             userId
         }
     };
-    console.log("getting user", userId, "from table", userTable, "");
     const user = await dynamo.get(params).promise();
     console.log("user", user);
     if (!user.Item) {
-        console.log("creating user", userId, "in table", userTable, "");
+        console.log("creating user", userId);
         const params = {
-            TableName: userTable,
+            TableName: process.env.usersTableName as string,
             Item: {
                 userId,
                 admin: false
             }
         };
         await dynamo.put(params).promise();
-        console.log("created user", userId, "in table", userTable, "");
+        console.log("created user", userId);
         return params.Item as IUser;
     }
-    console.log("user", userId, "already exists in table", userTable, "");
+    console.log("user", userId, "already exists in table");
     return user.Item as IUser;
 };

@@ -8,7 +8,6 @@ import {JobStatus} from "./JobStatus";
 import {SummaryList} from "./SummaryList";
 import {NewSummaryForm} from "./NewSummaryForm";
 
-
 const StyledBox = styled(Box)(({theme}) => ({
     backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
 }));
@@ -38,7 +37,7 @@ export const SummaraizeDrawer = () => {
                 <MetadataEntry k="Total Words" v={activeBook?.chapters.reduce((acc, chapter) => acc + chapter.numWords || 0, 0)}></MetadataEntry>
                 <MetadataEntry k="Size" v={activeBook?.sizeInBytes + " Bytes"}></MetadataEntry>
                 <MetadataEntry k="Summaries" v={0}></MetadataEntry>
-                <MetadataEntry k="Active Jobs" v={<JobStatus/>}></MetadataEntry>
+                <MetadataEntry k="Active Jobs" v={<JobStatus />}></MetadataEntry>
             </Grid>
             <Divider textAlign='left'>Create a new summary</Divider>
             <NewSummaryForm/>

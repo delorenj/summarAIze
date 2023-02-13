@@ -15,7 +15,7 @@ export enum JobStatus {
     FAILED = "FAILED"
 }
 
-export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: IUser) => {
+export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: IUser) : Promise<ISummaryJobStatus> => {
     const queueUrl = process.env.QUEUE_URL as string;
 
     const job: ISummaryJobPayload = {
@@ -44,4 +44,5 @@ export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: 
         Item: jobStatus,
     }).promise();
 
+    return jobStatus;
 }

@@ -31,11 +31,11 @@ export const publishSummaryJob = handler(async (event: APIGatewayProxyWithCognit
         const payload: ISummaryFormPayload = JSON.parse(event.body as string);
         console.log("payload", payload);
 
-        const summarizations = await publishToSummaryQueue(payload, user);
+        const jobStatus = await publishToSummaryQueue(payload, user);
 
         return JSON.stringify({
             statusCode: 200,
-            body: summarizations
+            body: jobStatus
         });
     } catch (e) {
         console.log("Error parsing summaryform payload", e);

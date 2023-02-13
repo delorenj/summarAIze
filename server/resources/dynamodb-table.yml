@@ -1,34 +1,34 @@
 Resources:
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: ${self:provider.environment.usersTableName}
-      AttributeDefinitions:
-        - AttributeName: userId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-      # Set the capacity to auto-scale
-      BillingMode: PAY_PER_REQUEST
-  BooksTable:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: ${self:provider.environment.booksTableName}
-      AttributeDefinitions:
-        - AttributeName: userId
-          AttributeType: S
-        - AttributeName: bookId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-        - AttributeName: bookId
-          KeyType: RANGE
-      # Set the capacity to auto-scale
-      BillingMode: PAY_PER_REQUEST
+#  UsersTable:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: ${self:provider.environment.usersTableName}
+#      AttributeDefinitions:
+#        - AttributeName: userId
+#          AttributeType: S
+#      KeySchema:
+#        - AttributeName: userId
+#          KeyType: HASH
+#      # Set the capacity to auto-scale
+#      BillingMode: PAY_PER_REQUEST
+#  BooksTable:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: ${self:provider.environment.booksTableName}
+#      AttributeDefinitions:
+#        - AttributeName: userId
+#          AttributeType: S
+#        - AttributeName: bookId
+#          AttributeType: S
+#      KeySchema:
+#        - AttributeName: userId
+#          KeyType: HASH
+#        - AttributeName: bookId
+#          KeyType: RANGE
+#      # Set the capacity to auto-scale
+#      BillingMode: PAY_PER_REQUEST
   JobsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -38,12 +38,6 @@ Resources:
         - AttributeName: jobId
           AttributeType: S
         - AttributeName: userId
-          AttributeType: S
-        - AttributeName: status
-          AttributeType: S
-        - AttributeName: payload
-          AttributeType: S
-        - AttributeName: createdAt
           AttributeType: S
       KeySchema:
         - AttributeName: jobId

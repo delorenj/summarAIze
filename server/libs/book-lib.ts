@@ -90,7 +90,7 @@ const getRawChapterById = (book: IBookRow, chapterId: string): IChapter => {
 }
 
 export const getBookRow = async (bookId: string, userId: string): Promise<IBookRow> => {
-    const books = await getBooks(userId, process.env.booksTableName as string);
+    const books = await getBooks(userId);
     const book = books.filter(book => book.bookId === bookId);
     if(!book) {
         throw new Error(`Could not find book with id ${bookId}`);

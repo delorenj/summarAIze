@@ -3,7 +3,7 @@ import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
-import {IBook, ISummary, IChapter, IUploadBookProps, IGetUserDataResponse} from "../../../types/summaraizeTypes";
+import {IBook, IUploadBookProps, IGetUserDataResponse, ISummaryJobStatus} from "../../../types/summaraizeTypes";
 
 
 const defaultBook: IBook = {
@@ -31,6 +31,7 @@ export interface UseMyDataProps {
 export const useMyData = (props: UseMyDataProps) => {
     const {sessionInfo} = useAuth();
     const [myBooks, setMyBooks] = useState<IBook[]>([])
+    const [myJobs, setMyJobs] = useState<ISummaryJobStatus[]>([])
     const navigate = useNavigate();
     const {skipCache} = props || false;
 
@@ -53,8 +54,12 @@ export const useMyData = (props: UseMyDataProps) => {
 
                 console.log("data", data);
                 setMyBooks(data.books);
+                setMyJobs(data.jobs);
                 localStorage.setItem("books", JSON.stringify(data.books));
+                localStorage.setItem("jobs", JSON.stringify(data.jobs));
                 console.log("set localStorage to:", JSON.stringify(data.books));
+                console.log("set localStorage to:", JSON.stringify(data.jobs));
+
             } catch (err) {
                 console.log(err);
                 // @ts-ignore
@@ -75,5 +80,5 @@ export const useMyData = (props: UseMyDataProps) => {
         }
     }, [])
 
-    return {myBooks}
+    return {myBooks, myJobs}
 }

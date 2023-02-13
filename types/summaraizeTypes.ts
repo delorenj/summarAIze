@@ -111,7 +111,8 @@ export interface IBook {
 }
 
 export interface IGetUserDataResponse {
-    books: IBook[]
+    books: IBook[],
+    jobs: ISummaryJobStatus[],
 }
 
 export interface IUploadBookProps {
@@ -137,6 +138,7 @@ export interface ISummarizeOptions {
       frequency_penalty: 0.8,
       presence_penalty: 0.0,
 }
+
 export interface ISummaryFormPayload {
     bookId: string,
     complexity: number,

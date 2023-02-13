@@ -1,21 +1,17 @@
 import handler from "./libs/handler-lib";
 import {APIGatewayProxyWithCognitoAuthorizerEvent} from "aws-lambda";
-import { IBook, IBookRow} from "../types/summaraizeTypes";
-import {getBooks, getOrCreateUser} from "./libs/user-lib";
+import { IBook, IBookRow, ISummaryJobStatus} from "../types/summaraizeTypes";
+import {getBooks, getJobs, getOrCreateUser} from "./libs/user-lib";
 
 export const getData = handler(async (event:APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
     console.log("user id", userId);
-    console.log("event.requestContext", JSON.stringify(event.requestContext));
-    const stage = event.requestContext.stage;
-    const tableNameBook = `${stage}-books`;
-    const tableNameUser = `${stage}-users`;
-    console.log("table names", tableNameBook, tableNameUser);
-    const user = await getOrCreateUser(userId, tableNameUser);
-    console.log("got user", user);
-    const books : IBookRow[] = await getBooks(userId, tableNameBook);
+    const user = await getOrCreateUser(userId);
+    const books : IBookRow[] = await getBooks(userId);
+    const jobs : ISummaryJobStatus[] = await getJobs(userId);
     return JSON.stringify({
         user,
-        books
+        books,
+        jobs
     });
 });
