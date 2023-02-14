@@ -26,6 +26,7 @@
     "file-type": "^18.2.0",
     "fork-pdf-parse-with-pagepertext": "^1.1.2",
     "openai": "^3.1.0",
+    "pdf-creator-node": "^2.3.5",
     "pdf-parse": "^1.1.1",
     "stripe": "^11.6.0",
     "striptags": "^3.2.0",

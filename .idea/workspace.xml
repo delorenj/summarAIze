@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/libs/document-lib.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/libs/summary-template.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/pdf-creator-node.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/sqs-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/summaryQueue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test" beforeDir="false" afterPath="$PROJECT_DIR$/tools/cli-test" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/LICENSE" beforeDir="false" />
@@ -53,6 +52,7 @@
         <option value="React Contect TypeScript JSX File" />
         <option value="TypeScript JSX File" />
         <option value="TypeScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -115,6 +115,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
@@ -128,7 +129,7 @@
     "javascript.nodejs.core.library.configured.version": "14.15.0",
     "javascript.nodejs.core.library.typings.version": "14.18.36",
     "jdk.selected.JAVA_MODULE": "corretto-17",
-    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server/libs",
+    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -151,11 +152,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server" />
+      <recent name="$PROJECT_DIR$/server/libs" />
       <recent name="C:\Users\jarad\code\summarAIze\server\libs" />
       <recent name="C:\Users\jarad\code\summarAIze\server" />
-      <recent name="$PROJECT_DIR$/server/libs" />
       <recent name="$PROJECT_DIR$/libs" />
-      <recent name="$PROJECT_DIR$/summaraize-app/src/contexts" />
     </key>
   </component>
   <component name="RubyModuleManagerSettings">

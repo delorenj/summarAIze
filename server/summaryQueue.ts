@@ -26,6 +26,9 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
         const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
         console.log("summarizations", summarizations);
 
+        const document = createSummaryDocument(summarizations, payload, userId);
+        uploadDocument(document, payload, userId);
+
         //Update job status
         await updateJobStatus(event.Records[0].messageId, userId, JobStatus.COMPLETED);
     } catch (e) {

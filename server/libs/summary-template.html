@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{title}}</title>
+  </head>
+  <body>
+    <h1>{{title}}</h1>
+    <p>{{description}}</p>
+    <ul>
+      {{#each summaries}}
+      <li>
+        <h2>{{summaryTitle}}</h2>
+        <p>{{summaryText}}</p>
+      </li>
+      {{/each}}
+    </ul>
+  </body>
+</html>
