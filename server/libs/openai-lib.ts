@@ -10,6 +10,8 @@ const openai = new OpenAIApi(configuration);
 export interface OpenAILibParams {
   user: IUser;
 }
+
+const descriptionPrompt = "With a complexity of {complexity} of 1.0 and a depth of {depth} of 1.0, give me a description of the summary defined by those parameters when those parameters are defined as meaning complexity determines the level of education needed to understand the summary and depth is the amount of detail given in the summary. Write the description as it would appear above the summary it is describing and make it at most 3 sentences."
 const OpenAILib = (params: OpenAILibParams) => {
   const { user } = params;
   const defaultOptions : ISummarizeOptions = {
@@ -29,6 +31,33 @@ const OpenAILib = (params: OpenAILibParams) => {
   const composePromptByOptions = (chapterText: IChapterText, options: ISummarizeOptions) : string => {
     console.log("About to compose prompt by options: ", options, chapterText);
     return "Summarize the following text: " + chapterText.text;
+  }
+
+  const generateDescriptionByPayload = async (payload: ISummaryFormPayload) : Promise<string> => {
+    console.log("About to generate description by payload: ", payload);
+    const options = getSummarizeOptionsByPayload(payload);
+    const subDescriptionPrompt = descriptionPrompt.replace("{complexity}", payload.complexity.toString()).replace("{depth}", payload.depth.toString());
+    console.log("description prompt", subDescriptionPrompt);
+    const request: CreateCompletionRequest = {
+        model: options.model,
+        prompt: subDescriptionPrompt,
+        max_tokens: options.max_tokens,
+        temperature: options.temperature,
+        top_p: options.top_p,
+        frequency_penalty: options.frequency_penalty,
+        presence_penalty: options.presence_penalty
+    }
+    console.log("request", request);
+    const description = await openai.createCompletion(request);
+
+    console.log("description", description);
+
+    if(!description.data.choices ||
+        description.data.choices.length === 0 ||
+        !description.data.choices[0].text) {
+        throw new Error("No description returned from OpenAI API");
+    }
+    return description.data.choices[0].text;
   }
 
   const summarizeChapter = async (chapterText: IChapterText, options: ISummarizeOptions) : Promise<ISummarizeResult> => {
@@ -81,7 +110,7 @@ const OpenAILib = (params: OpenAILibParams) => {
   };
 
   return {
-    summarize
+    summarize, generateDescriptionByPayload
   };
 };
 

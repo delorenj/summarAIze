@@ -1,12 +1,15 @@
 import * as AWS from "aws-sdk";
 import fs from "fs";
 import pdf from "pdf-creator-node";
-import { ISummarizeResult, ISummaryFormPayload } from "../../types/summaraizeTypes";
+import { ISummarizeResult, ISummaryFormPayload, IUser } from "../../types/summaraizeTypes";
+import {getBookRow} from "./book-lib";
+import openaiLib from "./openai-lib";
+import {getUser} from "./user-lib";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
-const html = fs.readFileSync('summary-template.html', 'utf8');
+const html = fs.readFileSync('templates/summary-template.html', 'utf8');
 
 const options = {
     format: 'A4',
@@ -19,41 +22,41 @@ interface ISummarySection {
     summaryText: string,
 }
 
-const data = {
-    title: 'My Document',
-    description: 'This is a document about something',
-    summaries: [
-        {
-            summaryTitle: 'Summary 1',
-            summaryText: 'This is a summary of something',
-        },
-        {
-            summaryTitle: 'Summary 2',
-            summaryText: 'This is another summary of something',
-        },
-    ],
-};
-
 interface ISummaryTemplate {
     title: string,
     description: string,
     summaries: ISummarySection[],
 }
-export const createSummaryDocument = (summarizations: ISummarizeResult[], payload: ISummaryFormPayload, userId: string) => {
-    const document: ISummaryTemplate = {
-        title: getTitleFromPayload(payload),
-        description: getDescriptionFromPayload(payload),
-        summaries: getSummariesFromSummarizations(summarizations),
-    };
 
-    const pdfDocument = pdf.create(html, options);
-    pdfDocument.generate(data, (err, result) => {
-        if (err) {
-            console.error(err);
-        } else {
-            fs.writeFileSync('output.pdf', result);
+const getDescriptionFromPayload = async (payload: ISummaryFormPayload, user: IUser) : Promise<string> => {
+    return await openaiLib({user}).generateDescriptionByPayload(payload);
+};
+
+const getSummariesFromSummarizations = (summarizations: ISummarizeResult[]) : ISummarySection[] => {
+    return summarizations.map((summarization) => {
+        return {
+            summaryTitle: summarization.summary.chapter.title as string,
+            summaryText: summarization.summary.text,
         }
     });
+};
 
-    return document;
+export const createSummaryDocument = async (summarizations: ISummarizeResult[], payload: ISummaryFormPayload, userId: string) => {
+    const bookRow = await getBookRow(payload.bookId, userId);
+    const user = await getUser(userId);
+    const description = await getDescriptionFromPayload(payload, user as IUser);
+    const htmlData: ISummaryTemplate = {
+        title: bookRow.title,
+        description,
+        summaries: getSummariesFromSummarizations(summarizations)
+    };
+
+    const document = {
+        html,
+        data: htmlData,
+        path: "./output.pdf",
+        type: "",
+    };
+
+    return await pdf.create(document, options);
 }

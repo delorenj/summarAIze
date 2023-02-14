@@ -39,7 +39,9 @@ export const useMyData = (props: UseMyDataProps) => {
     const {skipCache} = props || false;
 
     const pollForJobs = useCallback(() => {
+        console.log("pollForJobs(): inside useCallback");
         const fetchData = (async () => {
+            console.log("pollForJobs(): inside fetchData()");
             try {
                 if (!sessionInfo || !sessionInfo.idToken) return;
                 const headers = {
@@ -52,16 +54,19 @@ export const useMyData = (props: UseMyDataProps) => {
                 );
                 setMyJobs(data);
                 if (data.filter(job => job.status === 'PENDING').length > 0) {
+                    console.log("pollForJobs(): still pending jobs. About to setPoller() again...");
                     setPoller(setTimeout(() => {
                         fetchData();
                     }, 2000));
                 } else {
+                    console.log("pollForJobs(): no pending jobs. About to clearTimeout()...");
                     clearTimeout(poller as NodeJS.Timeout);
                 }
             } catch (err) {
                 console.log(err);
             }
         });
+        console.log("pollForJobs(): about to call initial fetchData()...");
         fetchData();
     }, [sessionInfo, setMyJobs, poller, setPoller]);
 
