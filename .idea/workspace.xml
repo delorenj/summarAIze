@@ -6,17 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="b4988db0-222f-4a50-a320-399ccb7b5c36" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/sqs-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/resources/dynamodb-table.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/s3SignedUrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/s3SignedUrl.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/summaryQueue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test" beforeDir="false" afterPath="$PROJECT_DIR$/tools/cli-test" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/cli-test/LICENSE" beforeDir="false" />
@@ -144,7 +140,7 @@
     "project.structure.side.proportion": "0.2",
     "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "preferences.lookFeel",
-    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -225,7 +221,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx</url>
           <line>39</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>

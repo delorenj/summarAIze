@@ -1,5 +1,5 @@
 import * as AWS from "aws-sdk";
-import { ISummaryFormPayload, ISummaryJobPayload, ISummaryJobStatus, IUser } from "../../types/summaraizeTypes";
+import {ISummaryFormPayload, ISummaryJobPayload, ISummaryJobStatus, IUser} from "../../types/summaraizeTypes";
 
 const sqs = new AWS.SQS({
     apiVersion: 'latest',
@@ -15,7 +15,7 @@ export enum JobStatus {
     FAILED = "FAILED"
 }
 
-export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: IUser) : Promise<ISummaryJobStatus> => {
+export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: IUser): Promise<ISummaryJobStatus> => {
     const queueUrl = process.env.QUEUE_URL as string;
 
     const job: ISummaryJobPayload = {
@@ -46,3 +46,22 @@ export const publishToSummaryQueue = async (payload: ISummaryFormPayload, user: 
 
     return jobStatus;
 }
+
+export const updateJobStatus = async (jobId: string, userId: string, status: JobStatus) => {
+    const params = {
+        TableName: process.env.jobsTableName as string,
+        Key: {
+            jobId,
+            userId
+        },
+        UpdateExpression: "set #status = :status",
+        ExpressionAttributeNames: {
+            "#status": "status",
+        },
+        ExpressionAttributeValues: {
+            ":status": status,
+        } as any,
+    };
+    await dynamoDb.update(params).promise();
+}
+

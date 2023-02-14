@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
-import {IBook, IUploadBookProps, IGetUserDataResponse, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {IBook, IGetUserDataResponse, ISummaryJobStatus, IUploadBookProps} from "../../../types/summaraizeTypes";
 import {useHomeContext} from "../contexts/homeContext";
 
 
@@ -25,6 +25,7 @@ export const createBook = (props: IBook) => {
 export const uploadBook = (props: IUploadBookProps): IBook => {
     return createBook({...{title: "Ass"}, ...defaultBook})
 }
+
 export interface UseMyDataProps {
     skipCache?: boolean
 }
@@ -34,7 +35,35 @@ export const useMyData = (props: UseMyDataProps) => {
     const {sessionInfo} = useAuth();
     const [myBooks, setMyBooks] = useState<IBook[]>([])
     const navigate = useNavigate();
+    const [poller, setPoller] = useState<NodeJS.Timeout>();
     const {skipCache} = props || false;
+
+    const pollForJobs = useCallback(() => {
+        const fetchData = (async () => {
+            try {
+                if (!sessionInfo || !sessionInfo.idToken) return;
+                const headers = {
+                    'Authorization': `Bearer ${sessionInfo.idToken}`
+                };
+
+                const {data} = await axios.get<ISummaryJobStatus[]>(
+                    'https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/user/jobs',
+                    {headers}
+                );
+                setMyJobs(data);
+                if (data.filter(job => job.status === 'PENDING').length > 0) {
+                    setPoller(setTimeout(() => {
+                        fetchData();
+                    }, 2000));
+                } else {
+                    clearTimeout(poller as NodeJS.Timeout);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        });
+        fetchData();
+    }, [sessionInfo, setMyJobs, poller, setPoller]);
 
     useEffect(() => {
         const storedBooks = localStorage.getItem("books");
@@ -79,5 +108,5 @@ export const useMyData = (props: UseMyDataProps) => {
         }
     }, [])
 
-    return {myBooks, myJobs, setMyJobs}
+    return {myBooks, myJobs, setMyJobs, pollForJobs}
 }

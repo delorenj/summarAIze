@@ -4,6 +4,7 @@ import {getUser} from "./libs/user-lib";
 import {ISummaryFormPayload, ISummarizeResult} from "../types/summaraizeTypes";
 import OpenAILib from "./libs/openai-lib";
 import {getChapterTextByPayload} from "./libs/book-lib";
+import {JobStatus, updateJobStatus} from "./libs/sqs-lib";
 
 export const handler = sqsHandler(async (event: SQSEvent) => {
     console.log("event", event);
@@ -26,9 +27,10 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
         console.log("summarizations", summarizations);
 
         //Update job status
-        updateJobStatus(event.Records[0].messageId, "completed", userId);
+        await updateJobStatus(event.Records[0].messageId, userId, JobStatus.COMPLETED);
     } catch (e) {
         console.log("Error parsing payload/userId from SQS message:", e);
         throw new Error("Error parsing payload/userId from SQS message");
     }
+    return "OK";
 });

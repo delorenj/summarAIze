@@ -36,13 +36,20 @@ export const SummaryFormContext = React.createContext(defaultState)
 const SummaryFormContextProvider = ({children}: Props) => {
     const navigate = useNavigate();
     const {sessionInfo} = useAuth();
-    const {setMyJobs, myJobs} = useMyData({skipCache: true});
+    const {setMyJobs, myJobs, pollForJobs} = useMyData({skipCache: true});
     const {activeBook} = useHomeContext();
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
     const [includeCharacterGlossary, setIncludeCharacterGlossary] = useState<boolean>(defaultState.includeCharacterGlossary);
     const [selectedChapters, setSelectedChapters] = useState<string[]>(defaultState.selectedChapters);
     const [bookId, setBookId] = useState<string>(activeBook?.bookId || defaultState.bookId);
+
+    useEffect(() => {
+        const pendingJobs = myJobs.filter(job => job.status === "PENDING");
+        if (pendingJobs.length > 0) {
+            pollForJobs();
+        }
+    }, [myJobs]);
 
     const handleSetComplexity = (event: Event, newValue: number | number[]) => {
         setComplexity(newValue as number);
