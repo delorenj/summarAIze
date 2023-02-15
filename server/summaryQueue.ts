@@ -1,11 +1,11 @@
 import {sqsHandler} from "./libs/handler-lib";
 import {SQSEvent} from "aws-lambda";
 import {getUser} from "./libs/user-lib";
-import {ISummaryFormPayload, ISummarizeResult} from "../types/summaraizeTypes";
-//import OpenAILib from "./libs/openai-lib";
+import {ISummarizeResult, ISummaryFormPayload} from "../types/summaraizeTypes";
+import OpenAILib from "./libs/openai-lib";
 import {getChapterTextByPayload} from "./libs/book-lib";
 import {JobStatus, updateJobStatus} from "./libs/sqs-lib";
-//import {createSummaryDocument} from "./libs/document-lib";
+import {createSummaryDocument} from "./libs/document-lib";
 
 export const handler = sqsHandler(async (event: SQSEvent) => {
     console.log("event", event);
@@ -22,12 +22,11 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
 
         const textToSummarize = await getChapterTextByPayload(payload, userId);
         console.log("textToSummarize", textToSummarize);
-    console.log("SKIPPING OPENAI CALLS FOR NOW");
-        //const oai = OpenAILib({user});
-        //const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
-        //console.log("summarizations", summarizations);
-
-        //const document = createSummaryDocument(summarizations, payload, userId);
+        console.log("SKIPPING OPENAI CALLS FOR NOW");
+        const oai = OpenAILib({user, mock: true});
+        const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
+        console.log("summarizations", summarizations);
+        const document = await createSummaryDocument(summarizations, payload, userId);
         //uploadDocument(document, payload, userId);
         //console.log("document", document);
         //Update job status

@@ -33,15 +33,12 @@ export const getBooks = async (userId: string): Promise<IBookRow[]> => {
 
     try {
       const publicBooks = await dynamo.query(publicBooksQuery).promise();
+      console.log("got public books", publicBooks);
+      console.log("about to get my books", myBooksQuery);
       const myBooks = await dynamo.query(myBooksQuery).promise();
-      await Promise.all([publicBooks, myBooks]).catch((e) => {
-        console.log("tom error", e);
-        throw new Error("Error getting books");
-      });
-
+      console.log("got my books", myBooks);
       const combinedBooks = [...publicBooks.Items as IBookRow[], ...myBooks.Items as IBookRow[]];
       console.log("about to return", combinedBooks);
-
       return combinedBooks;
     } catch (e) {
         console.log("jote error", e);

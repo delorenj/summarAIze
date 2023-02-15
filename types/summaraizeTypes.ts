@@ -130,13 +130,13 @@ export interface ISummarizeResult {
 }
 
 export interface ISummarizeOptions {
-      model: "text-davinci-003",
-      prompt: "",
-      temperature: 0.5,
-      max_tokens: 60,
-      top_p: 1.0,
-      frequency_penalty: 0.8,
-      presence_penalty: 0.0,
+      model: string,
+      prompt: string,
+      temperature: number,
+      max_tokens: number,
+      top_p: number,
+      frequency_penalty: number,
+      presence_penalty: number,
 }
 
 export interface ISummaryFormPayload {

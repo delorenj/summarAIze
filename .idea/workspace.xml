@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/hooks/usePollJobStatus.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/document-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/document-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/openai-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/openai-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/user-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/user-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/summaryQueue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/templates/summary-template.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
