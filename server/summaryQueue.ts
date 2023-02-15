@@ -22,7 +22,6 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
 
         const textToSummarize = await getChapterTextByPayload(payload, userId);
         console.log("textToSummarize", textToSummarize);
-        console.log("SKIPPING OPENAI CALLS FOR NOW");
         const oai = OpenAILib({user, mock: true});
         const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
         console.log("summarizations", summarizations);

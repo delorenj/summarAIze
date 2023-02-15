@@ -280,12 +280,13 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
                     numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
                     if (line.toLowerCase().includes('chapter')) {
                         chapterCount += 1;
+                        const lineIndexLookahead = Math.min(lineIndex + 3, lines.length);
                         chapterBreaks.push({
                             id: `page-${i}-line-${lineIndex}`,
                             page: i,
                             chapter: chapterCount,
                             numWords: numWordsPerChapter,
-                            firstFewWords: lines.slice(lineIndex, lineIndex + 3).join(" ")
+                            firstFewWords: lines.slice(lineIndex, lineIndexLookahead).join(" ")
                         });
                         console.log("Found chapter break", chapterBreaks);
                         break;
@@ -299,7 +300,7 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
             console.log("No chapter breaks found, adding one at the beginning of the book");
             let firstFewWords = '';
             try {
-                firstFewWords = doc.textPerPage[0].text.split(" ").slice(0, 250).join(" ");
+                firstFewWords = doc.textPerPage[0].text.split(" ").slice(0, 50).join(" ");
             } catch (err) {
                 console.log("Problem getting first few words", err);
             }

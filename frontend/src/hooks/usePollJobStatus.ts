@@ -10,12 +10,10 @@ export const usePollJobStatus = (active: boolean) => {
     const statusEndpoint = 'https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/user/jobs';
     const {sessionInfo} = useAuth();
     const startPolling = () => {
-        debugger;
         setPolling(true);
     }
 
     useEffect(() => {
-        debugger;
         let intervalId: NodeJS.Timeout
         const headers = {
             'Authorization': `Bearer ${sessionInfo?.idToken}`
