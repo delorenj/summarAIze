@@ -1,20 +1,23 @@
 import * as AWS from "aws-sdk";
+import Handlebars from "handlebars";
 import PDFDocument from "pdfkit";
 import {ISummarizeResult, ISummaryFormPayload, IUser} from "../../types/summaraizeTypes";
-import {getBookRow} from "./book-lib";
+import {getBookRow, stripNewlinesAndCollapseSpaces} from "./book-lib";
 import openaiLib from "./openai-lib";
 import {getUser} from "./user-lib";
-import blobStream from "blob-stream";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
-const html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\" /><title>{{title}}</title></head><body><h1>{{title}}</h1><p>{{description}}</p><ul>{{#each summaries}}<li><h2>{{summaryTitle}}</h2><p>{{summaryText}}</p></li>{{/each}}</ul></body></html>";
-
+const titleOptions = {
+    align: 'center',
+}
+const titleFont = 'Helvetica-Bold';
+const titleSize = 20;
 const options = {
     format: 'A4',
     orientation: 'portrait',
-    border: '10mm',
+    border: '20mm',
 };
 
 interface ISummarySection {
@@ -36,7 +39,7 @@ const getDescriptionFromPayload = async (payload: ISummaryFormPayload, user: IUs
 const getSummariesFromSummarizations = (summarizations: ISummarizeResult[]): ISummarySection[] => {
     return summarizations.map((summarization) => {
         return {
-            summaryTitle: summarization.summary.chapter.title as string,
+            summaryTitle: summarization.summary.chapter.title || summarization.summary.chapter.id as string,
             summaryText: summarization.summary.text,
         }
     });
@@ -52,38 +55,37 @@ export const createSummaryDocument = async (summarizations: ISummarizeResult[], 
         summaries: getSummariesFromSummarizations(summarizations)
     };
 
-    const document = {
-        html,
-        data: htmlData,
-        type: "buffer",
-    };
-
-    console.log("document", document);
     const doc = new PDFDocument();
-    const stream = doc.pipe(blobStream());
-    doc.text("Hello World");
-    doc.end();
-    await uploadBlobStreamToS3(stream, userId, payload.bookId);
+
+    doc.font(titleFont).fontSize(titleSize).text(bookRow.title, titleOptions);
+    doc.moveDown(1);
+    doc.font('Helvetica-Oblique').fontSize(12).text(description, {align: 'justify'});
+    doc.moveDown(2);
+    htmlData.summaries.forEach((summary) => {
+        doc.font('Helvetica-Bold').fontSize(14).text('Summary of ' + summary.summaryTitle, {align: 'center'});
+        doc.moveDown(1);
+        doc.font('Helvetica').fontSize(12).text(stripNewlinesAndCollapseSpaces(summary.summaryText), {align: 'justify'});
+        doc.moveDown(1);
+    });
+    const pdfBytes = await new Promise((resolve) => {
+        const chunks: any = [];
+        doc.on("data", (chunk) => chunks.push(chunk));
+        doc.on("end", () => resolve(Buffer.concat(chunks)));
+        doc.end();
+    });
+    await uploadBlobStreamToS3(pdfBytes, userId, payload.bookId);
 }
 
-export const uploadBlobStreamToS3 = async (stream: any, userId: string, bookId: string) => {
-    stream.on('finish', async function () {
-        // get a blob you can do whatever you like with
-        const blob = stream.toBlob('application/pdf');
-        console.log("blob", blob);
-        const params = {
-            Bucket: "summaraize-book",
-            Key: `${userId}/summaries/${bookId}.pdf`,
-            Body: blob,
-            ContentType: "application/pdf",
-        };
-        console.log("params", params);
-        const result = await s3.upload(params).promise();
-        console.log("result", result);
+export const uploadBlobStreamToS3 = async (buffer: any, userId: string, bookId: string) => {
 
-        // or get a blob URL for display in the browser
-        const url = stream.toBlobURL('application/pdf');
-        console.log("url", url);
-        return result;
-    });
+    const params = {
+        Bucket: "summaraize-book",
+        Key: `${userId}/summaries/${bookId}.pdf`,
+        Body: buffer,
+        ContentType: "application/pdf",
+    };
+    console.log("params", params);
+    const result = await s3.upload(params).promise();
+    console.log("result", result);
+    return result;
 }

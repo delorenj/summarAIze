@@ -221,7 +221,7 @@ const numberOfWords = (text: string): number => {
     return text?.split(" ").length || 0;
 };
 
-const stripNewlinesAndCollapseSpaces = (str: string): string => {
+export const stripNewlinesAndCollapseSpaces = (str: string): string => {
     return str.replace(/(\r\n|\n|\r|\t|\s{2,})/gm, " ").trim();
 };
 
