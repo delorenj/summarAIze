@@ -13,6 +13,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {Fade, Grow, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import {styled} from "@mui/styles";
 import {useMemo} from "react";
+import { IChapterIdName } from '../../../types/summaraizeTypes';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,10 +44,13 @@ export const ChapterSelect = () => {
         const {
             target: {value},
         } = event;
-        setSelectedChapters(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+
+        if (typeof value === 'string') {
+            const map: IChapterIdName[] = value.split(',').map((v: string) => JSON.parse(v))
+            setSelectedChapters(map);
+        } else {
+            setSelectedChapters(value.map((v: string) => JSON.parse(v)));
+        }
     };
 
     const navigableChapters = useMemo(() => {
@@ -61,7 +65,7 @@ export const ChapterSelect = () => {
                         disableHoverListener={navigableChapters}
                         arrow={true}
                         TransitionComponent={Grow}
-                        TransitionProps={{ timeout: 600 }}                        placement="top"
+                        TransitionProps={{timeout: 600}} placement="top"
                         title={
                             <>
                                 <Typography color="inherit"><strong>No navigable chapters</strong></Typography>
@@ -75,17 +79,17 @@ export const ChapterSelect = () => {
                                 labelId="demo-multiple-checkbox-label"
                                 id="demo-multiple-checkbox"
                                 multiple
-                                value={selectedChapters}
+                                value={selectedChapters.map(v => JSON.stringify(v))}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Include chapters"/>}
-                                renderValue={(selected) => selectedChapters.join(', ')}
+                                renderValue={(selected) => selectedChapters.map(v => v.name).join(', ')}
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
-                                    <MenuItem key={chapter.id || `Page ${chapter.page}`}
-                                              value={chapter.id || `Page ${chapter.page}`}>
+                                    <MenuItem key={ JSON.stringify({id: chapter.id, name: chapter.page}) }
+                                              value={ JSON.stringify({id: chapter.id, name: `Page ${chapter.page}`}) }>
                                         <Checkbox
-                                            checked={selectedChapters.indexOf(chapter.id as unknown as string || `Page ${chapter.page}` as unknown as string) > -1}/>
+                                            checked={selectedChapters.indexOf({id: chapter.id, name: chapter.page as unknown as string}) > -1}/>
                                         <ListItemText
                                             primary={chapter.title || `Chapter ${index + 1} (${chapter.page})`}
                                             secondary={chapter.firstFewWords.split(' ').slice(0, 8).join(' ')}/>

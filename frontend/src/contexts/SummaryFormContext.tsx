@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAuth} from "./authContext";
-import {ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {IChapterIdName, ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
 import {useNavigate} from "react-router-dom";
 import {useMyData} from "../hooks/useMyData";
 import {usePollJobStatus} from "../hooks/usePollJobStatus";
@@ -12,11 +12,10 @@ export interface ISummaryFormContext {
     complexity: number, setComplexity: (complexity: number) => void, handleSetComplexity: (event: Event, newValue: number | number[]) => void,
     depth: number, setDepth: (depth: number) => void, handleSetDepth: (event: Event, newValue: number | number[]) => void,
     includeCharacterGlossary: boolean, setIncludeCharacterGlossary: (includeCharacterGlossary: boolean) => void,
-    selectedChapters: string[], setSelectedChapters: (chapters: string[]) => void,
+    selectedChapters: IChapterIdName[], setSelectedChapters: (chapters: IChapterIdName[]) => void,
     numWordsSelected: number,
     onGenerateSummary: () => void,
 }
-
 
 const defaultState: ISummaryFormContext = {
     bookId: "unset", setBookId: () => { throw new Error("implement me")},
@@ -43,7 +42,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
     const [includeCharacterGlossary, setIncludeCharacterGlossary] = useState<boolean>(defaultState.includeCharacterGlossary);
-    const [selectedChapters, setSelectedChapters] = useState<string[]>(defaultState.selectedChapters);
+    const [selectedChapters, setSelectedChapters] = useState<IChapterIdName[]>(defaultState.selectedChapters);
     const [bookId, setBookId] = useState<string>(activeBook?.bookId || defaultState.bookId);
 
     // useEffect(() => {
@@ -110,8 +109,10 @@ const SummaryFormContextProvider = ({children}: Props) => {
     }
 
     const numWordsSelected = useMemo(() => {
-        return selectedChapters.reduce((acc, chapterId) => {
-            const chapter = activeBook?.chapters.find(chapter => chapter.id === chapterId);
+        return selectedChapters.reduce((acc, chapterMap) => {
+            const chapter = activeBook?.chapters.find((chapter) => {
+                chapter.id === chapterMap.id
+            });
             return acc + (chapter?.numWords || 0);
         }, 0);
     }, [selectedChapters, activeBook]);

@@ -289,6 +289,10 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
                             firstFewWords: lines.slice(lineIndex, lineIndexLookahead).join(" ")
                         });
                         console.log("Found chapter break", chapterBreaks);
+                        if(i > 0) {
+                            // Add end to the previous chapter
+                            chapterBreaks[i-1].end = `page-${i}-line-${lineIndex}`;
+                        }
                         break;
                     }
                 }
@@ -305,7 +309,7 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
                 console.log("Problem getting first few words", err);
             }
             chapterBreaks.push({
-                id: "all",
+                id: "page-0-line-0",
                 page: 1,
                 chapter: 1,
                 numWords,

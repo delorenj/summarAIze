@@ -48,6 +48,7 @@ export interface IChapterText {
 
 export interface IChapter {
     id: string,
+    end?: string,
     page?: number,
     chapter?: number,
     title?: string,
@@ -139,12 +140,17 @@ export interface ISummarizeOptions {
       presence_penalty: number,
 }
 
+export interface IChapterIdName {
+    id: string,
+    name: string
+}
+
 export interface ISummaryFormPayload {
     bookId: string,
     complexity: number,
     depth: number,
     includeCharacterGlossary: boolean,
-    selectedChapters: string[]
+    selectedChapters: IChapterIdName[]
 }
 
 export interface IUploadTask {
