@@ -9,7 +9,7 @@ import {getUser} from "./user-lib";
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
-const html = fs.readFileSync('templates/summary-template.html', 'utf8');
+const html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\" /><title>{{title}}</title></head><body><h1>{{title}}</h1><p>{{description}}</p><ul>{{#each summaries}}<li><h2>{{summaryTitle}}</h2><p>{{summaryText}}</p></li>{{/each}}</ul></body></html>";
 
 const options = {
     format: 'A4',

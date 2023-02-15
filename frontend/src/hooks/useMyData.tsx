@@ -1,10 +1,11 @@
-import {useCallback, useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {useAuth} from "../contexts/authContext";
 import {signOut} from "../libs/cognito";
 import {useNavigate} from "react-router-dom";
-import {IBook, IGetUserDataResponse, ISummaryJobStatus, IUploadBookProps} from "../../../types/summaraizeTypes";
+import {IBook, IGetUserDataResponse, IUploadBookProps} from "../../../types/summaraizeTypes";
 import {useHomeContext} from "../contexts/homeContext";
+import {usePollJobStatus} from "./usePollJobStatus";
 
 
 const defaultBook: IBook = {
@@ -35,40 +36,9 @@ export const useMyData = (props: UseMyDataProps) => {
     const {sessionInfo} = useAuth();
     const [myBooks, setMyBooks] = useState<IBook[]>([])
     const navigate = useNavigate();
-    const [poller, setPoller] = useState<NodeJS.Timeout>();
     const {skipCache} = props || false;
 
-    const pollForJobs = useCallback(() => {
-        console.log("pollForJobs(): inside useCallback");
-        const fetchData = (async () => {
-            console.log("pollForJobs(): inside fetchData()");
-            try {
-                if (!sessionInfo || !sessionInfo.idToken) return;
-                const headers = {
-                    'Authorization': `Bearer ${sessionInfo.idToken}`
-                };
-
-                const {data} = await axios.get<ISummaryJobStatus[]>(
-                    'https://4kx4cryfxd.execute-api.us-east-1.amazonaws.com/dev/user/jobs',
-                    {headers}
-                );
-                setMyJobs(data);
-                if (data.filter(job => job.status === 'PENDING').length > 0) {
-                    console.log("pollForJobs(): still pending jobs. About to setPoller() again...");
-                    setPoller(setTimeout(() => {
-                        fetchData();
-                    }, 2000));
-                } else {
-                    console.log("pollForJobs(): no pending jobs. About to clearTimeout()...");
-                    clearTimeout(poller as NodeJS.Timeout);
-                }
-            } catch (err) {
-                console.log(err);
-            }
-        });
-        console.log("pollForJobs(): about to call initial fetchData()...");
-        fetchData();
-    }, [sessionInfo, setMyJobs, poller, setPoller]);
+    const {startPolling} = usePollJobStatus(false);
 
     useEffect(() => {
         const storedBooks = localStorage.getItem("books");
@@ -113,5 +83,5 @@ export const useMyData = (props: UseMyDataProps) => {
         }
     }, [])
 
-    return {myBooks, myJobs, setMyJobs, pollForJobs}
+    return {myBooks, myJobs, setMyJobs, startPolling}
 }

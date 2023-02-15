@@ -5,6 +5,7 @@ import {useAuth} from "./authContext";
 import {ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
 import {useNavigate} from "react-router-dom";
 import {useMyData} from "../hooks/useMyData";
+import {usePollJobStatus} from "../hooks/usePollJobStatus";
 
 export interface ISummaryFormContext {
     bookId: string, setBookId: (bookId: string) => void,
@@ -36,20 +37,23 @@ export const SummaryFormContext = React.createContext(defaultState)
 const SummaryFormContextProvider = ({children}: Props) => {
     const navigate = useNavigate();
     const {sessionInfo} = useAuth();
-    const {setMyJobs, myJobs, pollForJobs} = useMyData({skipCache: true});
+    const {setMyJobs, myJobs} = useMyData({skipCache: true});
     const {activeBook} = useHomeContext();
+    const {startPolling} = usePollJobStatus(false);
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
     const [includeCharacterGlossary, setIncludeCharacterGlossary] = useState<boolean>(defaultState.includeCharacterGlossary);
     const [selectedChapters, setSelectedChapters] = useState<string[]>(defaultState.selectedChapters);
     const [bookId, setBookId] = useState<string>(activeBook?.bookId || defaultState.bookId);
 
-    useEffect(() => {
-        const pendingJobs = myJobs.filter(job => job.status === "PENDING");
-        if (pendingJobs.length > 0) {
-            pollForJobs();
-        }
-    }, [myJobs]);
+    // useEffect(() => {
+    //     console.log("SummaryFormContextProvider useEffect for [myJobs]", myJobs);
+    //     const pendingJobs = myJobs.filter(job => job.status === "PENDING");
+    //     if (pendingJobs.length > 0) {
+    //         console.log("polling for jobs since there are some pending (initial call)", pendingJobs.length)
+    //         startPolling();
+    //     }
+    // }, [myJobs]);
 
     const handleSetComplexity = (event: Event, newValue: number | number[]) => {
         setComplexity(newValue as number);
@@ -62,6 +66,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
     const onCompleteGenerateSummary = (response:AxiosResponse<ISummaryJobStatus>) => {
         console.log("onCompletedGenerateSummary", response);
         setMyJobs([...myJobs, response.data]);
+        startPolling();
     };
 
     const onErrorGenerateSummary = (error: AxiosError) => {

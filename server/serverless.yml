@@ -52,10 +52,6 @@ plugins:
   - serverless-offline
   - serverless-lift
 
-package:
-  patterns:
-    - templates/**
-
 custom:
   stage: ${opt:stage, self:provider.stage}
   bundle:
