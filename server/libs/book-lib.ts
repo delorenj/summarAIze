@@ -235,6 +235,8 @@ const getEpubMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
     const chapters: IChapter[] = [];
     let totalNumWords = 0;
     let chapterCount = 0;
+    console.log("epub.flow", epub.flow);
+    console.log("epub", epub);
     for (const chapter of epub.flow) {
         chapterCount += 1;
         const rawChapter = await epub.getChapterAsync(chapter.id);
@@ -245,6 +247,7 @@ const getEpubMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
             id: chapter.id,
             chapter: chapterCount,
             title: chapter.title,
+            page: chapter.page,
             numWords,
             firstFewWords: noTagText.split(" ").slice(0, 250).join(" ")
         };

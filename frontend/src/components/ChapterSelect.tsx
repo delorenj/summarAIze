@@ -83,7 +83,7 @@ export const ChapterSelect = () => {
                                 value={selectedChapters.map(v => JSON.stringify(v))}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Include chapters"/>}
-                                renderValue={(selected) => selectedChapters.map(v => `Page ${v.name}`).join(', ')}
+                                renderValue={(selected) => navigableChapters ?  selectedChapters.map(v => v.id).join(', ') : selectedChapters.map(v => `Page ${v.name}`).join(', ')}
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
