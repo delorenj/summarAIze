@@ -83,12 +83,12 @@ export const ChapterSelect = () => {
                                 value={selectedChapters.map(v => JSON.stringify(v))}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Include chapters"/>}
-                                renderValue={(selected) => selectedChapters.map(v => v.name).join(', ')}
+                                renderValue={(selected) => selectedChapters.map(v => `Page ${v.name}`).join(', ')}
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
                                     <MenuItem key={ JSON.stringify({id: chapter.id, name: chapter.page }) }
-                                              value={ JSON.stringify({id: chapter.id, name: `Page ${chapter.page}`}) }>
+                                              value={ JSON.stringify({id: chapter.id, name: chapter.page}) }>
                                         <Checkbox
                                             checked={selectedChapters.filter(v => v.id === chapter.id).length > 0}/>
                                         <ListItemText
