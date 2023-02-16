@@ -21,6 +21,7 @@ import {getBooks} from "./user-lib";
 import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
 import {DocumentContext, createDocumentContext} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
+import {createChapterParser, LookForChapterHeadingStrategy} from "./Documents/ChapterParser";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -226,75 +227,6 @@ export const numberOfWords = (text: string): number => {
 export const stripNewlinesAndCollapseSpaces = (str: string): string => {
     return str.replace(/(\r\n|\n|\r|\t|\s{2,})/gm, " ").trim();
 };
-export const findChapterBreaks = async (doc: DocumentContext): Promise<IChapter[]> => {
-        const numPages = await doc.pageCount();
-        console.log("Number of pages", numPages);
-        const chapterBreaks: IChapter[] = [];
-        const numWords = await doc.wordCount();
-        console.log("Number of words", numWords);
-        let chapterCount = 0;
-        let numWordsPerChapter = 0;
-        let lines = [];
-        for (let i = 0; i < numPages; i++) {
-            const page = await doc.getPage(i);
-            lines = page.match(/[^\r\n]+/g) || [];
-            try {
-                // Loop through the lines on the page and look for "Chapter" keyword
-                for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-                    const line = lines[lineIndex];
-                    if (line.toLowerCase().includes('chapter')) {
-                        const lineIndexLookahead = Math.min(lineIndex + 3, lines.length);
-                        chapterBreaks.push({
-                            id: `page-${i}-line-${lineIndex}`,
-                            page: i,
-                            chapter: chapterCount + 1,
-                            numWords: -1,
-                            firstFewWords: lines.slice(lineIndex, lineIndexLookahead).join(" ")
-                        });
-                        console.log("Found chapter break", chapterBreaks);
-                        if (chapterCount > 0) {
-                            // Add end to the previous chapter
-                            chapterBreaks[chapterCount - 1].end = `page-${i}-line-${lineIndex}`;
-                            chapterBreaks[chapterCount - 1].numWords = numWordsPerChapter;
-                            console.log("Added end to previous chapter", numWordsPerChapter);
-                            numWordsPerChapter = 0;
-                        }
-                        chapterCount += 1;
-                        numWordsPerChapter = 0;
-                        console.log("chapterCount", chapterCount, "numWordsPerChapter reset", numWordsPerChapter)
-                        break;
-                    } else {
-                        console.log("No chapter break found on line", line);
-                        numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
-                        console.log("new numWordsPerChapter", numWordsPerChapter);
-                    }
-                }
-            } catch (e) {
-                console.log("error parsing chapter breaks", e);
-            }
-        }
-        if (chapterBreaks.length === 0) {
-            console.log("No chapter breaks found, adding one at the beginning of the book");
-            let firstFewWords = '';
-            try {
-                firstFewWords = (await doc.getPage(0)).split(" ").slice(0, 50).join(" ");
-            } catch (err) {
-                console.log("Problem getting first few words", err);
-            }
-            chapterBreaks.push({
-                id: "page-0-line-0",
-                page: 1,
-                chapter: 1,
-                numWords,
-                firstFewWords
-            });
-        } else {
-            chapterBreaks[chapterBreaks.length - 1].end = `page-${numPages}-line-${lines.length}`;
-            chapterBreaks[chapterBreaks.length - 1].numWords = numWordsPerChapter;
-        }
-        console.log("Chapter breaks", chapterBreaks);
-        return chapterBreaks;
-    };
 
 export const getTitleFromUrl = (url: string): string | undefined => {
     return url.split("/").pop()?.split(".")[0];
@@ -360,11 +292,19 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         console.log("Generic metatdata detected...");
         metadata = await getGenericMetadata(book);
     } else if (isEpub(fileType)) {
-        const {parseMetadata} = createDocumentContext(EpubDocumentStrategy({book}));
-        metadata = await parseMetadata();
+        const documentContext = createDocumentContext(EpubDocumentStrategy({book}));
+        metadata = await documentContext.parseMetadata();
+        console.log("Got book metadata", metadata);
+        const chapterParser = createChapterParser(LookForChapterHeadingStrategy());
+        const chapters = await chapterParser.parse(documentContext);
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
     } else if (isPdf(fileType)) {
-        const {parseMetadata} = createDocumentContext(PDFDocumentStrategy({book}));
-        metadata = await parseMetadata();
+        const documentContext = createDocumentContext(PDFDocumentStrategy({book}));
+        metadata = await documentContext.parseMetadata();
+        const chapters = createChapterParser(LookForChapterHeadingStrategy()).parse(documentContext);
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
     } else {
         //Generic metadata for other file types
         console.log("Generic metatdata detected...");

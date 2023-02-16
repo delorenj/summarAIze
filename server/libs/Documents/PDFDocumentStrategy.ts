@@ -1,8 +1,7 @@
 import {IBookMetadata, IChapter, IRawBook} from '../../../types/summaraizeTypes';
 import {DocumentStrategy} from './DocumentStrategy';
-import pdfParse from 'fork-pdf-parse-with-pagepertext';
-import fullPdfParse from 'pdf-parse';
-import {findChapterBreaks, getTitleFromUrl, numberOfWords, stripNewlinesAndCollapseSpaces} from "../book-lib";
+import pdfParse from 'pdf-parse';
+import {getTitleFromUrl} from "../book-lib";
 import striptags from "striptags";
 
 const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
@@ -10,42 +9,28 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const pdf = async (): Promise<any> => {
         return await pdfParse(book.fileContents);
     }
-    const fullPdf = async (): Promise<any> => {
-        return await fullPdfParse(book.fileContents);
+    const wordCount = async (): Promise<number> => {
+        const allWords = await getAllText();
+        return allWords.split(" ").length;
     }
-    const getPage = async (pageNumber: number): Promise<string> => {
-        const doc = await pdf();
-        const numPages = doc.textPerPage.length;
-        if (pageNumber >= numPages) {
-            throw new Error("Page number is out of range");
-        }
-        return doc.textPerPage[pageNumber - 1];
-    };
-
-    const pageCount = async (): Promise<number> => {
-        const doc = await pdf();
-        return doc.textPerPage.length + 1;
-    };
 
     const getAllText = async (): Promise<string> => {
-        const doc = await fullPdf();
+        const doc = await pdf();
         return striptags(doc.text);
     }
 
     const parseMetadata = async (): Promise<IBookMetadata> => {
         const doc = await pdf();
         console.log("Got PDF doc");
-        const fullDoc = await fullPdf();
-        console.log("Got full PDF doc");
         const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
-        const chapters = findChapterBreaks(doc, fullDoc);
+        const chapters:IChapter[] = [];
         const info = doc.info;
         const metadata = doc.metadata;
         console.log("PDF metadata", {title, chapters, info, metadata});
         console.log("chapters", chapters);
         return {
             title,
-            numWords: numberOfWords(fullDoc.text),
+            numWords: await wordCount(),
             chapters,
             fileType: {
                 ext: "pdf",
@@ -54,7 +39,7 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         };
     };
 
-    return {getPage, pageCount, parseMetadata, getAllText};
+    return {parseMetadata, getAllText};
 };
 
 export default PDFDocumentStrategy;

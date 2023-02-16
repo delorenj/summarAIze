@@ -5,17 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/DocumentContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/DocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/EpubDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/PDFDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -82,7 +90,7 @@
       <updated>1676392203618</updated>
       <workItem from="1676392205836" duration="745000" />
       <workItem from="1676392999905" duration="3679000" />
-      <workItem from="1676411764624" duration="27373000" />
+      <workItem from="1676411764624" duration="34620000" />
     </task>
     <servers />
   </component>
@@ -100,9 +108,21 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts</url>
-          <line>10</line>
+          <line>13</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts</url>
+          <line>85</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/server/libs/book-lib.ts</url>
+          <line>98</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
