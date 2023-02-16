@@ -17,7 +17,6 @@ import {
 import fullPdf from 'pdf-parse';
 import {promises as fs} from "fs";
 import {dirname as getDirName} from "path";
-import {QueryInput} from "aws-sdk/clients/dynamodb";
 import {getBooks} from "./user-lib";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -30,7 +29,7 @@ export const getChapterTextByPayload = async (payload: ISummaryFormPayload, user
     const chapterTexts = [];
     for (const selectedChapter of payload.selectedChapters) {
         console.log("selectedChapter", selectedChapter);
-        const chapter = getRawChapterById(bookRow, selectedChapter);
+        const chapter = getRawChapterById(bookRow, selectedChapter.id);
         console.log("chapter", chapter);
         const chapterText = await getTextByChapter(rawBook, chapter);
         console.log("chapterText", chapterText);
@@ -93,7 +92,7 @@ export const getBookRow = async (bookId: string, userId: string): Promise<IBookR
     const books = await getBooks(userId);
     console.log("jong books", books)
     const book = books.filter(book => book.bookId === bookId);
-    if(!book) {
+    if (!book) {
         throw new Error(`Could not find book with id ${bookId}`);
     }
     return book[0] as IBookRow;
@@ -268,32 +267,41 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
         console.log("Number of pages", numPages);
         const chapterBreaks: IChapter[] = [];
         const numWords = numberOfWords(fullDoc.text);
+        let chapterCount = 0;
+        let numWordsPerChapter = 0;
+        let lines;
         for (let i = 0; i < numPages; i++) {
-            let numWordsPerChapter = 0;
             const page = doc.textPerPage[i];
-            const lines = page.text.match(/[^\r\n]+/g);
-            let chapterCount = 0;
+            lines = page.text.match(/[^\r\n]+/g);
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
                     const line = lines[lineIndex];
-                    numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
                     if (line.toLowerCase().includes('chapter')) {
-                        chapterCount += 1;
                         const lineIndexLookahead = Math.min(lineIndex + 3, lines.length);
                         chapterBreaks.push({
                             id: `page-${i}-line-${lineIndex}`,
                             page: i,
-                            chapter: chapterCount,
-                            numWords: numWordsPerChapter,
+                            chapter: chapterCount + 1,
+                            numWords: -1,
                             firstFewWords: lines.slice(lineIndex, lineIndexLookahead).join(" ")
                         });
                         console.log("Found chapter break", chapterBreaks);
-                        if(i > 0) {
+                        if (chapterCount > 0) {
                             // Add end to the previous chapter
-                            chapterBreaks[i-1].end = `page-${i}-line-${lineIndex}`;
+                            chapterBreaks[chapterCount - 1].end = `page-${i}-line-${lineIndex}`;
+                            chapterBreaks[chapterCount - 1].numWords = numWordsPerChapter;
+                            console.log("Added end to previous chapter", numWordsPerChapter);
+                            numWordsPerChapter = 0;
                         }
+                        chapterCount += 1;
+                        numWordsPerChapter = 0;
+                        console.log("chapterCount", chapterCount, "numWordsPerChapter reset", numWordsPerChapter)
                         break;
+                    } else {
+                        console.log("No chapter break found on line", line);
+                        numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
+                        console.log("new numWordsPerChapter", numWordsPerChapter);
                     }
                 }
             } catch (e) {
@@ -315,6 +323,9 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
                 numWords,
                 firstFewWords
             });
+        } else {
+            chapterBreaks[chapterBreaks.length - 1].end = `page-${numPages}-line-${lines.length}`;
+            chapterBreaks[chapterBreaks.length - 1].numWords = numWordsPerChapter;
         }
         console.log("Chapter breaks", chapterBreaks);
         return chapterBreaks;

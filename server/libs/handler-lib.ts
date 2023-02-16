@@ -4,6 +4,7 @@ import {
   Callback,
   Context, S3CreateEvent, SQSEvent,
 } from "aws-lambda";
+import {InvokeAsyncRequest} from "aws-sdk/clients/lambda";
 
 export default function handler(lambda: (event: APIGatewayProxyWithCognitoAuthorizerEvent) =>
     Promise<string>) {
@@ -75,14 +76,13 @@ export function sqsHandler(lambda: (event: SQSEvent) => Promise<string>) {
   };
 }
 
-export function invokeHandler(lambda: () => Promise<string>) {
-  return async function () {
+export function invokeHandler(lambda: (event:any) => Promise<any>) {
+  return async function (event:any) {
     let body, statusCode;
 
     try {
       // Run the Lambda
-      await lambda();
-      body = "Success";
+      body = await lambda(event);
       statusCode = 200;
     } catch (e: any) {
       body = { error: e.message };

@@ -2,26 +2,26 @@ import handler, {invokeHandler, s3handler} from "./libs/handler-lib";
 import {getBookFromFileSystemOrS3, writeMetadataToDB} from "./libs/book-lib";
 import {APIGatewayProxyWithCognitoAuthorizerEvent, S3CreateEvent} from "aws-lambda";
 import * as AWS from "aws-sdk";
-import { IBook, IRawBook } from "../types/summaraizeTypes";
+import {IBook, IRawBook} from "../types/summaraizeTypes";
 
 export interface IParseBookMetadataPayload {
     bookUrl: string;
 }
 
 //This method is called by the client to get the book metadata
-export const parseBookMetadata = handler(async (event:APIGatewayProxyWithCognitoAuthorizerEvent) => {
+export const parseBookMetadata = handler(async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
     const userId = event.requestContext.authorizer.claims.sub;
-    const body : IParseBookMetadataPayload = JSON.parse(event.body as string);
+    const body: IParseBookMetadataPayload = JSON.parse(event.body as string);
     const bookUrl = body.bookUrl;
 
-    const book : IRawBook = await getBookFromFileSystemOrS3(bookUrl);
+    const book: IRawBook = await getBookFromFileSystemOrS3(bookUrl);
     await writeMetadataToDB(userId, book);
     return JSON.stringify({
         book
     });
 });
 
-export const onUpload = s3handler(async (event:S3CreateEvent) => {
+export const onUpload = s3handler(async (event: S3CreateEvent) => {
     const object = event.Records[0].s3.object;
     const key = object.key;
     const userId = key.split("/")[0];
@@ -29,7 +29,7 @@ export const onUpload = s3handler(async (event:S3CreateEvent) => {
     const book = await getBookFromFileSystemOrS3(key);
     console.log("got book", book);
     await writeMetadataToDB(userId, book);
-    return JSON.stringify(  {
+    return JSON.stringify({
         book
     });
 });
@@ -47,6 +47,24 @@ export const parseAllBooks = invokeHandler(async () => {
         const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
         await writeMetadataToDB(book.userId, bookFromS3);
     }
-    return JSON.stringify({});
+    //return the keys of the books that were parsed
+    return {books: books.Items.map((book: IBook) => book.key) };
 });
 
+export const parseBook = invokeHandler(async (event) => {
+    console.log("event", event);
+    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+    //first, get all the books from the DB
+    const params = {
+        TableName: "dev-books",
+    };
+    const books: any = await dynamoDb.scan(params).promise();
+    const payload = event.book;
+    const reg = new RegExp(payload);
+    const book = books.Items.filter((book: IBook) => book.key.match(reg))[0];
+    console.log("book", book);
+    const bookUrl = `${book.userId}/${book.key}`;
+    const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
+    await writeMetadataToDB(book.userId, bookFromS3);
+    return {book: {'key': book.key} };
+});

@@ -98,6 +98,9 @@ functions:
   parseAllBooks:
     handler: book.parseAllBooks
     timeout: 300
+  parseBook:
+    handler: book.parseBook
+    timeout: 300
 
   parseBookMetadata:
     handler: book.parseBookMetadata

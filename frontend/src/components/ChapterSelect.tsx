@@ -54,7 +54,7 @@ export const ChapterSelect = () => {
     };
 
     const navigableChapters = useMemo(() => {
-        return activeBook && activeBook.chapters.filter(chapter => chapter.id).length > 0;
+        return activeBook && activeBook.chapters.filter(chapter => !chapter.id.startsWith('page')).length > 0;
     }, [activeBook]);
 
     return (
@@ -65,7 +65,8 @@ export const ChapterSelect = () => {
                         disableHoverListener={navigableChapters}
                         arrow={true}
                         TransitionComponent={Grow}
-                        TransitionProps={{timeout: 600}} placement="top"
+                        TransitionProps={{timeout: 600}}
+                        placement="top-end"
                         title={
                             <>
                                 <Typography color="inherit"><strong>No navigable chapters</strong></Typography>
@@ -86,10 +87,10 @@ export const ChapterSelect = () => {
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
-                                    <MenuItem key={ JSON.stringify({id: chapter.id, name: chapter.page}) }
+                                    <MenuItem key={ JSON.stringify({id: chapter.id, name: chapter.page }) }
                                               value={ JSON.stringify({id: chapter.id, name: `Page ${chapter.page}`}) }>
                                         <Checkbox
-                                            checked={selectedChapters.indexOf({id: chapter.id, name: chapter.page as unknown as string}) > -1}/>
+                                            checked={selectedChapters.filter(v => v.id === chapter.id).length > 0}/>
                                         <ListItemText
                                             primary={chapter.title || `Chapter ${index + 1} (${chapter.page})`}
                                             secondary={chapter.firstFewWords.split(' ').slice(0, 8).join(' ')}/>
