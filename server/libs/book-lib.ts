@@ -18,6 +18,9 @@ import fullPdf from 'pdf-parse';
 import {promises as fs} from "fs";
 import {dirname as getDirName} from "path";
 import {getBooks} from "./user-lib";
+import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
+import {DocumentContext, createDocumentContext} from "./Documents/DocumentContext";
+import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -216,66 +219,25 @@ const isPdf = (fileType: IFileType) => {
     return fileType && fileType.mime === "application/pdf";
 };
 
-const numberOfWords = (text: string): number => {
+export const numberOfWords = (text: string): number => {
     return text?.split(" ").length || 0;
 };
 
 export const stripNewlinesAndCollapseSpaces = (str: string): string => {
     return str.replace(/(\r\n|\n|\r|\t|\s{2,})/gm, " ").trim();
 };
-
-// This method is called by the client to get the book metadata
-const getEpubMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
-    if (!book.fileContents) {
-        throw new Error("No file contents");
-    }
-
-    const epub = await EPub.createAsync(book.fileContents as unknown as string);
-    const title = epub.metadata.title;
-    const chapters: IChapter[] = [];
-    let totalNumWords = 0;
-    let chapterCount = 0;
-    console.log("epub.flow", epub.flow);
-    console.log("epub", epub);
-    for (const chapter of epub.flow) {
-        chapterCount += 1;
-        const rawChapter = await epub.getChapterAsync(chapter.id);
-        const noTagText = stripNewlinesAndCollapseSpaces(striptags(rawChapter));
-        const numWords = numberOfWords(noTagText);
-        totalNumWords += numWords;
-        const chapterResult = {
-            id: chapter.id,
-            chapter: chapterCount,
-            title: chapter.title,
-            page: chapter.page,
-            numWords,
-            firstFewWords: noTagText.split(" ").slice(0, 250).join(" ")
-        };
-        chapters.push(chapterResult);
-    }
-    console.log("about to return", chapters, JSON.stringify(chapters), "chapterCount=" + chapterCount);
-    return {
-        title,
-        numWords: totalNumWords,
-        chapters,
-        fileType: {
-            ext: "epub",
-            mime: "application/epub+zip"
-        }
-    };
-};
-
-const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
-        const numPages = doc.textPerPage.length;
+export const findChapterBreaks = async (doc: DocumentContext): Promise<IChapter[]> => {
+        const numPages = await doc.pageCount();
         console.log("Number of pages", numPages);
         const chapterBreaks: IChapter[] = [];
-        const numWords = numberOfWords(fullDoc.text);
+        const numWords = await doc.wordCount();
+        console.log("Number of words", numWords);
         let chapterCount = 0;
         let numWordsPerChapter = 0;
-        let lines;
+        let lines = [];
         for (let i = 0; i < numPages; i++) {
-            const page = doc.textPerPage[i];
-            lines = page.text.match(/[^\r\n]+/g);
+            const page = await doc.getPage(i);
+            lines = page.match(/[^\r\n]+/g) || [];
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
@@ -315,7 +277,7 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
             console.log("No chapter breaks found, adding one at the beginning of the book");
             let firstFewWords = '';
             try {
-                firstFewWords = doc.textPerPage[0].text.split(" ").slice(0, 50).join(" ");
+                firstFewWords = (await doc.getPage(0)).split(" ").slice(0, 50).join(" ");
             } catch (err) {
                 console.log("Problem getting first few words", err);
             }
@@ -332,32 +294,9 @@ const findChapterBreaks = (doc: any, fullDoc: any): IChapter[] => {
         }
         console.log("Chapter breaks", chapterBreaks);
         return chapterBreaks;
-    }
-;
-
-const getPdfMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
-    const doc = await pdf(book.fileContents);
-    console.log("Got PDF doc");
-    const fullDoc = await fullPdf(book.fileContents);
-    console.log("Got full PDF doc");
-    const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
-    const chapters = findChapterBreaks(doc, fullDoc);
-    const info = doc.info;
-    const metadata = doc.metadata;
-    console.log("PDF metadata", {title, chapters, info, metadata});
-    console.log("chapters", chapters);
-    return {
-        title,
-        numWords: numberOfWords(fullDoc.text),
-        chapters,
-        fileType: {
-            ext: "pdf",
-            mime: "application/pdf"
-        }
     };
-};
 
-const getTitleFromUrl = (url: string): string | undefined => {
+export const getTitleFromUrl = (url: string): string | undefined => {
     return url.split("/").pop()?.split(".")[0];
 };
 
@@ -386,28 +325,26 @@ const splitStringIntoArray = (str: string): IPagePerText[] => {
     return result;
 };
 
-const getGenericMetadata = async (book: IRawBook) => {
-    if (!book.fileContents) {
-        throw new Error("No file contents");
-    }
-    const text = book.fileContents.toString();
-
-    const textPerPage = splitStringIntoArray(text);
-    console.log('num pages', textPerPage.length);
-    const paginatedBook = {
-        ...book,
-        ...{textPerPage}
-    };
-    const fullDoc = {
-        text
-    };
-    console.log('paginatedBook', paginatedBook);
-    const chapters: IChapter[] = findChapterBreaks(paginatedBook, fullDoc);
+const getGenericMetadata = async (book: IRawBook) : Promise<IBookMetadata> => {
+    // Skip this for now
+    // if (!book.fileContents) {
+    //     throw new Error("No file contents");
+    // }
+    // const text = book.fileContents.toString();
+    //
+    // const doc = createDocumentContext(GenericDocumentStrategy({book});
+    // const chapters: IChapter[] = await findChapterBreaks(doc);
+    // return {
+    //     title: getTitleFromUrl(book.url),
+    //     numWords: numberOfWords(fullDoc.text),
+    //     chapters
+    // };
     return {
-        title: getTitleFromUrl(book.url),
-        numWords: numberOfWords(fullDoc.text),
-        chapters
-    };
+        title: 'mock',
+        numWords: 0,
+        chapters: [],
+        fileType: {ext: "txt", mime: "plain/text"}
+    }
 };
 
 //This method is called by the client to get the book metadata
@@ -423,9 +360,11 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         console.log("Generic metatdata detected...");
         metadata = await getGenericMetadata(book);
     } else if (isEpub(fileType)) {
-        metadata = await getEpubMetadata(book);
+        const {parseMetadata} = createDocumentContext(EpubDocumentStrategy({book}));
+        metadata = await parseMetadata();
     } else if (isPdf(fileType)) {
-        metadata = await getPdfMetadata(book);
+        const {parseMetadata} = createDocumentContext(PDFDocumentStrategy({book}));
+        metadata = await parseMetadata();
     } else {
         //Generic metadata for other file types
         console.log("Generic metatdata detected...");
