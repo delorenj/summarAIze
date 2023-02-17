@@ -1,13 +1,12 @@
 import {IBookMetadata, IChapter, IRawBook} from '../../../types/summaraizeTypes';
 import {DocumentStrategy} from './DocumentStrategy';
-import pdfParse from 'pdf-parse';
 import {getTitleFromUrl} from "../book-lib";
 import striptags from "striptags";
 
-const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
+const PlainTextDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const {book} = params;
-    const pdf = async (): Promise<any> => {
-        return await pdfParse(book.fileContents);
+    const plainText = (): string => {
+        return book.fileContents.toString('utf8');
     }
     const wordCount = async (): Promise<number> => {
         const allWords = await getAllText();
@@ -15,22 +14,23 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     }
 
     const getAllText = async (): Promise<string> => {
-        const doc = await pdf();
-        return striptags(doc.text);
+        const doc = plainText();
+        return striptags(doc);
     }
 
     const parseMetadata = async (): Promise<IBookMetadata> => {
-        const doc = await pdf();
-        console.log("Got PDF doc");
-        const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
+        const doc = plainText();
+        console.log("Got PlainText doc");
+        const title = getTitleFromUrl(book.url) || "Untitled";
         const chapters:IChapter[] = [];
+        console.log("chapters", chapters);
         return {
             title,
             numWords: await wordCount(),
             chapters,
             fileType: {
-                ext: "pdf",
-                mime: "application/pdf"
+                ext: "plainText",
+                mime: "application/plainText"
             }
         };
     };
@@ -38,4 +38,4 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     return {parseMetadata, getAllText};
 };
 
-export default PDFDocumentStrategy;
+export default PlainTextDocumentStrategy;

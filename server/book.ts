@@ -61,7 +61,8 @@ export const parseBook = invokeHandler(async (event) => {
     const books: any = await dynamoDb.scan(params).promise();
     const payload = event.book;
     const reg = new RegExp(payload);
-    const book = books.Items.filter((book: IBook) => book.key.match(reg))[0];
+    console.log("books", books, "reg", reg, "payload", payload);
+    const book = books.Items.filter((book: IBook) => book.key.toLowerCase().match(reg))[0];
     console.log("book", book);
     const bookUrl = `${book.userId}/${book.key}`;
     const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);

@@ -21,7 +21,6 @@ export const createChapterParser = (strategy: ChapterParsingStrategy): IChapterP
     };
 }
 
-
 export const LookForChapterHeadingStrategy = (): ChapterParsingStrategy => {
     const parse = async (doc: DocumentContext): Promise<IChapter[]> => {
         const numPages = await doc.pageCount();
@@ -32,9 +31,11 @@ export const LookForChapterHeadingStrategy = (): ChapterParsingStrategy => {
         let chapterCount = 0;
         let numWordsPerChapter = 0;
         let lines = [];
-        for (let i = 0; i < numPages; i++) {
+        for (let i = 0; i < 130; i++) {
             const page = await doc.getPage(i);
+            console.log("Page", i, page);
             lines = page.match(/[^\r\n]+/g) || [];
+            // console.log("Lines: " + i, lines);
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
@@ -61,9 +62,7 @@ export const LookForChapterHeadingStrategy = (): ChapterParsingStrategy => {
                         console.log("chapterCount", chapterCount, "numWordsPerChapter reset", numWordsPerChapter)
                         break;
                     } else {
-                        console.log("No chapter break found on line", line);
                         numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
-                        console.log("new numWordsPerChapter", numWordsPerChapter);
                     }
                 }
             } catch (e) {

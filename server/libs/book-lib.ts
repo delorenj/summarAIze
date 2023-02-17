@@ -22,6 +22,7 @@ import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
 import {DocumentContext, createDocumentContext} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
 import {createChapterParser, LookForChapterHeadingStrategy} from "./Documents/ChapterParser";
+import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -288,9 +289,13 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
     console.log("fileTypeFromBuffer", fileType);
     let metadata;
     if (isPlainText(fileType)) {
-        //Generic metadata for other file types
-        console.log("Generic metatdata detected...");
-        metadata = await getGenericMetadata(book);
+        const documentContext = createDocumentContext(PlainTextDocumentStrategy({book}));
+        metadata = await documentContext.parseMetadata();
+        console.log("Got book metadata", metadata);
+        const chapterParser = createChapterParser(LookForChapterHeadingStrategy());
+        const chapters = await chapterParser.parse(documentContext);
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
     } else if (isEpub(fileType)) {
         const documentContext = createDocumentContext(EpubDocumentStrategy({book}));
         metadata = await documentContext.parseMetadata();
@@ -306,9 +311,14 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;
     } else {
-        //Generic metadata for other file types
-        console.log("Generic metatdata detected...");
-        metadata = await getGenericMetadata(book);
+        console.log("Unknown file type, treating as plain text", fileType);
+        const documentContext = createDocumentContext(PlainTextDocumentStrategy({book}));
+        metadata = await documentContext.parseMetadata();
+        console.log("Got book metadata", metadata);
+        const chapterParser = createChapterParser(LookForChapterHeadingStrategy());
+        const chapters = await chapterParser.parse(documentContext);
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
     }
     console.log("Got book metadata", {
         fileType: fileType,
