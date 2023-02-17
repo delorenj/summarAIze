@@ -98,6 +98,12 @@ export interface IRawBook {
     fileContents: Buffer,
     metadata?: IBookMetadata
 }
+export enum LogLevel {
+    DEBUG = "debug",
+    INFO = "info",
+    WARN = "warn",
+    ERROR = "error",
+}
 
 export interface IBook {
     cacheKey?: string,
