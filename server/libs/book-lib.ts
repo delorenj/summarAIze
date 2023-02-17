@@ -299,13 +299,16 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
     const parserOptions:IChapterParserOptions= {
         persistChapter: true,
         persistStrategy: S3ChapterPersistenceStrategy({book}),
-        logLevel: LogLevel.DEBUG
-    }
+        logLevel: LogLevel.DEBUG,
+        book
+    };
+
+    const chapterParser = createChapterParser(LookForChapterHeadingStrategy(parserOptions));
+
     if (isPlainText(fileType)) {
         const documentContext = createDocumentContext(PlainTextDocumentStrategy({book}));
         metadata = await documentContext.parseMetadata();
         console.log("Got book metadata", metadata);
-        const chapterParser = createChapterParser(LookForChapterHeadingStrategy({book}),parserOptions);
         const chapters = await chapterParser.parse(documentContext);
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;
@@ -313,14 +316,14 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         const documentContext = createDocumentContext(EpubDocumentStrategy({book}));
         metadata = await documentContext.parseMetadata();
         console.log("Got book metadata", metadata);
-        const chapterParser = createChapterParser(LookForChapterHeadingStrategy({book}),parserOptions);
         const chapters = await chapterParser.parse(documentContext);
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;
     } else if (isPdf(fileType)) {
         const documentContext = createDocumentContext(PDFDocumentStrategy({book}));
         metadata = await documentContext.parseMetadata();
-        const chapters = createChapterParser(LookForChapterHeadingStrategy({book}),parserOptions).parse(documentContext);
+        console.log("Got book metadata", metadata);
+        const chapters = await chapterParser.parse(documentContext);
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;
     } else {
@@ -328,7 +331,6 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         const documentContext = createDocumentContext(PlainTextDocumentStrategy({book}));
         metadata = await documentContext.parseMetadata();
         console.log("Got book metadata", metadata);
-        const chapterParser = createChapterParser(LookForChapterHeadingStrategy({book}),parserOptions);
         const chapters = await chapterParser.parse(documentContext);
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;

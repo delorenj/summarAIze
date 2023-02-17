@@ -85,7 +85,7 @@ export function invokeHandler(lambda: (event:any) => Promise<any>) {
       body = await lambda(event);
       statusCode = 200;
     } catch (e: any) {
-      body = { error: e.message };
+      body = { error: e.message, event };
       statusCode = 500;
     }
 

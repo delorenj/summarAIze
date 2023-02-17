@@ -5,6 +5,8 @@ import {ChapterPersistenceStrategy} from "./ChapterPersistenceStrategy";
 import {createChapterPersistenceContext} from "./ChapterPersistenceContext";
 import S3ChapterPersistenceStrategy from "./S3ChapterPersistenceStrategy";
 
+export const ARTIFICIAL_CHAPTER_BREAK_THRESHOLD = 50;
+
 export interface ChapterParsingStrategy {
     parse(doc: DocumentContext): Promise<IChapter[]>;
 }
@@ -21,7 +23,8 @@ export interface IChapterParserOptions {
     logLevel?: LogLevel;
     book: IRawBook;
 }
-export const createChapterParser = (strategy: ChapterParsingStrategy, options: IChapterParserOptions): IChapterParser => {
+
+export const createChapterParser = (strategy: ChapterParsingStrategy): IChapterParser => {
     return {
         strategy,
         async parse(doc: DocumentContext): Promise<IChapter[]> {
@@ -32,89 +35,113 @@ export const createChapterParser = (strategy: ChapterParsingStrategy, options: I
 
 export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): ChapterParsingStrategy => {
     const {persistChapter, logLevel, persistStrategy} = params;
-    const parse = async (doc: DocumentContext): Promise<IChapter[]> => {
-        const numPages = await doc.pageCount();
-        console.log("Number of pages", numPages);
-        const chapterBreaks: IChapter[] = [];
-        const numWords = await doc.wordCount();
-        console.log("Number of words", numWords);
-        let chapterCount = 0;
-        let numWordsPerChapter = 0;
-        let chapterWords = '';
-        let lines = [];
+    const log = (message: string, ...args: any[]) => {
+        if (logLevel === "debug") {
+            console.log(message, ...args);
+        }
+    }
 
+    interface IChapterPlaceholder {
+        chapterNumber: number;
+        pageStart: number;
+        lineStart: number;
+        pageEnd?: number;
+        lineEnd?: number;
+        text: string;
+    }
+
+    const noChapterFoundOnPastXPages = (chapterRows: IChapter[], currentPage: number, maxNumPages: number) => {
+        if (chapterRows.length === 0) {
+            chapterRows.push({
+                id: "page-0-line-0",
+                page: 0,
+                chapter: 0,
+                numWords: 0,
+                firstFewWords: "",
+            });
+        }
+        const lastChapter = chapterRows[chapterRows.length - 1];
+        return currentPage - (lastChapter.page || 0) > 70;
+    }
+    const parse = async (doc: DocumentContext): Promise<IChapter[]> => {
+        log("Parsing document with LookForChapterHeadingStrategy");
+        const numPages = await doc.pageCount();
+        log("Number of pages", numPages);
+        const numWords = await doc.wordCount();
+        log("Number of words", numWords);
+        let chapterCount = 0;
+        let artificialChapterBreaks = false;
+        const chapterRows: IChapter[] = [];
+        const currentPlaceholder: IChapterPlaceholder = {
+            chapterNumber: 0,
+            pageStart: 0,
+            lineStart: 0,
+            text: ''
+        }
         const chapterPersist = createChapterPersistenceContext(persistStrategy);
         for (let i = 0; i < 130; i++) {
             const page = await doc.getPage(i);
-            console.log("Page", i, page);
-            lines = page.match(/[^\r\n]+/g) || [];
+            log("Page", i, page);
+            const lines = page.match(/[^\r\n]+/g) || [];
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-                    const line = lines[lineIndex];
-                    if (line.toLowerCase().includes('chapter')) {
-                        const lineIndexLookahead = Math.min(lineIndex + 3, lines.length);
-                        chapterBreaks.push({
-                            id: `page-${i}-line-${lineIndex}`,
-                            page: i,
-                            chapter: chapterCount + 1,
-                            numWords: -1,
-                            firstFewWords: lines.slice(lineIndex, lineIndexLookahead).join(" ")
-                        });
-                        console.log("Found chapter break", chapterBreaks);
-                        if(chapterWords.length > 0) {
-                            console.log("Persisting chapter words", chapterWords);
-                            if(persistChapter) {
-                                console.log("Persisting chapter words for chapter ", chapterCount)
-                                await chapterPersist.saveChapter(
-                                    chapterWords,
-                                    chapterCount
-                                );
-                            } else {
-                                console.log("Not persisting chapter words");
+                    const line = stripNewlinesAndCollapseSpaces(lines[lineIndex]);
+                    if (line.toLowerCase().includes('chapter') || noChapterFoundOnPastXPages(chapterRows, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)) {
+                        log("Found chapter break on line:", line);
+                        if (noChapterFoundOnPastXPages(chapterRows, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)) {
+                            log("No chapter found on past 70 pages, so we're going to artificially break the chapters");
+                            artificialChapterBreaks = true;
+                        }
+                        if (currentPlaceholder.text.length === 0) {
+                            log("Looks like this is the first chapter, so there's nothing to persist yet. We'll start building the text for the first chapter");
+                            chapterCount += 1;
+                            currentPlaceholder.text = line;
+                            currentPlaceholder.lineStart = lineIndex;
+                            currentPlaceholder.pageStart = i;
+                            currentPlaceholder.chapterNumber = chapterCount;
+                        } else {
+                            log("Looks like we've found a chapter break. Persisting the previous chapter and starting a new one");
+                            const chapterRow: IChapter = {
+                                id: `page-${currentPlaceholder.pageStart}-line-${currentPlaceholder.lineStart}`,
+                                page: currentPlaceholder.pageStart,
+                                chapter: currentPlaceholder.chapterNumber,
+                                numWords: currentPlaceholder.text.split(" ").length,
+                                firstFewWords: currentPlaceholder.text.split(" ").slice(0, 10).join(" "),
+                                artificial: artificialChapterBreaks,
                             }
+                            if (persistChapter) {
+                                log("Persisting chapter", currentPlaceholder);
+                                const persistData = await chapterPersist.saveChapter(
+                                    currentPlaceholder.text,
+                                    currentPlaceholder.chapterNumber,
+                                );
+                                log("Persisted chapter", persistData);
+                                chapterRow.persistData = persistData;
+                            } else {
+                                log("Not persisting chapter");
+                            }
+                            chapterRows.push(chapterRow);
+
+                            //Reset the current placeholder to the new chapter
+                            chapterCount += 1;
+                            currentPlaceholder.text = line;
+                            currentPlaceholder.lineStart = lineIndex;
+                            currentPlaceholder.pageStart = i;
+                            currentPlaceholder.chapterNumber = chapterCount;
                         }
-                        chapterWords = line;
-                        if (chapterCount > 0) {
-                            // Add end to the previous chapter
-                            chapterBreaks[chapterCount - 1].end = `page-${i}-line-${lineIndex}`;
-                            chapterBreaks[chapterCount - 1].numWords = numWordsPerChapter;
-                            console.log("Added end to previous chapter", numWordsPerChapter);
-                            numWordsPerChapter = 0;
-                        }
-                        chapterCount += 1;
-                        numWordsPerChapter = 0;
-                        console.log("chapterCount", chapterCount, "numWordsPerChapter reset", numWordsPerChapter)
-                        break;
                     } else {
-                        numWordsPerChapter += numberOfWords(stripNewlinesAndCollapseSpaces(line));
+                        currentPlaceholder.text += line;
+                        currentPlaceholder.lineEnd = lineIndex;
+                        currentPlaceholder.pageEnd = i;
                     }
                 }
             } catch (e) {
-                console.log("error parsing chapter breaks", e);
+                log("error parsing chapter breaks", e);
             }
         }
-        if (chapterBreaks.length === 0) {
-            console.log("No chapter breaks found, adding one at the beginning of the book");
-            let firstFewWords = '';
-            try {
-                firstFewWords = (await doc.getPage(0)).split(" ").slice(0, 50).join(" ");
-            } catch (err) {
-                console.log("Problem getting first few words", err);
-            }
-            chapterBreaks.push({
-                id: "page-0-line-0",
-                page: 1,
-                chapter: 1,
-                numWords,
-                firstFewWords
-            });
-        } else {
-            chapterBreaks[chapterBreaks.length - 1].end = `page-${numPages}-line-${lines.length}`;
-            chapterBreaks[chapterBreaks.length - 1].numWords = numWordsPerChapter;
-        }
-        console.log("Chapter breaks", chapterBreaks);
-        return chapterBreaks;
+        log("Chapter breaks", chapterRows);
+        return chapterRows;
     }
     return {
         parse

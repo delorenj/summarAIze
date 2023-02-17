@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceContext.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/mocks/grapes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,28 +83,37 @@
     "WebServerToolWindowFactoryState": "false",
     "javascript.nodejs.core.library.configured.version": "14.15.0",
     "javascript.nodejs.core.library.typings.version": "14.18.36",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs/Documents",
+    "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server/mocks",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Problems",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
+    "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "settings.nodejs",
-    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
+    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jarad\code\summarAIze\server\mocks" />
       <recent name="$PROJECT_DIR$/server/libs/Documents" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jarad\code\summarAIze\server\libs\Documents" />
       <recent name="C:\Users\jarad\code\summarAIze\server\templates" />
     </key>
+  </component>
+  <component name="RubyModuleManagerSettings">
+    <option name="blackListedRootsPaths">
+      <list>
+        <option value="$PROJECT_DIR$/server" />
+      </list>
+    </option>
   </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
@@ -130,6 +141,7 @@
       <workItem from="1676392205836" duration="745000" />
       <workItem from="1676392999905" duration="3679000" />
       <workItem from="1676411764624" duration="34620000" />
+      <workItem from="1676644857122" duration="9336000" />
     </task>
     <servers />
   </component>
@@ -161,14 +173,15 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts</url>
-          <line>109</line>
-          <option name="timeStamp" value="3" />
+          <url>file://$PROJECT_DIR$/server/libs/book-lib.ts</url>
+          <line>116</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/server/libs/book-lib.ts</url>
-          <line>107</line>
-          <option name="timeStamp" value="4" />
+          <url>file://$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts</url>
+          <line>9</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

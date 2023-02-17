@@ -58,14 +58,25 @@ export const parseBook = invokeHandler(async (event) => {
     const params = {
         TableName: "dev-books",
     };
+    let searchString = "";
     const books: any = await dynamoDb.scan(params).promise();
-    const payload = event.book;
-    const reg = new RegExp(payload);
-    console.log("books", books, "reg", reg, "payload", payload);
-    const book = books.Items.filter((book: IBook) => book.key.toLowerCase().match(reg))[0];
+    try {
+        if (typeof event === "string") {
+            event = JSON.parse(event);
+        }
+        console.log("typeof event", typeof event);
+        searchString = event.book;
+    } catch (e) {
+        console.log("error parsing event", e);
+        searchString = event;
+    }
+    console.log("searchString", searchString);
+    const reg = new RegExp(searchString, "i");
+    console.log("books", books, "reg", reg, "searchString", searchString, event);
+    const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
     console.log("book", book);
     const bookUrl = `${book.userId}/${book.key}`;
     const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
     await writeMetadataToDB(book.userId, bookFromS3);
-    return {book: {'key': book.key} };
+    return {book: {'key': book.key}, event, reg, searchString};
 });

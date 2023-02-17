@@ -54,6 +54,8 @@ export interface IChapter {
     title?: string,
     numWords: number,
     firstFewWords: string,
+    persistData?: string,
+    artificial?: boolean,
 
 }
 
