@@ -31,18 +31,26 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
 export const getUserIdFromRawBook = (book: IRawBook): string => {
-    if (!book.id) {
-        throw new Error("No book id");
+    if (!book.url) {
+        throw new Error("No book url");
     }
-    return book.id.split("/")[0];
+    return book.url.split("/")[0];
 }
+export const getChapterUrlByRawBook = (book: IRawBook, chapterIndex: number): string => {
+    if (!book.url) {
+        throw new Error("No book url");
+    }
+    const bookKey = book.url.split("/").pop();
+    return `${getUserIdFromRawBook(book)}/chapters/${bookKey}/${chapterIndex}.txt`;
+}
+
 export const getChapterTextByPayload = async (payload: ISummaryFormPayload, userId: string): Promise<IChapterText[]> => {
     const bookRow = await getBookRow(payload.bookId, userId);
     const rawBook = await getBookFromFileSystemOrS3(bookRow.userId + "/" + bookRow.key);
     const chapterTexts = [];
     for (const selectedChapter of payload.selectedChapters) {
         console.log("selectedChapter", selectedChapter);
-        const chapter = getRawChapterById(bookRow, selectedChapter.id);
+        const chapter = getRawChapterByIndex(bookRow, selectedChapter.index);
         console.log("chapter", chapter);
         const chapterText = await getTextByChapter(rawBook, chapter);
         console.log("chapterText", chapterText);
@@ -53,7 +61,7 @@ export const getChapterTextByPayload = async (payload: ISummaryFormPayload, user
 
 const getEpubChapterText = async (book: IRawBook, chapter: IChapter): Promise<string> => {
     const epub = await EPub.createAsync(book.fileContents as unknown as string);
-    const chapterText = await epub.getChapterRawAsync(chapter.id);
+    const chapterText = await epub.getChapterRawAsync(chapter.chapterId);
     return striptags(chapterText);
 }
 
@@ -93,10 +101,10 @@ const getTextByChapter = async (book: IRawBook, chapter: IChapter): Promise<stri
     }
 }
 
-const getRawChapterById = (book: IBookRow, chapterId: string): IChapter => {
-    const filteredChapters = book.chapters.filter(chapter => chapter.id === chapterId);
+const getRawChapterByIndex = (book: IBookRow, chapterIndex: number): IChapter => {
+    const filteredChapters = book.chapters.filter(chapter => chapter.index === chapterIndex);
     if (filteredChapters.length === 0) {
-        throw new Error(`Could not find chapter with id ${chapterId}`);
+        throw new Error(`Could not find chapter with index ${chapterIndex}`);
     }
     return filteredChapters[0];
 }

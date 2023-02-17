@@ -53,9 +53,9 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
     const noChapterFoundOnPastXPages = (chapterRows: IChapter[], currentPage: number, maxNumPages: number) => {
         if (chapterRows.length === 0) {
             chapterRows.push({
-                id: "page-0-line-0",
+                index: 0,
+                bookmark: "page-0-line-0",
                 page: 0,
-                chapter: 0,
                 numWords: 0,
                 firstFewWords: "",
             });
@@ -79,7 +79,7 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
             text: ''
         }
         const chapterPersist = createChapterPersistenceContext(persistStrategy);
-        for (let i = 0; i < 130; i++) {
+        for (let i = 0; i < numPages; i++) {
             const page = await doc.getPage(i);
             log("Page", i, page);
             const lines = page.match(/[^\r\n]+/g) || [];
@@ -103,25 +103,32 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
                         } else {
                             log("Looks like we've found a chapter break. Persisting the previous chapter and starting a new one");
                             const chapterRow: IChapter = {
-                                id: `page-${currentPlaceholder.pageStart}-line-${currentPlaceholder.lineStart}`,
+                                index: currentPlaceholder.chapterNumber,
+                                bookmark: `page-${currentPlaceholder.pageStart}-line-${currentPlaceholder.lineStart}`,
                                 page: currentPlaceholder.pageStart,
-                                chapter: currentPlaceholder.chapterNumber,
                                 numWords: currentPlaceholder.text.split(" ").length,
                                 firstFewWords: currentPlaceholder.text.split(" ").slice(0, 10).join(" "),
                                 artificial: artificialChapterBreaks,
                             }
-                            if (persistChapter) {
+                            if (persistChapter && currentPlaceholder.text.length > 0) {
                                 log("Persisting chapter", currentPlaceholder);
-                                const persistData = await chapterPersist.saveChapter(
+                                const s3Url = await chapterPersist.saveChapter(
                                     currentPlaceholder.text,
                                     currentPlaceholder.chapterNumber,
                                 );
-                                log("Persisted chapter", persistData);
-                                chapterRow.persistData = persistData;
+                                log("Persisted chapter on S3");
+                                chapterRow.persistStrategy = persistStrategy.TYPE
                             } else {
                                 log("Not persisting chapter");
+                                if(currentPlaceholder.text.length === 0) {
+                                    log("...because chapter has no text");
+                                }
                             }
-                            chapterRows.push(chapterRow);
+                            if(chapterRow.numWords > 0) {
+                                chapterRows.push(chapterRow);
+                            } else {
+                                log("Chapter has no words, so we're not going to persist it");
+                            }
 
                             //Reset the current placeholder to the new chapter
                             chapterCount += 1;

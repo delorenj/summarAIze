@@ -100,7 +100,7 @@ functions:
     timeout: 300
   parseBook:
     handler: book.parseBook
-    timeout: 60
+    timeout: 300
 
   parseBookMetadata:
     handler: book.parseBookMetadata

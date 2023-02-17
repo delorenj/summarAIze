@@ -24,6 +24,9 @@ export const parseBookMetadata = handler(async (event: APIGatewayProxyWithCognit
 export const onUpload = s3handler(async (event: S3CreateEvent) => {
     const object = event.Records[0].s3.object;
     const key = object.key;
+    if(key.indexOf('/chapters/') > -1) {
+        return "not a book";
+    }
     const userId = key.split("/")[0];
     console.log("onUpload things", userId, key);
     const book = await getBookFromFileSystemOrS3(key);

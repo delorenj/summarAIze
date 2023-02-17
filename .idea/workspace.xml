@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/server/mocks/grapes.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/handler-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/handler-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/document-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/document-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -141,7 +141,7 @@
       <workItem from="1676392205836" duration="745000" />
       <workItem from="1676392999905" duration="3679000" />
       <workItem from="1676411764624" duration="34620000" />
-      <workItem from="1676644857122" duration="9336000" />
+      <workItem from="1676644857122" duration="19847000" />
     </task>
     <servers />
   </component>
@@ -171,11 +171,6 @@
           <url>file://$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts</url>
           <line>13</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/server/libs/book-lib.ts</url>
-          <line>116</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts</url>

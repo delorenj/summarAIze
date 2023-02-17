@@ -39,7 +39,10 @@ const getDescriptionFromPayload = async (payload: ISummaryFormPayload, user: IUs
 const getSummariesFromSummarizations = (summarizations: ISummarizeResult[]): ISummarySection[] => {
     return summarizations.map((summarization) => {
         return {
-            summaryTitle: summarization.summary.chapter.title || summarization.summary.chapter.id as string,
+            summaryTitle:
+                summarization.summary.chapter.chapterTitle ||
+                summarization.summary.chapter.chapterId as string ||
+                summarization.summary.chapter.index as unknown as string,
             summaryText: summarization.summary.text,
         }
     });

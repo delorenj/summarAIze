@@ -29,12 +29,7 @@ export interface IBookRow {
     key: string,
     bookId: string,
     title: string,
-    chapters: [{
-        id: string,
-        chapter: number,
-        numWords: number,
-        firstFewWords: string,
-    }],
+    chapters: IChapter[],
     format: string,
     cover: string,
     numWords: number,
@@ -47,14 +42,15 @@ export interface IChapterText {
 }
 
 export interface IChapter {
-    id: string,
+    index: number,
+    bookmark: string,
     end?: string,
     page?: number,
-    chapter?: number,
-    title?: string,
+    chapterTitle?: string,
+    chapterId?: string,     // for navigable chapter books
     numWords: number,
     firstFewWords: string,
-    persistData?: string,
+    persistStrategy?: string,
     artificial?: boolean,
 
 }
@@ -148,8 +144,8 @@ export interface ISummarizeOptions {
       presence_penalty: number,
 }
 
-export interface IChapterIdName {
-    id: string,
+export interface IChapterIndexName {
+    index: number,
     name: string
 }
 
@@ -158,7 +154,7 @@ export interface ISummaryFormPayload {
     complexity: number,
     depth: number,
     includeCharacterGlossary: boolean,
-    selectedChapters: IChapterIdName[]
+    selectedChapters: IChapterIndexName[]
 }
 
 export interface IUploadTask {
