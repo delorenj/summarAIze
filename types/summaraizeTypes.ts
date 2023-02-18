@@ -1,4 +1,5 @@
 import * as Buffer from "buffer";
+import { ChapterPersistenceStrategy } from "../server/libs/Documents/ChapterPersistenceStrategy";
 import { JobStatus } from "../server/libs/sqs-lib";
 
 export interface IUser {
@@ -6,6 +7,23 @@ export interface IUser {
     email?: string,
     isAdmin?: boolean,
 }
+
+export interface IChapterParserOptions {
+    persistChapter?: boolean;
+    persistStrategy: ChapterPersistenceStrategy;
+    logLevel?: LogLevel;
+    book: IRawBook;
+}
+
+export interface IChapterPlaceholder {
+        chapterNumber: number;
+        pageStart: number;
+        lineStart: number;
+        pageEnd?: number;
+        lineEnd?: number;
+        text: string;
+        artificial: boolean;
+    }
 
 export interface IPagePerText {
     text: string,

@@ -8,6 +8,7 @@ import {
     IBookMetadata,
     IBookRow,
     IChapter,
+    IChapterParserOptions,
     IChapterText,
     IFileType,
     IPagePerText,
@@ -22,9 +23,10 @@ import {getBooks} from "./user-lib";
 import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
 import {DocumentContext, createDocumentContext} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
-import {createChapterParser, IChapterParserOptions, LookForChapterHeadingStrategy} from "./Documents/ChapterParser";
+import {createChapterParser} from "./Documents/ChapterParserContext";
 import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
 import S3ChapterPersistenceStrategy from "./Documents/S3ChapterPersistenceStrategy";
+import {LookForChapterHeadingParserStrategy} from "./Documents/LookForChapterHeadingParserStrategy";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -311,7 +313,7 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         book
     };
 
-    const chapterParser = createChapterParser(LookForChapterHeadingStrategy(parserOptions));
+    const chapterParser = createChapterParser(LookForChapterHeadingParserStrategy(parserOptions));
 
     if (isPlainText(fileType)) {
         const documentContext = createDocumentContext(PlainTextDocumentStrategy({book}));
