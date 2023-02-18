@@ -1,9 +1,8 @@
 import {IChapter, IRawBook, LogLevel} from "../../../types/summaraizeTypes";
 import {DocumentContext} from "./DocumentContext";
-import {numberOfWords, stripNewlinesAndCollapseSpaces} from "../book-lib";
+import {stripNewlinesAndCollapseSpaces} from "../book-lib";
 import {ChapterPersistenceStrategy} from "./ChapterPersistenceStrategy";
 import {createChapterPersistenceContext} from "./ChapterPersistenceContext";
-import S3ChapterPersistenceStrategy from "./S3ChapterPersistenceStrategy";
 
 export const ARTIFICIAL_CHAPTER_BREAK_THRESHOLD = 50;
 
@@ -61,7 +60,7 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
             });
         }
         const lastChapter = chapterRows[chapterRows.length - 1];
-        return currentPage - (lastChapter.page || 0) > 70;
+        return currentPage - (lastChapter.page || 0) > ARTIFICIAL_CHAPTER_BREAK_THRESHOLD;
     }
     const parse = async (doc: DocumentContext): Promise<IChapter[]> => {
         log("Parsing document with LookForChapterHeadingStrategy");
@@ -79,6 +78,38 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
             text: ''
         }
         const chapterPersist = createChapterPersistenceContext(persistStrategy);
+
+        const lockInChapter = async () => {
+            const strippedText = stripNewlinesAndCollapseSpaces(currentPlaceholder.text);
+            const chapterRow: IChapter = {
+                index: currentPlaceholder.chapterNumber,
+                bookmark: `page-${currentPlaceholder.pageStart}-line-${currentPlaceholder.lineStart}`,
+                page: currentPlaceholder.pageStart,
+                numWords: strippedText.split(" ").length,
+                firstFewWords: strippedText.split(" ").slice(0, 10).join(" "),
+                artificial: artificialChapterBreaks,
+            }
+            if (persistChapter && strippedText.length > 0) {
+                log("Persisting chapter", currentPlaceholder);
+                const s3Url = await chapterPersist.saveChapter(
+                    strippedText,
+                    currentPlaceholder.chapterNumber,
+                );
+                log("Persisted chapter on S3");
+                chapterRow.persistStrategy = persistStrategy.TYPE
+            } else {
+                log("Not persisting chapter");
+                if (strippedText.length === 0) {
+                    log("...because chapter has no text");
+                }
+            }
+            if (strippedText.length > 0) {
+                chapterRows.push(chapterRow);
+            } else {
+                log("Chapter has no words, so we're not going to persist it");
+            }
+        }
+
         for (let i = 0; i < numPages; i++) {
             const page = await doc.getPage(i);
             log("Page", i, page);
@@ -86,69 +117,42 @@ export const LookForChapterHeadingStrategy = (params: IChapterParserOptions): Ch
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-                    const line = stripNewlinesAndCollapseSpaces(lines[lineIndex]);
+                    const line = lines[lineIndex];
                     if (line.toLowerCase().includes('chapter') || noChapterFoundOnPastXPages(chapterRows, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)) {
                         log("Found chapter break on line:", line);
                         if (noChapterFoundOnPastXPages(chapterRows, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)) {
-                            log("No chapter found on past 70 pages, so we're going to artificially break the chapters");
+                            log(`No chapter found on past ${ARTIFICIAL_CHAPTER_BREAK_THRESHOLD} pages, so we're going to artificially break the chapters`);
                             artificialChapterBreaks = true;
-                        }
-                        if (currentPlaceholder.text.length === 0) {
-                            log("Looks like this is the first chapter, so there's nothing to persist yet. We'll start building the text for the first chapter");
-                            chapterCount += 1;
-                            currentPlaceholder.text = line;
-                            currentPlaceholder.lineStart = lineIndex;
-                            currentPlaceholder.pageStart = i;
-                            currentPlaceholder.chapterNumber = chapterCount;
                         } else {
-                            log("Looks like we've found a chapter break. Persisting the previous chapter and starting a new one");
-                            const chapterRow: IChapter = {
-                                index: currentPlaceholder.chapterNumber,
-                                bookmark: `page-${currentPlaceholder.pageStart}-line-${currentPlaceholder.lineStart}`,
-                                page: currentPlaceholder.pageStart,
-                                numWords: currentPlaceholder.text.split(" ").length,
-                                firstFewWords: currentPlaceholder.text.split(" ").slice(0, 10).join(" "),
-                                artificial: artificialChapterBreaks,
-                            }
-                            if (persistChapter && currentPlaceholder.text.length > 0) {
-                                log("Persisting chapter", currentPlaceholder);
-                                const s3Url = await chapterPersist.saveChapter(
-                                    currentPlaceholder.text,
-                                    currentPlaceholder.chapterNumber,
-                                );
-                                log("Persisted chapter on S3");
-                                chapterRow.persistStrategy = persistStrategy.TYPE
-                            } else {
-                                log("Not persisting chapter");
-                                if(currentPlaceholder.text.length === 0) {
-                                    log("...because chapter has no text");
-                                }
-                            }
-                            if(chapterRow.numWords > 0) {
-                                chapterRows.push(chapterRow);
-                            } else {
-                                log("Chapter has no words, so we're not going to persist it");
-                            }
-
-                            //Reset the current placeholder to the new chapter
-                            chapterCount += 1;
-                            currentPlaceholder.text = line;
-                            currentPlaceholder.lineStart = lineIndex;
-                            currentPlaceholder.pageStart = i;
-                            currentPlaceholder.chapterNumber = chapterCount;
+                            artificialChapterBreaks = false;
                         }
+
+                        log("Looks like we've found a chapter break. Persisting the previous chapter and starting a new one");
+                        await lockInChapter();
+
+                        //Reset the current placeholder to the new chapter
+                        chapterCount += 1;
+                        currentPlaceholder.text = line;
+                        currentPlaceholder.lineStart = lineIndex;
+                        currentPlaceholder.pageStart = i;
+                        currentPlaceholder.chapterNumber = chapterCount;
+
                     } else {
-                        currentPlaceholder.text += line;
+                        currentPlaceholder.text += ` ${line}`; //Append the line to the current chapter with a space just in case
                         currentPlaceholder.lineEnd = lineIndex;
                         currentPlaceholder.pageEnd = i;
                     }
+                }
+                if (i === numPages - 1) {
+                    log("Looks like we've reached the end of the book. Persisting the last chapter");
+                    await lockInChapter();
                 }
             } catch (e) {
                 log("error parsing chapter breaks", e);
             }
         }
         log("Chapter breaks", chapterRows);
-        return chapterRows;
+        return chapterRows.filter(chapter => chapter.numWords > 0);
     }
     return {
         parse

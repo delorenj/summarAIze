@@ -6,14 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/document-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/document-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +34,10 @@
             <RecentBranchesForRepo>
               <option name="branches">
                 <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/chapter-persist" />
+                    <option name="lastUsedInstant" value="1676666338" />
+                  </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/document-strategy" />
                     <option name="lastUsedInstant" value="1676568566" />
@@ -94,7 +91,7 @@
     "project.structure.side.proportion": "0.2",
     "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "settings.nodejs",
-    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -174,8 +171,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts</url>
-          <line>9</line>
-          <properties lambdaOrdinal="-1" />
+          <line>8</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
