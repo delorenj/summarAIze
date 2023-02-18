@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/ChapterParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +57,9 @@
       </RecentBranches>
     </option>
   </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/server/node_modules/@types/aws-lambda/trigger/api-gateway-proxy.d.ts" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/server/node_modules/openai/api.ts" root0="SKIP_INSPECTION" />
@@ -75,10 +81,12 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "WebServerToolWindowFactoryState": "false",
-    "javascript.nodejs.core.library.configured.version": "14.15.0",
-    "javascript.nodejs.core.library.typings.version": "14.18.36",
+    "go.import.settings.migrated": "true",
+    "javascript.nodejs.core.library.configured.version": "18.12.0",
+    "javascript.nodejs.core.library.typings.version": "18.14.0",
     "last_opened_file_path": "C:/Users/jarad/code/summarAIze/server/mocks",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -138,6 +146,7 @@
       <workItem from="1676392999905" duration="3679000" />
       <workItem from="1676411764624" duration="34620000" />
       <workItem from="1676644857122" duration="19847000" />
+      <workItem from="1676733885751" duration="847000" />
     </task>
     <servers />
   </component>
@@ -154,6 +163,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>false</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

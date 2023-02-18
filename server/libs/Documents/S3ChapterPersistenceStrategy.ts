@@ -13,7 +13,6 @@ const S3ChapterPersistenceStrategy = (params: { book: IRawBook }): ChapterPersis
         const userId = getUserIdFromRawBook(book);
         const bookKey = book.url.split("/").pop();
         const key = getChapterUrlByRawBook(book, chapterIndex);
-        console.log("About to save chapter to S3", key, chapterText);
 
         try {
             const data = await S3.putObject({
