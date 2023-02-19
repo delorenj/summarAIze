@@ -2,11 +2,12 @@ import AWS from "aws-sdk";
 import {IBookMetadata, IChapter, IRawBook} from '../../../types/summaraizeTypes';
 import {ChapterPersistenceStrategy} from "./ChapterPersistenceStrategy";
 import {getChapterUrlByRawBook, getUserIdFromRawBook} from "../book-lib";
+import {DocumentContext} from "../Documents/DocumentContext";
 
 const S3 = new AWS.S3();
 
-const S3ChapterPersistenceStrategy = (params: { book: IRawBook }): ChapterPersistenceStrategy => {
-    const {book} = params;
+const S3ChapterPersistenceStrategy = (doc:DocumentContext): ChapterPersistenceStrategy => {
+    const book:IRawBook = doc.book;
     const TYPE = "S3";
     const saveChapter = async (chapterText: string, chapterIndex: number): Promise<string> => {
         console.log("Saving chapter to S3", chapterText, chapterIndex);

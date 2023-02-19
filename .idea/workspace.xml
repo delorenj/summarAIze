@@ -6,13 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParserContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/ChapterPersistenceContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/ChapterPersistenceStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/LookForChapterHeadingParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PlainTextDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PlainTextDocumentStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,31 +93,31 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "javascript.nodejs.core.library.configured.version": "18.12.0",
-    "javascript.nodejs.core.library.typings.version": "18.14.0",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs/Documents",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "ruby.rails.projectView.checked": "true",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;18.12.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;18.14.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/jaraddelorenzo/code/summaraize/server/libs/Documents&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/server/libs/Documents" />
@@ -159,7 +167,8 @@
       <workItem from="1676644857122" duration="19847000" />
       <workItem from="1676733885751" duration="847000" />
       <workItem from="1676740658975" duration="319000" />
-      <workItem from="1676740999554" duration="4415000" />
+      <workItem from="1676740999554" duration="6068000" />
+      <workItem from="1676814129120" duration="18249000" />
     </task>
     <servers />
   </component>
@@ -191,7 +200,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts</url>
-          <line>13</line>
+          <line>20</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

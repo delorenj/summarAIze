@@ -1,16 +1,16 @@
-import {IChapter, IChapterPlaceholder, IRawBook, LogLevel} from "../../../types/summaraizeTypes";
+import {IChapter, IChapterParserOptions, LogLevel} from "../../../types/summaraizeTypes";
 import {DocumentContext} from "../Documents/DocumentContext";
-import {stripNewlinesAndCollapseSpaces} from "../book-lib";
-import {ChapterPersistenceStrategy} from "../ChapterPersistence/ChapterPersistenceStrategy";
-import {createChapterPersistenceContext} from "../ChapterPersistence/ChapterPersistenceContext";
+import s3ChapterPersistenceStrategy from "../ChapterPersistence/S3ChapterPersistenceStrategy";
+import S3ChapterPersistenceStrategy from "../ChapterPersistence/S3ChapterPersistenceStrategy";
 import {ChapterParsingStrategy} from "./ChapterParserStrategy";
 
 export const ARTIFICIAL_CHAPTER_BREAK_THRESHOLD = 20;
 
 export interface ChapterParserContext {
     strategy: ChapterParsingStrategy;
-
-    parse(doc: DocumentContext): Promise<IChapter[]>;
+    documentContext: DocumentContext,
+    parse(): Promise<IChapter[]>,
+    numChapters(minPage: number, maxPage: number): Promise<number>,
 }
 
 /*
@@ -30,11 +30,19 @@ The code also checks for the last page of the document and locks in the last cha
 if necessary. Overall, this code is using a strategy to parse a document, look for
 chapter headings, and create an array of chapter objects. It is checking for certain conditions and creating new chapter objects based on these conditions.
  */
-export const createChapterParser = (strategy: ChapterParsingStrategy): ChapterParserContext => {
+export const defaultChapterParserOptions : IChapterParserOptions= {
+    persistChapter: false,
+    logLevel: LogLevel.DEBUG,
+}
+export const createChapterParserContext = (documentContext: DocumentContext, strategy: ChapterParsingStrategy): ChapterParserContext => {
     return {
         strategy,
-        async parse(doc: DocumentContext): Promise<IChapter[]> {
-            return await strategy.parse(doc);
+        documentContext,
+        async parse(): Promise<IChapter[]> {
+            return await strategy.parse(documentContext);
+        },
+        async numChapters(minPage: number, maxPage: number): Promise<number> {
+            return await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
         }
     };
 }

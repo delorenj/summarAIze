@@ -35,7 +35,7 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         };
     };
 
-    return {parseMetadata, getAllText};
+    return {parseMetadata, getAllText, book};
 };
 
 export default PDFDocumentStrategy;

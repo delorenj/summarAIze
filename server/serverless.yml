@@ -101,6 +101,9 @@ functions:
   parseBook:
     handler: book.parseBook
     timeout: 900
+  parsePages:
+    handler: book.parsePages
+    timeout: 300
 
   parseBookMetadata:
     handler: book.parseBookMetadata

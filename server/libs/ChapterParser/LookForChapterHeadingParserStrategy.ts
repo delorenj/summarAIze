@@ -1,14 +1,18 @@
-import {ARTIFICIAL_CHAPTER_BREAK_THRESHOLD} from "./ChapterParserContext";
+import {ARTIFICIAL_CHAPTER_BREAK_THRESHOLD, defaultChapterParserOptions} from "./ChapterParserContext";
 import {createChapterPersistenceContext} from "../ChapterPersistence/ChapterPersistenceContext";
 import {stripNewlinesAndCollapseSpaces} from "../book-lib";
 import {ChapterParsingStrategy} from "./ChapterParserStrategy";
 import {DocumentContext} from "../Documents/DocumentContext";
 import {IChapter, IChapterParserOptions, IChapterPlaceholder } from "../../../types/summaraizeTypes";
+import S3ChapterPersistenceStrategy from "../ChapterPersistence/S3ChapterPersistenceStrategy";
 
 export const LookForChapterHeadingParserStrategy = (params: IChapterParserOptions): ChapterParsingStrategy => {
-    const {persistChapter, logLevel, persistStrategy} = params;
+    const options = {
+        ...params,
+        ...defaultChapterParserOptions
+    };
     const log = (message: string, ...args: any[]) => {
-        if (logLevel === "debug") {
+        if (options.logLevel === "debug") {
             console.log(message, ...args);
         }
     }
@@ -52,7 +56,7 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
             text: '',
             artificial: false,
         }
-        const chapterPersist = createChapterPersistenceContext(persistStrategy);
+        const chapterPersist = createChapterPersistenceContext(S3ChapterPersistenceStrategy(doc));
 
         const lockInChapter = async () => {
             const strippedText = stripNewlinesAndCollapseSpaces(currentPlaceholder.text);
@@ -64,14 +68,14 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
                 firstFewWords: strippedText.split(" ").slice(0, 10).join(" "),
                 artificial: currentPlaceholder.artificial,
             }
-            if (persistChapter && strippedText.length > 0) {
+            if (options.persistChapter && strippedText.length > 0) {
                 log("Persisting chapter", currentPlaceholder);
                 const s3Url = await chapterPersist.saveChapter(
                     strippedText,
                     currentPlaceholder.chapterNumber,
                 );
                 log("Persisted chapter on S3");
-                chapterRow.persistStrategy = persistStrategy.TYPE
+                chapterRow.persistStrategy = "S3"
             } else {
                 log("Not persisting chapter");
                 if (strippedText.length === 0) {
@@ -141,7 +145,30 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
         log("Chapter breaks", chapterRows);
         return chapterRows.filter(chapter => chapter.numWords > 0);
     }
+
+    const numChapters = async (doc: DocumentContext, minPage: number, maxPage: number) : Promise<number> => {
+        const numPages = await doc.pageCount();
+        const numWords = await doc.wordCount();
+        console.log("numPages", numPages);
+        console.log("numWords", numWords);
+        const chapterPages = [];
+        for (let i = minPage; i < Math.min(maxPage, numPages); i++) {
+            const page = await doc.getPage(i);
+            log("Page", i, page);
+            const headingCheckRegex = new RegExp(/^\s*(chapter|part|section)*\s(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fifteen|twenty|thirty|fifty|I|V|X)*/, 'gmsui');
+            const pageMatch = page.match(headingCheckRegex);
+            console.log("pageMatch", pageMatch);
+            if (pageMatch) {
+                chapterPages.push(i);
+            }
+        }
+        console.log("chapterPages", chapterPages);
+        return chapterPages.length;
+    }
+
     return {
-        parse
+        options,
+        parse,
+        numChapters,
     }
 }

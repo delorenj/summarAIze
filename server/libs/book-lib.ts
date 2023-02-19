@@ -5,6 +5,7 @@ import pdf from 'fork-pdf-parse-with-pagepertext';
 import striptags from "striptags";
 import {
     FileType,
+    IBook,
     IBookMetadata,
     IBookRow,
     IChapter,
@@ -20,9 +21,9 @@ import {promises as fs} from "fs";
 import {dirname as getDirName} from "path";
 import {getBooks} from "./user-lib";
 import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
-import {createDocumentContext, DocumentContext} from "./Documents/DocumentContext";
+import {createDocumentContext} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
-import {createChapterParser} from "./ChapterParser/ChapterParserContext";
+import {createChapterParserContext} from "./ChapterParser/ChapterParserContext";
 import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
 import S3ChapterPersistenceStrategy from "./ChapterPersistence/S3ChapterPersistenceStrategy";
 import {LookForChapterHeadingParserStrategy} from "./ChapterParser/LookForChapterHeadingParserStrategy";
@@ -31,6 +32,20 @@ import {DocumentStrategy} from "./Documents/DocumentStrategy";
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const s3 = new AWS.S3();
+
+export const searchForBookByTitle = async (title: string): Promise<IRawBook> => {
+    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+    //first, get all the books from the DB
+    const params = {
+        TableName: "dev-books",
+    };
+
+    const reg = new RegExp(title, "i");
+    const books: any = await dynamoDb.scan(params).promise();
+    const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
+    const bookUrl = `${book.userId}/${book.key}`;
+    return await getBookFromFileSystemOrS3(bookUrl, {simple: true});
+}
 
 export const getUserIdFromRawBook = (book: IRawBook): string => {
     if (!book.url) {
@@ -126,7 +141,7 @@ export const getBookFromFileSystemOrS3ById = async (bookId: string, userId: stri
     return await getBookFromFileSystemOrS3(bookItem.userId + "/" + bookItem.key);
 }
 
-export const getBookFromFileSystemOrS3 = async (url: string): Promise<IRawBook> => {
+export const getBookFromFileSystemOrS3 = async (url: string, options?: any): Promise<IRawBook> => {
     // Always get the book from S3 for now
     // try {
     //     const book = await readFileFromTemp(url);
@@ -143,7 +158,7 @@ export const getBookFromFileSystemOrS3 = async (url: string): Promise<IRawBook> 
     if (!book) {
         throw new Error(`Could not find book at ${url}`);
     }
-    const metadata: IBookMetadata = await getBookMetadata(book);
+    const metadata: IBookMetadata = await getBookMetadata(book, options);
     await writeBookToTemp(book);
     return {
         url,
@@ -226,15 +241,15 @@ const readFileFromS3Bucket = async (url: string): Promise<IRawBook> => {
     }
 }
 
-const isPlainText = (fileType: IFileType) => {
+export const isPlainText = (fileType: IFileType) => {
     return fileType && fileType.mime === "text/plain";
 };
 
-const isEpub = (fileType: IFileType) => {
+export const isEpub = (fileType: IFileType) => {
     return fileType && fileType.mime === "application/epub+zip";
 };
 
-const isPdf = (fileType: IFileType) => {
+export const isPdf = (fileType: IFileType) => {
     return fileType && fileType.mime === "application/pdf";
 };
 
@@ -255,21 +270,22 @@ const getKeyFromUrl = (url: string): string | undefined => {
 };
 
 //This method is called by the client to get the book metadata
-const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
+const getBookMetadata = async (book: IRawBook, options?: any): Promise<IBookMetadata> => {
     if (!book.fileContents) {
         throw new Error("No file contents");
     }
     const fileType = await fileTypeFromBuffer(book.fileContents) || {ext: "txt", mime: "plain/text"};
     console.log("fileTypeFromBuffer", fileType);
-    let metadata;
-    const parserOptions: IChapterParserOptions = {
-        persistChapter: true,
-        persistStrategy: S3ChapterPersistenceStrategy({book}),
-        logLevel: LogLevel.DEBUG,
-        book
-    };
 
-    const chapterParser = createChapterParser(LookForChapterHeadingParserStrategy(parserOptions));
+    if(options?.simple) {
+        return {
+        fileType: fileType,
+        title: getTitleFromUrl(book.url) || "Untitled",
+        numWords: 0,
+        chapters: []
+        }
+    }
+
     let docStrategy: DocumentStrategy;
 
     if (isEpub(fileType)) {
@@ -282,9 +298,15 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
     }
 
     const documentContext = createDocumentContext(docStrategy);
-    metadata = await documentContext.parseMetadata();
+    const parserOptions: IChapterParserOptions = {
+        persistChapter: true,
+        logLevel: LogLevel.DEBUG
+    };
+
+    const chapterParser = createChapterParserContext(documentContext, LookForChapterHeadingParserStrategy(parserOptions));
+    const metadata = await documentContext.parseMetadata();
     console.log("Got book metadata", metadata);
-    const chapters = await chapterParser.parse(documentContext);
+    const chapters = await chapterParser.parse();
     console.log("Got Chapters", chapters);
     metadata.chapters = chapters;
 

@@ -51,7 +51,7 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         };
     };
 
-    return {parseMetadata, getAllText};
+    return {parseMetadata, getAllText, book};
 };
 
 export default EpubDocumentStrategy;
