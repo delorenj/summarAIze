@@ -6,6 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParserContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/ChapterPersistenceContext.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/ChapterPersistenceStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/LookForChapterHeadingParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,8 +116,11 @@
       <recent name="C:\Users\jarad\code\summarAIze\server\mocks" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server/libs/ChapterPersistence" />
+      <recent name="$PROJECT_DIR$/server/libs" />
+      <recent name="$PROJECT_DIR$/server/libs/Documents/ChapterParser" />
+      <recent name="$PROJECT_DIR$/server/libs/Documents/ChapterPersistence" />
       <recent name="C:\Users\jarad\code\summarAIze\server\libs\Documents" />
-      <recent name="C:\Users\jarad\code\summarAIze\server\templates" />
     </key>
   </component>
   <component name="RubyModuleManagerSettings">
@@ -150,7 +159,7 @@
       <workItem from="1676644857122" duration="19847000" />
       <workItem from="1676733885751" duration="847000" />
       <workItem from="1676740658975" duration="319000" />
-      <workItem from="1676740999554" duration="1665000" />
+      <workItem from="1676740999554" duration="4415000" />
     </task>
     <servers />
   </component>

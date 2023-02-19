@@ -1,8 +1,8 @@
 import {ARTIFICIAL_CHAPTER_BREAK_THRESHOLD} from "./ChapterParserContext";
-import {createChapterPersistenceContext} from "./ChapterPersistenceContext";
+import {createChapterPersistenceContext} from "../ChapterPersistence/ChapterPersistenceContext";
 import {stripNewlinesAndCollapseSpaces} from "../book-lib";
 import {ChapterParsingStrategy} from "./ChapterParserStrategy";
-import {DocumentContext} from "./DocumentContext";
+import {DocumentContext} from "../Documents/DocumentContext";
 import {IChapter, IChapterParserOptions, IChapterPlaceholder } from "../../../types/summaraizeTypes";
 
 export const LookForChapterHeadingParserStrategy = (params: IChapterParserOptions): ChapterParsingStrategy => {

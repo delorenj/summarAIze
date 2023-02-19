@@ -1,8 +1,8 @@
 import {IChapter, IChapterPlaceholder, IRawBook, LogLevel} from "../../../types/summaraizeTypes";
-import {DocumentContext} from "./DocumentContext";
+import {DocumentContext} from "../Documents/DocumentContext";
 import {stripNewlinesAndCollapseSpaces} from "../book-lib";
-import {ChapterPersistenceStrategy} from "./ChapterPersistenceStrategy";
-import {createChapterPersistenceContext} from "./ChapterPersistenceContext";
+import {ChapterPersistenceStrategy} from "../ChapterPersistence/ChapterPersistenceStrategy";
+import {createChapterPersistenceContext} from "../ChapterPersistence/ChapterPersistenceContext";
 import {ChapterParsingStrategy} from "./ChapterParserStrategy";
 
 export const ARTIFICIAL_CHAPTER_BREAK_THRESHOLD = 20;

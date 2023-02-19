@@ -22,10 +22,10 @@ import {getBooks} from "./user-lib";
 import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
 import {createDocumentContext, DocumentContext} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
-import {createChapterParser} from "./Documents/ChapterParserContext";
+import {createChapterParser} from "./ChapterParser/ChapterParserContext";
 import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
-import S3ChapterPersistenceStrategy from "./Documents/S3ChapterPersistenceStrategy";
-import {LookForChapterHeadingParserStrategy} from "./Documents/LookForChapterHeadingParserStrategy";
+import S3ChapterPersistenceStrategy from "./ChapterPersistence/S3ChapterPersistenceStrategy";
+import {LookForChapterHeadingParserStrategy} from "./ChapterParser/LookForChapterHeadingParserStrategy";
 import {DocumentStrategy} from "./Documents/DocumentStrategy";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -180,7 +180,6 @@ export const writeMetadataToDB = async (userId: string, book: IRawBook) => {
     }
 };
 
-///////////// Private functions
 
 // a function to write the files to tmp on the lambda
 const writeBookToTemp = async (book: IRawBook) => {
@@ -255,49 +254,6 @@ const getKeyFromUrl = (url: string): string | undefined => {
     return url.split("/").pop();
 };
 
-const splitStringIntoArray = (str: string): IPagePerText[] => {
-    const words = str.split(' ');
-    let wordCount = 0;
-    const result = [];
-    let currentString = "";
-    for (const word of words) {
-        wordCount += 1;
-        if (wordCount <= 500) {
-            currentString += `${word} `;
-        } else {
-            result.push({text: currentString});
-            currentString = "";
-            wordCount = 0;
-        }
-    }
-    if (currentString) {
-        result.push({text: currentString});
-    }
-    return result;
-};
-
-const getGenericMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
-    // Skip this for now
-    // if (!book.fileContents) {
-    //     throw new Error("No file contents");
-    // }
-    // const text = book.fileContents.toString();
-    //
-    // const doc = createDocumentContext(GenericDocumentStrategy({book});
-    // const chapters: IChapter[] = await findChapterBreaks(doc);
-    // return {
-    //     title: getTitleFromUrl(book.url),
-    //     numWords: numberOfWords(fullDoc.text),
-    //     chapters
-    // };
-    return {
-        title: 'mock',
-        numWords: 0,
-        chapters: [],
-        fileType: {ext: "txt", mime: "plain/text"}
-    }
-};
-
 //This method is called by the client to get the book metadata
 const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
     if (!book.fileContents) {
@@ -324,7 +280,7 @@ const getBookMetadata = async (book: IRawBook): Promise<IBookMetadata> => {
         console.log("Unknown file type, treating as plain text", fileType);
         docStrategy = PlainTextDocumentStrategy({book});
     }
-    
+
     const documentContext = createDocumentContext(docStrategy);
     metadata = await documentContext.parseMetadata();
     console.log("Got book metadata", metadata);
