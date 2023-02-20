@@ -29,6 +29,7 @@ import S3ChapterPersistenceStrategy from "./ChapterPersistence/S3ChapterPersiste
 import {LookForChapterHeadingParserStrategy} from "./ChapterParser/LookForChapterHeadingParserStrategy";
 import {DocumentStrategy} from "./Documents/DocumentStrategy";
 import {NativeChapterParserStrategy} from "./ChapterParser/NativeChapterParserStrategy";
+import {baseConfig} from "serverless-lift/dist/test/utils/runServerless";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -278,12 +279,12 @@ const getBookMetadata = async (book: IRawBook, options?: any): Promise<IBookMeta
     const fileType = await fileTypeFromBuffer(book.fileContents) || {ext: "txt", mime: "plain/text"};
     console.log("fileTypeFromBuffer", fileType);
 
-    if(options?.simple) {
+    if (options?.simple) {
         return {
-        fileType: fileType,
-        title: getTitleFromUrl(book.url) || "Untitled",
-        numWords: 0,
-        chapters: []
+            fileType: fileType,
+            title: getTitleFromUrl(book.url) || "Untitled",
+            numWords: 0,
+            chapters: []
         }
     }
 
@@ -304,12 +305,28 @@ const getBookMetadata = async (book: IRawBook, options?: any): Promise<IBookMeta
         logLevel: LogLevel.DEBUG
     };
 
-    const chapterParser = createChapterParserContext(documentContext, NativeChapterParserStrategy(parserOptions));
     const metadata = await documentContext.parseMetadata();
     console.log("Got book metadata", metadata);
-    const avgWordsPerChapter = await chapterParser.avgWordsPerChapter();
-    console.log("Got Chapters", chapters);
-    metadata.chapters = chapters;
+
+    let chapterParser = createChapterParserContext(documentContext, NativeChapterParserStrategy(parserOptions));
+    let avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 10000);
+    let chapters: IChapter[] = [];
+    console.log("Got avgWordsPerChapter", avgWordsPerChapter);
+    if (avgWordsPerChapter > 4000) {
+        console.log("Too many words per chapter, going to see if headings are present");
+        chapterParser = createChapterParserContext(documentContext, LookForChapterHeadingParserStrategy(parserOptions));
+        avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 10000)
+        console.log("Got avgWordsPerChapter", avgWordsPerChapter);
+        if (avgWordsPerChapter > 4000) {
+            console.log("Too many words per chapter, going to manually parse");
+            throw new Error("Artificial chapters not supported yet");
+        }
+
+        chapters = await chapterParser.parse();
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
+
+    }
 
     console.log("Got book metadata", {
         fileType: fileType,

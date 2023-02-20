@@ -44,10 +44,11 @@ export const createChapterParserContext = (documentContext: DocumentContext, str
         },
         async numChapters(minPage: number, maxPage: number): Promise<number> {
             return await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
-        }
+        },
         async avgWordsPerChapter(minPage: number, maxPage: number): Promise<number> {
-            // TODO: Implement this
-            return await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
+            const numChapters = await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
+            const numWords = await documentContext.wordCount();
+            return Math.floor(numWords / numChapters);
         }
     };
 }
