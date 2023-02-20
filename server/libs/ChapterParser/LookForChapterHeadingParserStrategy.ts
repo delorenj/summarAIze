@@ -3,41 +3,31 @@ import {createChapterPersistenceContext} from "../ChapterPersistence/ChapterPers
 import {stripNewlinesAndCollapseSpaces} from "../book-lib";
 import {ChapterParsingStrategy} from "./ChapterParserStrategy";
 import {DocumentContext} from "../Documents/DocumentContext";
-import {IChapter, IChapterParserOptions, IChapterPlaceholder } from "../../../types/summaraizeTypes";
+import {IChapter, IChapterParserOptions, IChapterPlaceholder} from "../../../types/summaraizeTypes";
 import S3ChapterPersistenceStrategy from "../ChapterPersistence/S3ChapterPersistenceStrategy";
 
+export const chapterBreakRegex = /^\s*(chapter|part|section)\s(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fifteen|twenty|thirty|fifty|I|V|X)*/;
 export const LookForChapterHeadingParserStrategy = (params: IChapterParserOptions): ChapterParsingStrategy => {
     const options = {
+        ...defaultChapterParserOptions,
         ...params,
-        ...defaultChapterParserOptions
     };
+    console.log("LookForChapterHeading parser options", options);
     const log = (message: string, ...args: any[]) => {
         if (options.logLevel === "debug") {
             console.log(message, ...args);
         }
     }
 
-    const noChapterFoundOnPastXPages = (chapterRows: IChapter[], currentPage: number, maxNumPages: number) => {
-        let chapterRowComp: IChapter;
-        if (chapterRows.length === 0) {
-            chapterRowComp = {
-                index: 0,
-                bookmark: "page-0-line-0",
-                page: 0,
-                numWords: 0,
-                firstFewWords: "",
-            };
-        } else {
-            chapterRowComp = chapterRows[chapterRows.length - 1];
-        }
-
-        const result = ((currentPage - (chapterRowComp.page || 0)) % ARTIFICIAL_CHAPTER_BREAK_THRESHOLD) === 0;
-        if(result) {
+    const noChapterFoundOnPastXPages = (placeholder: IChapterPlaceholder, currentPage: number, maxNumPages: number) => {
+        const diff = (currentPage - (placeholder.pageEnd || 0));
+        const result = (diff > 0) && (diff % ARTIFICIAL_CHAPTER_BREAK_THRESHOLD === 0)
+        if (result) {
             log("No chapter found on past", ARTIFICIAL_CHAPTER_BREAK_THRESHOLD, "pages. Creating artificial chapter.");
             console.log("noChapter",
-            "currentPage", currentPage,
-            "previousPage", chapterRowComp.page,
-            "current - prev||0", currentPage - (chapterRowComp.page || 0));
+                "currentPage", currentPage,
+                "previousPage", placeholder.pageEnd || 0,
+                "current - prev||0", currentPage - (placeholder.pageEnd || 0));
         }
         return result;
     }
@@ -49,6 +39,7 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
         log("Number of words", numWords);
         let chapterCount = 0;
         const chapterRows: IChapter[] = [];
+        let artificialToggledOn = false;
         const currentPlaceholder: IChapterPlaceholder = {
             chapterNumber: 0,
             pageStart: 0,
@@ -92,11 +83,12 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
         for (let i = 0; i < numPages; i++) {
             const page = await doc.getPage(i);
             log("Page", i, page);
-            const tooLongWithoutChapter = noChapterFoundOnPastXPages(chapterRows, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)
-            if (tooLongWithoutChapter) {
+            const tooLongWithoutChapter = noChapterFoundOnPastXPages(currentPlaceholder, i, ARTIFICIAL_CHAPTER_BREAK_THRESHOLD)
+            if (tooLongWithoutChapter || artificialToggledOn) {
                 log(`No chapter found on past ${ARTIFICIAL_CHAPTER_BREAK_THRESHOLD} pages, so we're going to artificially break the chapters`);
                 currentPlaceholder.pageEnd = i - 1;
                 currentPlaceholder.artificial = true;
+                artificialToggledOn = true;
                 await lockInChapter();
                 const lines = page.match(/[^\r\n]+/g) || [];
                 chapterCount += 1;
@@ -106,17 +98,35 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
                 currentPlaceholder.chapterNumber = chapterCount;
                 continue;
             }
+            const headingCheckRegex = new RegExp(chapterBreakRegex, 'igm');
+            const pageMatch = page.match(headingCheckRegex);
+            console.log("pageMatch", pageMatch);
+            if (!pageMatch) {
+                log("No chapter break found on page on full page match. Continuing");
+                const lines = page.match(/[^\r\n]+/g) || [];
+                currentPlaceholder.text += ` ${page}`; //Append the line to the current chapter with a space just in case
+                currentPlaceholder.lineEnd = lines.length - 1
+                currentPlaceholder.pageEnd = i - 1;
+                continue;
+            } else {
+                const matchesWithMoreThanOneWord = pageMatch.filter(match => match.split(" ").length > 1 && match.split(" ")[1] !== "");
+                console.log("matchesWithMoreThanOneWord", matchesWithMoreThanOneWord);
+                if (matchesWithMoreThanOneWord.length === 0) {
+                    console.log("Chapter break on page but it's only one word. Not counting it as a chapter");
+                    continue;
+                } else {
+                    console.log("Chapter break on page and it's more than one word. Counting it as a chapter");
+                }
+            }
             const lines = page.match(/[^\r\n]+/g) || [];
             try {
                 // Loop through the lines on the page and look for "Chapter" keyword
                 for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
                     const line = lines[lineIndex];
-
-                    if (line.toLowerCase().includes('chapter')) {
+                    if (line.match(new RegExp(chapterBreakRegex, 'ig'))) {
                         log("Found chapter break on line:", line);
 
                         currentPlaceholder.artificial = false;
-
                         await lockInChapter();
 
                         //Reset the current placeholder to the new chapter
@@ -146,20 +156,24 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
         return chapterRows.filter(chapter => chapter.numWords > 0);
     }
 
-    const numChapters = async (doc: DocumentContext, minPage: number, maxPage: number) : Promise<number> => {
+    const numChapters = async (doc: DocumentContext, minPage: number, maxPage: number): Promise<number> => {
         const numPages = await doc.pageCount();
         const numWords = await doc.wordCount();
         console.log("numPages", numPages);
         console.log("numWords", numWords);
         const chapterPages = [];
-        for (let i = minPage; i < Math.min(maxPage, numPages); i++) {
+        for (let i = minPage; i < Math.min(maxPage || 10000, numPages); i++) {
             const page = await doc.getPage(i);
             log("Page", i, page);
-            const headingCheckRegex = new RegExp(/^\s*(chapter|part|section)*\s(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fifteen|twenty|thirty|fifty|I|V|X)*/, 'gmsui');
+            const headingCheckRegex = new RegExp(chapterBreakRegex, 'igm');
             const pageMatch = page.match(headingCheckRegex);
             console.log("pageMatch", pageMatch);
             if (pageMatch) {
-                chapterPages.push(i);
+                if (pageMatch.filter(match => match.split(" ").length > 1 && match.split(" ")[1] !== "").length > 0) {
+                    chapterPages.push(i);
+                } else {
+                    console.log("Chapter break on page but it's only one word. Not counting it as a chapter");
+                }
             }
         }
         console.log("chapterPages", chapterPages);

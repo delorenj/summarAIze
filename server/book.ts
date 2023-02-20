@@ -100,7 +100,7 @@ export const parsePages = invokeHandler(async (event) => {
         searchString = event;
     }
     const minPage = event.minPage || 0;
-    const maxPage = event.maxPage || 100;
+    const maxPage = event.maxPage;
     console.log("searchString", searchString, "minPage", minPage, "maxPage", maxPage);
     const book = await searchForBookByTitle(searchString);
     console.log("book", book);

@@ -7,20 +7,7 @@
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/ChapterParserStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterParser/LookForChapterHeadingParserStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/ChapterPersistence/S3ChapterPersistenceStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PlainTextDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PlainTextDocumentStrategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +155,7 @@
       <workItem from="1676733885751" duration="847000" />
       <workItem from="1676740658975" duration="319000" />
       <workItem from="1676740999554" duration="6068000" />
-      <workItem from="1676814129120" duration="18249000" />
+      <workItem from="1676814129120" duration="34089000" />
     </task>
     <servers />
   </component>
