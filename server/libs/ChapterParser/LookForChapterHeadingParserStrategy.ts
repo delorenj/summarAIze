@@ -19,6 +19,18 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
         }
     }
 
+    const pageMatchWasOk = (pageMatch: any[]) => {
+        const matchesWithMoreThanOneWord = pageMatch.filter(match => match.trim().split(" ").length > 1 && match.trim().split(" ")[1] !== "");
+        console.log("matchesWithMoreThanOneWord", matchesWithMoreThanOneWord);
+        console.log("trim split", pageMatch.filter(match => match.trim().split(" ")));
+        if (matchesWithMoreThanOneWord.length === 0) {
+            console.log("Chapter break on page but it's only one word. Not counting it as a chapter");
+            return false
+        } else {
+            console.log("Chapter break on page and it's more than one word. Counting it as a chapter");
+            return true
+        }
+    }
     const noChapterFoundOnPastXPages = (placeholder: IChapterPlaceholder, currentPage: number, maxNumPages: number) => {
         const diff = (currentPage - (placeholder.pageEnd || 0));
         const result = (diff > 0) && (diff % ARTIFICIAL_CHAPTER_BREAK_THRESHOLD === 0)
@@ -109,13 +121,8 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
                 currentPlaceholder.pageEnd = i - 1;
                 continue;
             } else {
-                const matchesWithMoreThanOneWord = pageMatch.filter(match => match.split(" ").length > 1 && match.split(" ")[1] !== "");
-                console.log("matchesWithMoreThanOneWord", matchesWithMoreThanOneWord);
-                if (matchesWithMoreThanOneWord.length === 0) {
-                    console.log("Chapter break on page but it's only one word. Not counting it as a chapter");
+                if (!pageMatchWasOk(pageMatch)) {
                     continue;
-                } else {
-                    console.log("Chapter break on page and it's more than one word. Counting it as a chapter");
                 }
             }
             const lines = page.match(/[^\r\n]+/g) || [];
@@ -169,10 +176,8 @@ export const LookForChapterHeadingParserStrategy = (params: IChapterParserOption
             const pageMatch = page.match(headingCheckRegex);
             console.log("pageMatch", pageMatch);
             if (pageMatch) {
-                if (pageMatch.filter(match => match.split(" ").length > 1 && match.split(" ")[1] !== "").length > 0) {
+                if(pageMatchWasOk(pageMatch)) {
                     chapterPages.push(i);
-                } else {
-                    console.log("Chapter break on page but it's only one word. Not counting it as a chapter");
                 }
             }
         }

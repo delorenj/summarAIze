@@ -6,7 +6,7 @@ import striptags from "striptags";
 
 const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const {book} = params;
-    const pdf = async (): Promise<any> => {
+    const pdf = async (): Promise<pdfParse.Result> => {
         return await pdfParse(book.fileContents);
     }
     const wordCount = async (): Promise<number> => {
@@ -19,11 +19,15 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         return striptags(doc.text);
     }
 
+    const getNativeDocument = async (): Promise<pdfParse.Result> => {
+        return await pdf();
+    }
+
     const parseMetadata = async (): Promise<IBookMetadata> => {
         const doc = await pdf();
         console.log("Got PDF doc");
         const title = doc.info.Title || getTitleFromUrl(book.url) || "Untitled";
-        const chapters:IChapter[] = [];
+        const chapters: IChapter[] = [];
         return {
             title,
             numWords: await wordCount(),
@@ -35,7 +39,17 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         };
     };
 
-    return {parseMetadata, getAllText, book};
+    const getNativeChapters = async (): Promise<IChapter[]> => {
+        const doc = await pdf();
+        const chapters: IChapter[] = [];
+        return chapters;
+    }
+
+    const getNativeChapterText = async (chapterId: string): Promise<string> => {
+        return 'not yet implemented';
+    }
+
+    return {parseMetadata, getAllText, book, getNativeDocument, getNativeChapters, getNativeChapterText};
 };
 
 export default PDFDocumentStrategy;

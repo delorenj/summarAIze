@@ -18,6 +18,10 @@ const PlainTextDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy
         return striptags(doc);
     }
 
+    const getNativeDocument = async (): Promise<string> => {
+        return plainText();
+    }
+
     const parseMetadata = async (): Promise<IBookMetadata> => {
         const doc = plainText();
         console.log("Got PlainText doc");
@@ -35,7 +39,7 @@ const PlainTextDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy
         };
     };
 
-    return {parseMetadata, getAllText, book};
+    return {parseMetadata, getAllText, book, getNativeDocument};
 };
 
 export default PlainTextDocumentStrategy;

@@ -6,6 +6,8 @@ import {IBook, IRawBook} from "../types/summaraizeTypes";
 import {DocumentFactory} from "./libs/Documents/DocumentContext";
 import {LookForChapterHeadingParserStrategy} from "./libs/ChapterParser/LookForChapterHeadingParserStrategy";
 import {createChapterParserContext} from "./libs/ChapterParser/ChapterParserContext";
+import {ChapterParsingStrategy} from "./libs/ChapterParser/ChapterParserStrategy";
+import {LookForMultipleLineBreaksParserStrategy} from "./libs/ChapterParser/LookForMultipleLineBreaksParserStrategy";
 
 export interface IParseBookMetadataPayload {
     bookUrl: string;
@@ -101,14 +103,28 @@ export const parsePages = invokeHandler(async (event) => {
     }
     const minPage = event.minPage || 0;
     const maxPage = event.maxPage;
+    const chapterStrategy = event.strategy || "LookForChapterHeadingParserStrategy";
+    let strategy: ChapterParsingStrategy | null;
+    switch (chapterStrategy) {
+        case "breaks":
+            strategy = LookForMultipleLineBreaksParserStrategy({
+                persistChapter: false
+            });
+            break
+        case "heading":
+        default:
+            strategy = LookForChapterHeadingParserStrategy({
+                persistChapter: false
+            });
+            break;
+    }
+
     console.log("searchString", searchString, "minPage", minPage, "maxPage", maxPage);
     const book = await searchForBookByTitle(searchString);
     console.log("book", book);
     const documentContext = await DocumentFactory().createFromRawBook(book);
     console.log("documentContext", documentContext);
-    const chapterParser = await createChapterParserContext(documentContext, LookForChapterHeadingParserStrategy({
-        persistChapter: false
-    }));
+    const chapterParser = await createChapterParserContext(documentContext, strategy);
     console.log("chapterParser", chapterParser);
     const foundChapterPages = await chapterParser.numChapters(minPage, maxPage);
     return {book: {'url': book.url}, foundChapterPages, event, searchString};

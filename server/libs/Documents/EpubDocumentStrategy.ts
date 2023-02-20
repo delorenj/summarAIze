@@ -23,6 +23,10 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         return allWords.split(" ");
     }
 
+    const getNativeDocument = async (): Promise<EPub> => {
+        return await epub();
+    }
+
     const getAllText = async (): Promise<string> => {
         const doc = await epub();
         let text = "";
@@ -51,7 +55,29 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         };
     };
 
-    return {parseMetadata, getAllText, book};
+    const getNativeChapters = async (): Promise<IChapter[]> => {
+        const doc = await epub();
+        const chapters: IChapter[] = [];
+        for (const chapter of doc.flow) {
+            const contents = await getNativeChapterText(chapter.id as string);
+            chapters.push({
+                bookmark: `native-epub`,
+                firstFewWords: contents.slice(0, 100),
+                index: chapters.length,
+                chapterTitle: chapter.title || chapter.id || "Untitled",
+                numWords: await wordCount(),
+                chapterId: chapter.id as string
+            });
+        }
+        return chapters;
+    }
+
+    const getNativeChapterText = async (chapterId: string): Promise<string> => {
+        const doc = await epub();
+        const contents = await doc.getChapterRawAsync(chapterId);
+        return striptags(contents);
+    }
+    return {parseMetadata, getAllText, book, getNativeDocument, getNativeChapters, getNativeChapterText};
 };
 
 export default EpubDocumentStrategy;
