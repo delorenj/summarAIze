@@ -8,6 +8,7 @@ import {LookForChapterHeadingParserStrategy} from "./libs/ChapterParser/LookForC
 import {createChapterParserContext} from "./libs/ChapterParser/ChapterParserContext";
 import {ChapterParsingStrategy} from "./libs/ChapterParser/ChapterParserStrategy";
 import {LookForMultipleLineBreaksParserStrategy} from "./libs/ChapterParser/LookForMultipleLineBreaksParserStrategy";
+import {NativeChapterParserStrategy} from "./libs/ChapterParser/NativeChapterParserStrategy";
 
 export interface IParseBookMetadataPayload {
     bookUrl: string;
@@ -111,6 +112,11 @@ export const parsePages = invokeHandler(async (event) => {
                 persistChapter: false
             });
             break
+        case "native":
+            strategy = NativeChapterParserStrategy({
+                persistChapter: false
+            });
+            break;
         case "heading":
         default:
             strategy = LookForChapterHeadingParserStrategy({

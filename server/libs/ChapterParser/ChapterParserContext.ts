@@ -11,6 +11,7 @@ export interface ChapterParserContext {
     documentContext: DocumentContext,
     parse(): Promise<IChapter[]>,
     numChapters(minPage: number, maxPage: number): Promise<number>,
+    avgWordsPerChapter(minPage: number, maxPage: number): Promise<number>,
 }
 
 /*
@@ -42,6 +43,10 @@ export const createChapterParserContext = (documentContext: DocumentContext, str
             return await strategy.parse(documentContext);
         },
         async numChapters(minPage: number, maxPage: number): Promise<number> {
+            return await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
+        }
+        async avgWordsPerChapter(minPage: number, maxPage: number): Promise<number> {
+            // TODO: Implement this
             return await strategy.numChapters(documentContext, minPage || 0, maxPage || 100);
         }
     };

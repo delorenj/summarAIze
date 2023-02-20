@@ -39,7 +39,17 @@ const PlainTextDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy
         };
     };
 
-    return {parseMetadata, getAllText, book, getNativeDocument};
+    const getNativeChapters = async (): Promise<IChapter[]> => {
+        const doc = plainText();
+        const chapters:IChapter[] = [];
+        return chapters;
+    }
+
+    const getNativeChapterText = async (chapterId: string): Promise<string> => {
+        return 'not yet implemented';
+    }
+    
+    return {parseMetadata, getAllText, book, getNativeDocument, getNativeChapters, getNativeChapterText};
 };
 
 export default PlainTextDocumentStrategy;

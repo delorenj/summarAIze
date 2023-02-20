@@ -2,6 +2,7 @@ import {IBookMetadata, IChapter, IRawBook} from '../../../types/summaraizeTypes'
 import {DocumentStrategy, wordsPerPage} from './DocumentStrategy';
 import {EPub} from "epub2";
 import striptags from "striptags";
+import {font} from "pdfkit";
 
 const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const {book} = params;
@@ -58,6 +59,7 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const getNativeChapters = async (): Promise<IChapter[]> => {
         const doc = await epub();
         const chapters: IChapter[] = [];
+        console.log(doc);
         for (const chapter of doc.flow) {
             const contents = await getNativeChapterText(chapter.id as string);
             chapters.push({
@@ -73,8 +75,11 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     }
 
     const getNativeChapterText = async (chapterId: string): Promise<string> => {
+        console.log("getNativeChapterText");
         const doc = await epub();
+        console.log("chapterId", chapterId);
         const contents = await doc.getChapterRawAsync(chapterId);
+        console.log("contents", contents);
         return striptags(contents);
     }
     return {parseMetadata, getAllText, book, getNativeDocument, getNativeChapters, getNativeChapterText};

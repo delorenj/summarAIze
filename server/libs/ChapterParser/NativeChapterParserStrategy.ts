@@ -24,7 +24,6 @@ export const NativeChapterParserStrategy = (params: IChapterParserOptions): Chap
         log("Number of pages", numPages);
         const numWords = await doc.wordCount();
         log("Number of words", numWords);
-        let chapterCount = 0;
 
         const chapterRows = await doc.strategy.getNativeChapters();
         console.log("chapterRows", chapterRows);
@@ -58,7 +57,9 @@ export const NativeChapterParserStrategy = (params: IChapterParserOptions): Chap
         const numWords = await doc.wordCount();
         console.log("numPages", numPages);
         console.log("numWords", numWords);
-        return 0;
+        const chapterRows = await doc.strategy.getNativeChapters();
+        console.log("chapterRows", chapterRows);
+        return chapterRows.length;
     }
 
     return {

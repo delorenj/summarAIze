@@ -28,6 +28,7 @@ import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
 import S3ChapterPersistenceStrategy from "./ChapterPersistence/S3ChapterPersistenceStrategy";
 import {LookForChapterHeadingParserStrategy} from "./ChapterParser/LookForChapterHeadingParserStrategy";
 import {DocumentStrategy} from "./Documents/DocumentStrategy";
+import {NativeChapterParserStrategy} from "./ChapterParser/NativeChapterParserStrategy";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -303,10 +304,10 @@ const getBookMetadata = async (book: IRawBook, options?: any): Promise<IBookMeta
         logLevel: LogLevel.DEBUG
     };
 
-    const chapterParser = createChapterParserContext(documentContext, LookForChapterHeadingParserStrategy(parserOptions));
+    const chapterParser = createChapterParserContext(documentContext, NativeChapterParserStrategy(parserOptions));
     const metadata = await documentContext.parseMetadata();
     console.log("Got book metadata", metadata);
-    const chapters = await chapterParser.parse();
+    const avgWordsPerChapter = await chapterParser.avgWordsPerChapter();
     console.log("Got Chapters", chapters);
     metadata.chapters = chapters;
 
