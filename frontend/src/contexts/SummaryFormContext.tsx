@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAuth} from "./authContext";
-import {IChapterIdName, ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {IChapterIndexName, ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
 import {useNavigate} from "react-router-dom";
 import {useMyData} from "../hooks/useMyData";
 import {usePollJobStatus} from "../hooks/usePollJobStatus";
@@ -12,7 +12,7 @@ export interface ISummaryFormContext {
     complexity: number, setComplexity: (complexity: number) => void, handleSetComplexity: (event: Event, newValue: number | number[]) => void,
     depth: number, setDepth: (depth: number) => void, handleSetDepth: (event: Event, newValue: number | number[]) => void,
     includeCharacterGlossary: boolean, setIncludeCharacterGlossary: (includeCharacterGlossary: boolean) => void,
-    selectedChapters: IChapterIdName[], setSelectedChapters: (chapters: IChapterIdName[]) => void,
+    selectedChapters: IChapterIndexName[], setSelectedChapters: (chapters: IChapterIndexName[]) => void,
     numWordsSelected: number,
     onGenerateSummary: () => void,
 }
@@ -42,7 +42,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
     const [complexity, setComplexity] = useState<number>(defaultState.complexity);
     const [depth, setDepth] = useState<number>(defaultState.depth);
     const [includeCharacterGlossary, setIncludeCharacterGlossary] = useState<boolean>(defaultState.includeCharacterGlossary);
-    const [selectedChapters, setSelectedChapters] = useState<IChapterIdName[]>(defaultState.selectedChapters);
+    const [selectedChapters, setSelectedChapters] = useState<IChapterIndexName[]>(defaultState.selectedChapters);
     const [bookId, setBookId] = useState<string>(activeBook?.bookId || defaultState.bookId);
 
     // useEffect(() => {
@@ -110,7 +110,7 @@ const SummaryFormContextProvider = ({children}: Props) => {
 
     const numWordsSelected = useMemo(() => {
         return selectedChapters.reduce((acc, chapterMap) => {
-            const chapter = activeBook?.chapters.find(chapter => chapterMap.id === chapter.id);
+            const chapter = activeBook?.chapters.find(chapter => chapterMap.index === chapter.index);
             console.log("chapter", chapter);
             return acc + (chapter?.numWords || 0);
         }, 0);

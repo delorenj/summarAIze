@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useMemo} from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,10 +11,9 @@ import {useHomeContext} from "../contexts/homeContext";
 import {useSummaryFormContext} from "../contexts/SummaryFormContext";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
-import {Fade, Grow, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {Grow, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import {styled} from "@mui/styles";
-import {useMemo} from "react";
-import { IChapterIdName } from '../../../types/summaraizeTypes';
+import { IChapterIndexName } from '../../../types/summaraizeTypes';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,7 +46,7 @@ export const ChapterSelect = () => {
         } = event;
 
         if (typeof value === 'string') {
-            const map: IChapterIdName[] = value.split(',').map((v: string) => JSON.parse(v))
+            const map: IChapterIndexName[] = value.split(',').map((v: string) => JSON.parse(v))
             setSelectedChapters(map);
         } else {
             setSelectedChapters(value.map((v: string) => JSON.parse(v)));
@@ -54,7 +54,7 @@ export const ChapterSelect = () => {
     };
 
     const navigableChapters = useMemo(() => {
-        return activeBook && activeBook.chapters.filter(chapter => !chapter.id.startsWith('page')).length > 0;
+        return activeBook && activeBook.chapters.filter(chapter => !chapter.artificial).length > 0;
     }, [activeBook]);
 
     return (
@@ -83,16 +83,16 @@ export const ChapterSelect = () => {
                                 value={selectedChapters.map(v => JSON.stringify(v))}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Include chapters"/>}
-                                renderValue={(selected) => navigableChapters ?  selectedChapters.map(v => v.id).join(', ') : selectedChapters.map(v => `Page ${v.name}`).join(', ')}
+                                renderValue={(selected) => navigableChapters ? selectedChapters.map(v => v.index).join(', ') : selectedChapters.map(v => `Page ${v.name}`).join(', ')}
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
-                                    <MenuItem key={ JSON.stringify({id: chapter.id, name: chapter.page }) }
-                                              value={ JSON.stringify({id: chapter.id, name: chapter.page}) }>
+                                    <MenuItem key={JSON.stringify({id: chapter.index, name: chapter.page})}
+                                              value={JSON.stringify({id: chapter.index, name: chapter.page})}>
                                         <Checkbox
-                                            checked={selectedChapters.filter(v => v.id === chapter.id).length > 0}/>
+                                            checked={selectedChapters.filter(v => v.index === chapter.index).length > 0}/>
                                         <ListItemText
-                                            primary={chapter.title || `Chapter ${index + 1} (${chapter.page})`}
+                                            primary={chapter.chapterTitle || `Chapter ${index + 1} (${chapter.page})`}
                                             secondary={chapter.firstFewWords.split(' ').slice(0, 8).join(' ')}/>
                                     </MenuItem>
                                 ))}
@@ -107,6 +107,5 @@ export const ChapterSelect = () => {
         </>
 
 
-    )
-        ;
+    );
 }

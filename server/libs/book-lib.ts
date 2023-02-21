@@ -326,6 +326,11 @@ const getBookMetadata = async (book: IRawBook, options?: any): Promise<IBookMeta
         console.log("Got Chapters", chapters);
         metadata.chapters = chapters;
 
+    } else {
+        console.log("Not too many words per chapter, going to use native chapters");
+        chapters = await chapterParser.parse();
+        console.log("Got Chapters", chapters);
+        metadata.chapters = chapters;
     }
 
     console.log("Got book metadata", {

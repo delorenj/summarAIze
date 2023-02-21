@@ -31,7 +31,8 @@ export const NativeChapterParserStrategy = (params: IChapterParserOptions): Chap
         for (let i = 0; i < chapterRows.length; i++) {
             const contents = await doc.strategy.getNativeChapterText(chapterRows[i].chapterId as string);
             const strippedText = stripNewlinesAndCollapseSpaces(contents);
-
+            chapterRows[i].numWords = strippedText.split(" ").length;
+            chapterRows[i].firstFewWords = strippedText.split(" ").slice(0, 10).join(" ");
             if (options.persistChapter && strippedText.length > 0) {
                 log("Persisting chapter", chapterRows[i]);
                 const s3Url = await chapterPersist.saveChapter(
