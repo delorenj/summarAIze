@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/libs/summary-lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/ChapterSelect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ChapterSelect.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/summaryQueue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +35,10 @@
             <RecentBranchesForRepo>
               <option name="branches">
                 <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/summaries" />
+                    <option name="lastUsedInstant" value="1676982041" />
+                  </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/artificial-chapters" />
                     <option name="lastUsedInstant" value="1676740873" />
@@ -91,7 +94,7 @@
     "go.import.settings.migrated": "true",
     "javascript.nodejs.core.library.configured.version": "18.12.0",
     "javascript.nodejs.core.library.typings.version": "18.14.0",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs/ChapterParser",
+    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/server/libs",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -108,6 +111,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server/libs" />
       <recent name="$PROJECT_DIR$/server/libs/ChapterParser" />
       <recent name="$PROJECT_DIR$/server/libs/Documents" />
       <recent name="C:\Users\jarad\code\summarAIze\server\mocks" />
@@ -157,7 +161,7 @@
       <workItem from="1676733885751" duration="847000" />
       <workItem from="1676740658975" duration="319000" />
       <workItem from="1676740999554" duration="6068000" />
-      <workItem from="1676814129120" duration="52506000" />
+      <workItem from="1676814129120" duration="62062000" />
     </task>
     <servers />
   </component>

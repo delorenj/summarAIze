@@ -6,6 +6,7 @@ import OpenAILib from "./libs/openai-lib";
 import {getChapterTextByPayload} from "./libs/book-lib";
 import {JobStatus, updateJobStatus} from "./libs/sqs-lib";
 import {createSummaryDocument} from "./libs/document-lib";
+import {persistSummaries} from "./libs/summary-lib";
 
 export const handler = sqsHandler(async (event: SQSEvent) => {
     console.log("event", event);
@@ -25,7 +26,8 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
         const oai = OpenAILib({user, mock: true});
         const summarizations: ISummarizeResult[] = await oai.summarize(payload, textToSummarize);
         console.log("summarizations", summarizations);
-        const document = await createSummaryDocument(summarizations, payload, userId);
+        // const document = await createSummaryDocument(summarizations, payload, userId);
+        await persistSummaries(summarizations, payload, userId, event);
         //uploadDocument(document, payload, userId);
         //console.log("document", document);
         //Update job status
