@@ -111,7 +111,6 @@ const SummaryFormContextProvider = ({children}: Props) => {
     const numWordsSelected = useMemo(() => {
         return selectedChapters.reduce((acc, chapterMap) => {
             const chapter = activeBook?.chapters.find(chapter => chapterMap.index === chapter.index);
-            console.log("chapter", chapter);
             return acc + (chapter?.numWords || 0);
         }, 0);
     }, [selectedChapters, activeBook]);

@@ -75,20 +75,20 @@ export const ChapterSelect = () => {
                         }
                     >
                         <FormControl sx={{m: 1, width: 300}}>
-                            <InputLabel id="demo-multiple-checkbox-label">Include chapters</InputLabel>
+                            <InputLabel id="chapter-select-label">Include chapters</InputLabel>
                             <Select
-                                labelId="demo-multiple-checkbox-label"
-                                id="demo-multiple-checkbox"
+                                labelId="chapter-select-label"
+                                id="chapter-select"
                                 multiple
                                 value={selectedChapters.map(v => JSON.stringify(v))}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Include chapters"/>}
-                                renderValue={(selected) => navigableChapters ? selectedChapters.map(v => v.index).join(', ') : selectedChapters.map(v => `Page ${v.name}`).join(', ')}
+                                renderValue={(selected) => navigableChapters ? selectedChapters.map(v => v.index + 1).join(', ') : selectedChapters.map(v => `Page ${v.name}`).join(', ')}
                                 MenuProps={MenuProps}
                             >
                                 {activeBook?.chapters?.map((chapter, index) => (
-                                    <MenuItem key={JSON.stringify({id: chapter.index, name: chapter.page})}
-                                              value={JSON.stringify({id: chapter.index, name: chapter.page})}>
+                                    <MenuItem key={JSON.stringify({index: chapter.index, name: chapter.page})}
+                                              value={JSON.stringify({index: chapter.index, name: chapter.page})}>
                                         <Checkbox
                                             checked={selectedChapters.filter(v => v.index === chapter.index).length > 0}/>
                                         <ListItemText

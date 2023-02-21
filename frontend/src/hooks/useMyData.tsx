@@ -42,7 +42,6 @@ export const useMyData = (props: UseMyDataProps) => {
 
     useEffect(() => {
         const storedBooks = localStorage.getItem("books");
-        console.log("storedBooks", storedBooks);
 
         const fetchData = async () => {
             try {
@@ -61,7 +60,6 @@ export const useMyData = (props: UseMyDataProps) => {
                 setMyBooks(data.books);
                 setMyJobs(data.jobs);
                 localStorage.setItem("books", JSON.stringify(data.books));
-                console.log("set localStorage to:", JSON.stringify(data.books));
 
             } catch (err) {
                 console.log(err);
