@@ -14,6 +14,7 @@ provider:
     booksTableName: ${self:custom.stage}-books
     usersTableName: ${self:custom.stage}-users
     jobsTableName: ${self:custom.stage}-summaryjobs
+    booksJobsTableName: ${self:custom.stage}-booksjobs
 
   iam:
     role:
@@ -133,6 +134,18 @@ functions:
     events:
       - http:
           path: /user
+          method: get
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  getBookDetails:
+    handler: book.getBookDetails
+    events:
+      - http:
+          path: /book/{bookId}
           method: get
           cors: true
           authorizer:

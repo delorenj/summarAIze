@@ -3,18 +3,13 @@ import './App.scss'
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
-import {
-  createTheme,
-  ThemeProvider,
-  StyledEngineProvider,
-  responsiveFontSizes,
-} from '@mui/material/styles';
+import { createTheme, ThemeProvider, StyledEngineProvider, responsiveFontSizes } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/300.css'
+import '@fontsource/roboto/400.css'
+import '@fontsource/roboto/500.css'
+import '@fontsource/roboto/700.css'
 
 import SignIn from './routes/auth/signIn'
 import SignUp from './routes/auth/signUp'
@@ -23,15 +18,19 @@ import RequestCode from './routes/auth/requestCode'
 import ForgotPassword from './routes/auth/forgotPassword'
 import ChangePassword from './routes/auth/changePassword'
 import Landing from './routes/landing'
-import {Home} from './routes/home'
-import AuthProvider, {AuthIsNotSignedIn, AuthIsSignedIn} from "./contexts/authContext";
-import {Upload} from "./routes/upload";
+import { Home } from './routes/home'
+import AuthProvider, { AuthIsNotSignedIn, AuthIsSignedIn } from './contexts/authContext'
+import { Upload } from './routes/upload'
+import { DocView } from './routes/doc-view'
+export interface IDocViewRouteParams {
+  bookId: string
+}
 
-let lightTheme = createTheme(({
+let lightTheme = createTheme({
   palette: {
     mode: 'light',
   },
-}))
+})
 lightTheme = responsiveFontSizes(lightTheme)
 
 // let darkTheme = createMuiTheme({
@@ -59,6 +58,7 @@ const MainRoute: React.FunctionComponent = () => (
     <Routes>
       <Route path="/changepassword" element={<ChangePassword />} />
       <Route path="/upload" element={<Upload />} />
+      <Route path="/doc/:bookId" element={<DocView />} />
       <Route path="/" element={<Home />} />
     </Routes>
   </Router>

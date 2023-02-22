@@ -1,0 +1,46 @@
+import React, { useContext, useEffect, useState } from 'react'
+import { IBook, IBookDetails } from '../../../types/summaraizeTypes'
+import { useMyData } from '../hooks/useMyData'
+import { useParams } from 'react-router-dom'
+
+export interface IDocViewContext {
+  bookDetails?: IBookDetails
+  setBookDetails(bookDetails: IBookDetails | undefined): void
+}
+
+const defaultState: IDocViewContext = {
+  setBookDetails(book: IBook) {},
+}
+
+type Props = {
+  children?: React.ReactNode
+}
+
+export const DocViewContext = React.createContext(defaultState)
+
+const DocViewContextProvider = ({ children }: Props) => {
+  const [bookDetails, setBookDetails] = useState<IBookDetails>()
+  const { bookId } = useParams()
+  const { getBookDetails } = useMyData()
+  const state: IDocViewContext = {
+    bookDetails,
+    setBookDetails: function (bookDetails: any): void {
+      throw new Error('Function not implemented.')
+    },
+  }
+
+  useEffect(() => {
+    if (!bookId) return
+
+    const fetch = async () => {
+      const response = await getBookDetails(bookId)
+      console.log('Got book details', response)
+      setBookDetails(response.data)
+    }
+  }, [])
+  return <DocViewContext.Provider value={state}>{children}</DocViewContext.Provider>
+}
+
+export const useDocViewContext = () => useContext(DocViewContext)
+
+export default DocViewContextProvider

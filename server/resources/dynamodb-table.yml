@@ -46,3 +46,20 @@ Resources:
 #          KeyType: RANGE
 #      # Set the capacity to auto-scale
 #      BillingMode: PAY_PER_REQUEST
+#  BooksJobsTable:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: ${self:provider.environment.booksJobsTableName}
+#      AttributeDefinitions:
+#        - AttributeName: bookId
+#          AttributeType: S
+#        - AttributeName: jobId
+#          AttributeType: S
+#      KeySchema:
+#        - AttributeName: bookId
+#          KeyType: HASH
+#        - AttributeName: jobId
+#          KeyType: RANGE
+#      # Set the capacity to auto-scale
+#      BillingMode: PAY_PER_REQUEST
