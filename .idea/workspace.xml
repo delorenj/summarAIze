@@ -6,27 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/BigDocCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/BigDocCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/BookCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/BookCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/ChapterSelect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ChapterSelect.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/JobStatus.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LandscapeModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/PortraitModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/SummaryFormContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/uploadContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/uploadContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/usePollJobStatus.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/usePollJobStatus.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useS3Upload.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useS3Upload.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/MetadataEntry.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MetadataEntry.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/routes/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/sqs-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/libs/summary-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/summary-lib.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/summaryQueue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summaryQueue.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +107,7 @@
     "project.structure.side.proportion": "0.2",
     "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "inlay.hints",
-    "ts.external.directory.path": "C:\\Users\\jarad\\code\\summarAIze\\server\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "/Users/jaraddelorenzo/code/summaraize/server/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

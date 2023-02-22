@@ -10,7 +10,7 @@ import { BookCard } from '../components/BookCard'
 import HomeContextProvider from '../contexts/homeContext'
 import { Button, Stack } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import { IBook } from "../types/summaraizeTypes";
+import { IBook } from '../types/summaraizeTypes'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -30,10 +30,6 @@ export const Home = () => {
     navigate('upload')
   }
 
-  const onBookClicked = (book: IBook) => {
-    console.log(book)
-    navigate(`doc/${book.bookId}`.replace(/"/g, ''))
-  }
   return (
     <HomeContextProvider>
       <ResponsiveAppBar />
@@ -57,7 +53,7 @@ export const Home = () => {
         <Container sx={{ py: 8 }} maxWidth="md">
           <Grid container spacing={4}>
             {myBooks.map((book) => (
-              <Grid key={book.bookId} xs={12} sm={6} md={4} onClick={() => onBookClicked(book)}>
+              <Grid key={book.bookId} xs={12} sm={6} md={4}>
                 <BookCard book={book} />
               </Grid>
             ))}
