@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useS3Upload} from "../hooks/useS3Upload";
-import {IFile, IUploadTask} from "../../../types/summaraizeTypes";
+import {IFile, IUploadTask} from "../types/summaraizeTypes";
 
 export interface IUploadContext {
     uploadDialogOpen: boolean,

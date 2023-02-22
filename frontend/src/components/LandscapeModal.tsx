@@ -17,7 +17,7 @@ import {DragDropBox} from "./DragDropBox";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import {styled} from "@mui/material/styles";
 import {useState} from "react";
-import { IUploadTask } from "../../../types/summaraizeTypes";
+import { IUploadTask } from "../types/summaraizeTypes";
 
 export const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
     height: 10,

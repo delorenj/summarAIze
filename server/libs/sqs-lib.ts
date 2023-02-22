@@ -4,6 +4,7 @@ import {
   ISummaryJobPayload,
   ISummaryJobStatus,
   IUser,
+  JobStatus,
 } from "../../types/summaraizeTypes";
 
 const sqs = new AWS.SQS({
@@ -12,13 +13,6 @@ const sqs = new AWS.SQS({
 });
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-export enum JobStatus {
-  PENDING = "PENDING",
-  IN_PROGRESS = "IN_PROGRESS",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-}
 
 export const publishToSummaryQueue = async (
   payload: ISummaryFormPayload,

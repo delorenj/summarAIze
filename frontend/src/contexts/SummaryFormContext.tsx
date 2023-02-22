@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext, useMemo} from 'react'
 import {useHomeContext} from "./homeContext";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAuth} from "./authContext";
-import {IChapterIndexName, ISummaryFormPayload, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {IChapterIndexName, ISummaryFormPayload, ISummaryJobStatus} from "../types/summaraizeTypes";
 import {useNavigate} from "react-router-dom";
 import {useMyData} from "../hooks/useMyData";
 import {usePollJobStatus} from "../hooks/usePollJobStatus";

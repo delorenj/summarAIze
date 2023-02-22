@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {ISummaryJobStatus} from "../types/summaraizeTypes";
 import {useAuth} from "../contexts/authContext";
 import {useHomeContext} from "../contexts/homeContext";
 

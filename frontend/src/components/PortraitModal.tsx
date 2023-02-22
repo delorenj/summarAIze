@@ -9,7 +9,7 @@ import {BorderLinearProgress} from "./LandscapeModal";
 import {useCallback, useState} from "react";
 import {Simulate} from "react-dom/test-utils";
 import drop = Simulate.drop;
-import { IUploadTask } from "../../../types/summaraizeTypes";
+import { IUploadTask } from "../types/summaraizeTypes";
 
 export const PortraitModal = () => {
     const {uploadDialogOpen, uploadTasks} = useUploadContext();

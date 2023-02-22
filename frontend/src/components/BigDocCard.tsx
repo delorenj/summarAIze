@@ -6,8 +6,8 @@ import CloudDownloadTwoToneIcon from '@mui/icons-material/CloudDownloadTwoTone'
 import SummarizeTwoToneIcon from '@mui/icons-material/SummarizeTwoTone'
 
 export const BigDocCard = () => {
-  const { activeBook } = useDocViewContext()
-  return activeBook ? (
+  const { bookDetails } = useDocViewContext()
+  return bookDetails ? (
     <>
       <Card
         raised
@@ -18,13 +18,13 @@ export const BigDocCard = () => {
           position: 'relative',
           zIndex: 1,
         }}>
-        <CardMedia component="img" image={activeBook.cover} alt={activeBook.title} height={undefined} />
+        <CardMedia component="img" image={bookDetails.book.cover} alt={bookDetails.book.title} height={undefined} />
         <CardContent
           sx={{
             flexGrow: 1,
           }}>
           <Typography gutterBottom variant="h5" component="h2">
-            {activeBook.title}
+            {bookDetails.book.title}
           </Typography>
         </CardContent>
         <CardActions>

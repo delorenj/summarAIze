@@ -1,5 +1,6 @@
 import {useHomeContext} from "../contexts/homeContext";
 import {List, ListItem, ListItemButton} from "@mui/material";
+import { JobStatus } from "../types/summaraizeTypes";
 
 export const SummaryList = () => {
     const {activeBook} = useHomeContext();
@@ -7,8 +8,8 @@ export const SummaryList = () => {
     return (
       <List>
           {!activeBook?.summaries && <ListItem>No summaries yet</ListItem>}
-          {activeBook?.summaries?.map((summary) => (
-              <ListItemButton key={summary.id}>{summary.title}</ListItemButton>
+          {activeBook?.summaries?.filter(summary => summary.status === JobStatus.COMPLETED).map(summary => (
+              <ListItemButton key={summary.jobId}>{summary.createdAt}</ListItemButton>
             ))}
       </List>
     );

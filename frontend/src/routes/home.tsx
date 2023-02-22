@@ -10,7 +10,7 @@ import { BookCard } from '../components/BookCard'
 import HomeContextProvider from '../contexts/homeContext'
 import { Button, Stack } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import { IBook } from '../../../types/summaraizeTypes'
+import { IBook } from "../types/summaraizeTypes";
 
 export const Home = () => {
   const navigate = useNavigate()

@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/authContext";
-import {IFile} from "../../../types/summaraizeTypes";
+import {IFile} from "../types/summaraizeTypes";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 

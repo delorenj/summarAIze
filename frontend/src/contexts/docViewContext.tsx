@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { IBook, IBookDetails } from '../../../types/summaraizeTypes'
+import { IBook, IBookDetails } from "../types/summaraizeTypes";
 import { useMyData } from '../hooks/useMyData'
 import { useParams } from 'react-router-dom'
 
@@ -9,7 +9,7 @@ export interface IDocViewContext {
 }
 
 const defaultState: IDocViewContext = {
-  setBookDetails(book: IBook) {},
+  setBookDetails(bookDetails: IBookDetails) {},
 }
 
 type Props = {
@@ -21,7 +21,7 @@ export const DocViewContext = React.createContext(defaultState)
 const DocViewContextProvider = ({ children }: Props) => {
   const [bookDetails, setBookDetails] = useState<IBookDetails>()
   const { bookId } = useParams()
-  const { getBookDetails } = useMyData()
+  const { getBookDetails } = useMyData({ skipCache: true})
   const state: IDocViewContext = {
     bookDetails,
     setBookDetails: function (bookDetails: any): void {
@@ -35,7 +35,7 @@ const DocViewContextProvider = ({ children }: Props) => {
     const fetch = async () => {
       const response = await getBookDetails(bookId)
       console.log('Got book details', response)
-      setBookDetails(response.data)
+      setBookDetails(response)
     }
   }, [])
   return <DocViewContext.Provider value={state}>{children}</DocViewContext.Provider>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
-import {IBook, ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {IBook, ISummaryJobStatus} from "../types/summaraizeTypes";
 
 export interface IHomeContext {
     summaraizeDrawerOpen: boolean,

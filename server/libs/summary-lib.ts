@@ -1,10 +1,8 @@
 import * as AWS from "aws-sdk";
 import {ISummarizeResult, ISummaryFormPayload, IUser} from "../../types/summaraizeTypes";
-import {getUser} from "./user-lib";
 import {SQSEvent} from "aws-lambda";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const s3 = new AWS.S3();
 
 export const persistSummaries = async (summarizations: ISummarizeResult[], payload: ISummaryFormPayload, userId: string, event: SQSEvent) => {
     const jobId = event.Records[0].messageId;

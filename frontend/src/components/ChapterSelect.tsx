@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 import {Grow, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import {styled} from "@mui/styles";
-import { IChapterIndexName } from '../../../types/summaraizeTypes';
+import { IChapterIndexName } from "../types/summaraizeTypes";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

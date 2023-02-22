@@ -1,10 +1,10 @@
 import {sqsHandler} from "./libs/handler-lib";
 import {SQSEvent} from "aws-lambda";
 import {getUser} from "./libs/user-lib";
-import {ISummarizeResult, ISummaryFormPayload} from "../types/summaraizeTypes";
+import {ISummarizeResult, ISummaryFormPayload, JobStatus} from "../types/summaraizeTypes";
 import OpenAILib from "./libs/openai-lib";
 import {getChapterTextByPayload} from "./libs/book-lib";
-import {JobStatus, updateJobStatus} from "./libs/sqs-lib";
+import {updateJobStatus} from "./libs/sqs-lib";
 import {createSummaryDocument} from "./libs/document-lib";
 import {persistSummaries} from "./libs/summary-lib";
 

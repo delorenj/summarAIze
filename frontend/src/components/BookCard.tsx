@@ -6,7 +6,7 @@ import SummarizeTwoToneIcon from '@mui/icons-material/SummarizeTwoTone';
 import CloudDownloadTwoToneIcon from '@mui/icons-material/CloudDownloadTwoTone';
 import IconButton from '@mui/material/IconButton';
 import RemoveRedEyeTwoToneIcon from '@mui/icons-material/RemoveRedEyeTwoTone';
-import { IBook } from "../../../types/summaraizeTypes";
+import { IBook } from "../types/summaraizeTypes";
 interface BookCardPropsType {
     book: IBook
 }

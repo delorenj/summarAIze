@@ -1,7 +1,7 @@
 import {Chip} from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import {ISummaryJobStatus} from "../../../types/summaraizeTypes";
+import {ISummaryJobStatus} from "../types/summaraizeTypes";
 import {useMyData} from "../hooks/useMyData";
 import {useEffect, useMemo, useState} from "react";
 
