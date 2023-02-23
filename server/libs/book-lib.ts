@@ -61,7 +61,17 @@ export const getBookById = async (
       bookId,
     },
   };
+  console.log("get book params", params);
   const result = await dynamoDb.get(params).promise();
+  console.log("get book result", result);
+  if (!result.Item) {
+    console.log("no book found. Maybe it's a public book?");
+    params.Key.userId = "public";
+    const result = await dynamoDb.get(params).promise();
+    console.log("get book result", result);
+    return result.Item as IBook;
+  }
+
   return result.Item as IBook;
 };
 
@@ -135,7 +145,9 @@ export const getChapterTextByPayload = async (
   userId: string
 ): Promise<IChapterText[]> => {
   const book = await getBookById(payload.bookId, userId);
+  console.log("book", book);
   const rawBook = await getBookFromFileSystemOrS3(userId + "/" + book.key);
+  console.log("rawBook", rawBook);
   const chapterTexts = [];
   for (const selectedChapter of payload.selectedChapters) {
     console.log("selectedChapter", selectedChapter);
