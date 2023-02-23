@@ -34,6 +34,7 @@ provider:
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-books
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-users
             - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-summaryjobs
+            - arn:aws:dynamodb:us-east-1:350692246643:table/${self:custom.stage}-booksjobs
         - Effect: Allow
           Action:
             - s3:ListBucket
