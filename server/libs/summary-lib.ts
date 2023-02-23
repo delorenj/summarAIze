@@ -20,14 +20,12 @@ export const persistSummaries = async (
     bookId: payload.bookId,
     summaries: {},
   };
-  console.log("summaries", summaries);
   summarizations.forEach((summarization) => {
     summaries["summaries"] = {
       ...summaries["summaries"],
       [summarization.summary.chapter.index]: summarization.summary.text,
     };
   });
-  console.log("summaries", summaries);
 
   const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
     TableName: process.env.jobsTableName as string,
@@ -41,6 +39,5 @@ export const persistSummaries = async (
     },
   };
 
-  console.log("params", params);
   await dynamoDb.update(params).promise();
 };
