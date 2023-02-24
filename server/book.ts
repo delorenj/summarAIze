@@ -162,14 +162,12 @@ export const getBookDetails = invokeHandler(async (event) => {
   console.log("event", event);
   const bookId = event.pathParameters.bookId;
   const userId = event.requestContext.authorizer.claims.sub;
-
   console.log("bookId", bookId, "userId", userId);
   const book = await getBookById(bookId, userId);
-  console.log("book", book);
-  const bookJobs = await getBookJobs(bookId);
+  const bookJobs = await getBookJobs(bookId, userId);
   const bookDetails: IBookDetails = {
     book,
     bookJobs,
   };
-  return { bookDetails, event };
+  return JSON.stringify(bookDetails);
 });
