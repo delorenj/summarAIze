@@ -158,9 +158,9 @@ export const parsePages = invokeHandler(async (event) => {
   return { book: { url: book.url }, foundChapterPages, event, searchString };
 });
 
-export const getBookDetails = invokeHandler(async (event) => {
+export const getBookDetails = handler(async (event) => {
   console.log("event", event);
-  const bookId = event.pathParameters.bookId;
+  const bookId = event.pathParameters?.bookId as string;
   const userId = event.requestContext.authorizer.claims.sub;
   console.log("bookId", bookId, "userId", userId);
   const book = await getBookById(bookId, userId);
