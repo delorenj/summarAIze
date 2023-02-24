@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { IBook, IBookDetails } from "../types/summaraizeTypes";
+import { IBook, IBookDetails } from '../types/summaraizeTypes'
 import { useMyData } from '../hooks/useMyData'
 import { useParams } from 'react-router-dom'
 
@@ -21,7 +21,7 @@ export const DocViewContext = React.createContext(defaultState)
 const DocViewContextProvider = ({ children }: Props) => {
   const [bookDetails, setBookDetails] = useState<IBookDetails>()
   const { bookId } = useParams()
-  const { getBookDetails } = useMyData({ skipCache: true})
+  const { getBookDetails } = useMyData({ skipCache: true })
   const state: IDocViewContext = {
     bookDetails,
     setBookDetails: function (bookDetails: any): void {
@@ -37,6 +37,7 @@ const DocViewContextProvider = ({ children }: Props) => {
       console.log('Got book details', response)
       setBookDetails(response)
     }
+    fetch()
   }, [])
   return <DocViewContext.Provider value={state}>{children}</DocViewContext.Provider>
 }

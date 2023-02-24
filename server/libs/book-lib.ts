@@ -97,33 +97,34 @@ export const getBookJobs = async (
     console.log("no book jobs");
     return [];
   }
-  const Keys = bookJobs.Items.map((item) => {
-    return { id: { S: item.jobId.S } };
-  });
+  const Keys = bookJobs.Items.map((item) => item.jobId);
   console.log("Keys", Keys);
-  const jobparams = {
+
+  const jobParams = {
     RequestItems: {
       [process.env.jobsTableName as string]: {
         Keys,
       },
     },
   };
-  console.log("jobparams", jobparams);
 
-  const jobs = await dynamoDb.batchGet(jobparams).promise();
-  console.log("jobs", jobs);
-  if (!jobs.Responses) {
-    console.log("no jobs");
-    return [];
-  }
-
-  console.log(
-    "Returning jobs",
-    jobs.Responses[process.env.jobsTableName as string]
-  );
-  return jobs.Responses[
-    process.env.jobsTableName as string
-  ] as ISummaryJobStatus[];
+  await dynamoDb.batchGet(jobParams, (err, data) => {
+    if (err) {
+      console.error("Error retrieving items:", err);
+      return [] as ISummaryJobStatus[];
+    } else {
+      if (!data.Responses) {
+        console.error("Error retrieving items:", data);
+        return [] as ISummaryJobStatus[];
+      }
+      const items = data.Responses[
+        process.env.jobsTableName as string
+      ] as ISummaryJobStatus[];
+      console.log("Retrieved items:", items);
+      return items;
+    }
+  });
+  return [] as ISummaryJobStatus[];
 };
 export const getUserIdFromRawBook = (book: IRawBook): string => {
   if (!book.url) {

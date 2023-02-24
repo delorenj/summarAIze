@@ -160,7 +160,7 @@ export const parsePages = invokeHandler(async (event) => {
 
 export const getBookDetails = invokeHandler(async (event) => {
   console.log("event", event);
-  const bookId = event.bookId;
+  const bookId = event.pathParameters.bookId;
   const userId = event.requestContext.authorizer.claims.sub;
 
   console.log("bookId", bookId, "userId", userId);

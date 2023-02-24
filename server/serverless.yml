@@ -25,6 +25,7 @@ provider:
             - dynamodb:Query
             - dynamodb:Scan
             - dynamodb:GetItem
+            - dynamodb:BatchGetItem
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
@@ -39,10 +40,6 @@ provider:
           Action:
             - s3:ListBucket
             - s3:ListObjects
-          Resource:
-            - arn:aws:s3:::summaraize-book/*
-        - Effect: Allow
-          Action:
             - s3:PutObject
             - s3:GetObject
             - s3:DeleteObject
