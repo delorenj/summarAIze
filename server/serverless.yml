@@ -103,7 +103,9 @@ functions:
   parsePages:
     handler: book.parsePages
     timeout: 300
-
+  locateBookCover:
+    handler: book.locateBookCover
+    timeout: 300
   parseBookMetadata:
     handler: book.parseBookMetadata
     events:
@@ -126,7 +128,6 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-
   getUserData:
     handler: user.getData
     events:
@@ -138,7 +139,6 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-
   getBookDetails:
     handler: book.getBookDetails
     events:
@@ -150,7 +150,6 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-
   publishSummaryJob:
     handler: summarize.publishSummaryJob
     environment:
