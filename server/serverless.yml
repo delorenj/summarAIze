@@ -11,6 +11,7 @@ provider:
   environment:
     OPENAI_API_KEY: ${param:openaiApiKey}
     stripeSecretKey: ${param:stripeSecretKey}
+    googleBooksApiKey: ${param:googleBooksApiKey}
     booksTableName: ${self:custom.stage}-books
     usersTableName: ${self:custom.stage}-users
     jobsTableName: ${self:custom.stage}-summaryjobs
@@ -97,9 +98,11 @@ functions:
   parseAllBooks:
     handler: book.parseAllBooks
     timeout: 300
+    maximumRetryAttempts: 0
   parseBook:
     handler: book.parseBook
     timeout: 900
+    maximumRetryAttempts: 0
   parsePages:
     handler: book.parsePages
     timeout: 300

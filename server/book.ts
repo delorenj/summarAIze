@@ -1,6 +1,7 @@
 import handler, { invokeHandler, s3handler } from "./libs/handler-lib";
 import {
   getBookById,
+  getBookCover,
   getBookFromFileSystemOrS3,
   getBookJobs,
   searchForBookByTitle,
@@ -79,6 +80,7 @@ export const parseBook = invokeHandler(async (event) => {
     TableName: "dev-books",
   };
   let searchString = "";
+  let options = {};
   const books: any = await dynamoDb.scan(params).promise();
   try {
     if (typeof event === "string") {
@@ -86,6 +88,7 @@ export const parseBook = invokeHandler(async (event) => {
     }
     console.log("typeof event", typeof event);
     searchString = event.book;
+    options = event.options || {};
   } catch (e) {
     console.log("error parsing event", e);
     searchString = event;
@@ -94,9 +97,14 @@ export const parseBook = invokeHandler(async (event) => {
   const reg = new RegExp(searchString, "i");
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
   const bookUrl = `${book.userId}/${book.key}`;
-  const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
+  const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl, options);
   await writeMetadataToDB(book.userId, bookFromS3);
-  return { book: { key: book.key }, event, reg, searchString };
+  return {
+    book: { key: book.key, author: book.author },
+    event,
+    reg,
+    searchString,
+  };
 });
 
 export const parsePages = invokeHandler(async (event) => {
@@ -170,4 +178,32 @@ export const getBookDetails = handler(async (event) => {
     bookJobs,
   };
   return JSON.stringify(bookDetails);
+});
+
+export const locateBookCover = invokeHandler(async (event) => {
+  console.log("event", event);
+  const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+  //first, get all the books from the DB
+  const params = {
+    TableName: "dev-books",
+  };
+  let searchString = "";
+  const books: any = await dynamoDb.scan(params).promise();
+  try {
+    if (typeof event === "string") {
+      event = JSON.parse(event);
+    }
+    console.log("typeof event", typeof event);
+    searchString = event.book;
+  } catch (e) {
+    console.log("error parsing event", e);
+    searchString = event;
+  }
+  console.log("searchString", searchString);
+  const reg = new RegExp(searchString, "i");
+  const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
+
+  const bookCover = await getBookCover(book);
+  return bookCover;
 });

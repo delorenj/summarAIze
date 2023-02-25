@@ -79,6 +79,7 @@ export interface IBookMetadata {
     ext: string;
     mime: string;
   };
+  author: string;
   numWords: number;
   chapters: IChapter[];
 }
@@ -118,6 +119,7 @@ export interface IBook {
   chapters: IChapter[];
   summaries?: ISummaryJobStatus[];
   title: string;
+  author?: string;
   cover: string;
   sizeInBytes: number;
 }
