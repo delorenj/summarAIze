@@ -13,12 +13,12 @@ type BookcoverResponse = {
   isbn?: string;
 };
 
-export interface BookcoverRequest {
+export interface BookCoverRequest {
   bookTitle?: string;
   authorName?: string;
 }
 
-export const getBookcoverUrl = async (req: BookcoverRequest) => {
+export const getBookCoverByBookCoverRequest = async (req: BookCoverRequest) => {
   const bookTitle = req.bookTitle;
   const authorName = req.authorName;
   const googleQuery = `${bookTitle} ${authorName} site:goodreads.com/book/show`;
@@ -28,14 +28,15 @@ export const getBookcoverUrl = async (req: BookcoverRequest) => {
 
   const goodreadsLink = getLinkGoogle(googleResponse.data);
   if (!goodreadsLink) {
+    console.log("Bookcover not found");
     throw new Error(BOOKCOVER_NOT_FOUND);
   }
 
   const goodreadsResponse = await Axios.get(goodreadsLink);
-  return getLinkGoodreads(goodreadsResponse.data);
+  return { url: getLinkGoodreads(goodreadsResponse.data) };
 };
 
-export const getBookcoverFromISBN = async (isbn: string) => {
+export const getBookCoverFromISBN = async (isbn: string) => {
   isbn = isbn.replace(/-/g, "");
   if (isbn.length !== 13) {
     throw new Error(INVALID_ISBN);

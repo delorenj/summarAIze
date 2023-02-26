@@ -1,7 +1,7 @@
 import handler, { invokeHandler, s3handler } from "./libs/handler-lib";
 import {
   getBookById,
-  getBookCover,
+  getBookCoverByBook,
   loadBookContentsAndGenerateMetadata,
   getBookJobs,
   getDocumentByTitle,
@@ -209,7 +209,7 @@ export const locateBookCover = invokeHandler(async (event) => {
   console.log("searchString", searchString);
   const reg = new RegExp(searchString, "i");
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
-
-  const bookCover = await getBookCover(book);
+  console.log("book", book);
+  const bookCover = await getBookCoverByBook(book);
   return bookCover;
 });

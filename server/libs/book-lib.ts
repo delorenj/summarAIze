@@ -32,7 +32,7 @@ import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
 import { LookForChapterHeadingParserStrategy } from "./ChapterParser/LookForChapterHeadingParserStrategy";
 import { DocumentStrategy } from "./Documents/DocumentStrategy";
 import { NativeChapterParserStrategy } from "./ChapterParser/NativeChapterParserStrategy";
-import { BookcoverRequest, getBookcoverUrl } from "../cover";
+import { BookCoverRequest, getBookCoverByBookCoverRequest } from "../cover";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -53,15 +53,22 @@ export const getDocumentByTitle = async (
   return DocumentFactory().createFromBook(book);
 };
 
-export const getBookCover = async (book: IBook) => {
-  if (!book.author) {
+export const getBookCoverByBook = async (book: IBook) => {
+  if (!book.author || book.author === "" || book.author === "Unknown") {
+    console.log("no author found for book", book);
     throw new Error("No author found for book");
   }
-  const req: BookcoverRequest = {
+  if (!book.title || book.title === "" || book.title === "Unknown") {
+    console.log("no title found for book", book);
+    throw new Error("No title found for book");
+  }
+
+  const req: BookCoverRequest = {
     bookTitle: book.title,
     authorName: book.author,
   };
-  return await getBookcoverUrl(req);
+  console.log("get book cover by book request", req);
+  return await getBookCoverByBookCoverRequest(req);
 };
 
 export const getBookById = async (

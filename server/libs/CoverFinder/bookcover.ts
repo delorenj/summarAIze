@@ -31,8 +31,10 @@ export const getLinkGoodreads = (data: any) => {
   if (data === undefined) {
     return null;
   }
-  const init = find(data, '<img src="https://i.gr-assets.com/images/');
-  const final = find(data, '"', init + 10);
-  const linkGoodreads = data.slice(init + 10, final);
-  return linkGoodreads;
+  const regex = new RegExp(/.image.:\s*.(https:.*?)",/);
+  const match = data.match(regex);
+  if (match === null || match.length < 2) {
+    return null;
+  }
+  return match[1];
 };
