@@ -2,9 +2,9 @@ import handler, { invokeHandler, s3handler } from "./libs/handler-lib";
 import {
   getBookById,
   getBookCover,
-  getBookFromFileSystemOrS3,
+  loadBookContentsAndGenerateMetadata,
   getBookJobs,
-  searchForBookByTitle,
+  getDocumentByTitle,
   writeMetadataToDB,
 } from "./libs/book-lib";
 import {
@@ -13,7 +13,10 @@ import {
 } from "aws-lambda";
 import * as AWS from "aws-sdk";
 import { IBook, IBookDetails, IRawBook } from "../types/summaraizeTypes";
-import { DocumentFactory } from "./libs/Documents/DocumentContext";
+import {
+  DocumentContext,
+  DocumentFactory,
+} from "./libs/Documents/DocumentContext";
 import { LookForChapterHeadingParserStrategy } from "./libs/ChapterParser/LookForChapterHeadingParserStrategy";
 import { createChapterParserContext } from "./libs/ChapterParser/ChapterParserContext";
 import { ChapterParsingStrategy } from "./libs/ChapterParser/ChapterParserStrategy";
@@ -31,7 +34,7 @@ export const parseBookMetadata = handler(
     const body: IParseBookMetadataPayload = JSON.parse(event.body as string);
     const bookUrl = body.bookUrl;
 
-    const book: IRawBook = await getBookFromFileSystemOrS3(bookUrl);
+    const book: IRawBook = await loadBookContentsAndGenerateMetadata(bookUrl);
     await writeMetadataToDB(userId, book);
     return JSON.stringify({
       book,
@@ -47,7 +50,7 @@ export const onUpload = s3handler(async (event: S3CreateEvent) => {
   }
   const userId = key.split("/")[0];
   console.log("onUpload things", userId, key);
-  const book = await getBookFromFileSystemOrS3(key);
+  const book = await loadBookContentsAndGenerateMetadata(key);
   console.log("got book", book);
   await writeMetadataToDB(userId, book);
   return JSON.stringify({
@@ -65,7 +68,7 @@ export const parseAllBooks = invokeHandler(async () => {
   console.log("books", books);
   for (const book of books.Items) {
     const bookUrl = `${book.userId}/${book.key}`;
-    const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl);
+    const bookFromS3 = await loadBookContentsAndGenerateMetadata(bookUrl);
     await writeMetadataToDB(book.userId, bookFromS3);
   }
   //return the keys of the books that were parsed
@@ -97,7 +100,10 @@ export const parseBook = invokeHandler(async (event) => {
   const reg = new RegExp(searchString, "i");
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
   const bookUrl = `${book.userId}/${book.key}`;
-  const bookFromS3 = await getBookFromFileSystemOrS3(bookUrl, options);
+  const bookFromS3 = await loadBookContentsAndGenerateMetadata(
+    bookUrl,
+    options
+  );
   await writeMetadataToDB(book.userId, bookFromS3);
   return {
     book: { key: book.key, author: book.author },
@@ -153,9 +159,9 @@ export const parsePages = invokeHandler(async (event) => {
     "maxPage",
     maxPage
   );
-  const book = await searchForBookByTitle(searchString);
-  console.log("book", book);
-  const documentContext = await DocumentFactory().createFromRawBook(book);
+  const documentContext: DocumentContext = await getDocumentByTitle(
+    searchString
+  );
   console.log("documentContext", documentContext);
   const chapterParser = await createChapterParserContext(
     documentContext,
@@ -163,7 +169,7 @@ export const parsePages = invokeHandler(async (event) => {
   );
   console.log("chapterParser", chapterParser);
   const foundChapterPages = await chapterParser.numChapters(minPage, maxPage);
-  return { book: { url: book.url }, foundChapterPages, event, searchString };
+  return { foundChapterPages, event, searchString };
 });
 
 export const getBookDetails = handler(async (event) => {

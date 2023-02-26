@@ -21,7 +21,11 @@ import { promises as fs } from "fs";
 import { dirname as getDirName } from "path";
 import { getBooks } from "./user-lib";
 import EpubDocumentStrategy from "./Documents/EpubDocumentStrategy";
-import { createDocumentContext } from "./Documents/DocumentContext";
+import {
+  createDocumentContext,
+  DocumentContext,
+  DocumentFactory,
+} from "./Documents/DocumentContext";
 import PDFDocumentStrategy from "./Documents/PDFDocumentStrategy";
 import { createChapterParserContext } from "./ChapterParser/ChapterParserContext";
 import PlainTextDocumentStrategy from "./Documents/PlainTextDocumentStrategy";
@@ -34,9 +38,9 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const s3 = new AWS.S3();
 
-export const searchForBookByTitle = async (
+export const getDocumentByTitle = async (
   title: string
-): Promise<IRawBook> => {
+): Promise<DocumentContext> => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
   //first, get all the books from the DB
   const params = {
@@ -46,8 +50,7 @@ export const searchForBookByTitle = async (
   const reg = new RegExp(title, "i");
   const books: any = await dynamoDb.scan(params).promise();
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
-  const bookUrl = `${book.userId}/${book.key}`;
-  return await getBookFromFileSystemOrS3(bookUrl, { simple: true });
+  return DocumentFactory().createFromBook(book);
 };
 
 export const getBookCover = async (book: IBook) => {
@@ -166,7 +169,9 @@ export const getChapterTextByPayload = async (
 ): Promise<IChapterText[]> => {
   const book = await getBookById(payload.bookId, userId);
   console.log("book", book);
-  const rawBook = await getBookFromFileSystemOrS3(book.userId + "/" + book.key);
+  const rawBook = await loadBookContentsAndGenerateMetadata(
+    book.userId + "/" + book.key
+  );
   console.log("rawBook", rawBook);
   const chapterTexts = [];
   for (const selectedChapter of payload.selectedChapters) {
@@ -260,14 +265,6 @@ export const getBookRow = async (
   return book[0] as IBook;
 };
 
-export const getBookFromFileSystemOrS3ById = async (
-  bookId: string,
-  userId: string
-): Promise<IRawBook> => {
-  const bookItem = await getBookById(bookId, userId);
-  return await getBookFromFileSystemOrS3(userId + "/" + bookItem.key);
-};
-
 export const findAuthorInContents = (contents: string): string | null => {
   // Regular expression to match an author name in the format "Last, First"
   const authorRegex = /(?<=(Author|Written by):\s+)[A-Za-z]+,\s+[A-Za-z]+/g;
@@ -279,7 +276,7 @@ export const findAuthorInContents = (contents: string): string | null => {
     return null;
   }
 };
-export const getBookFromFileSystemOrS3 = async (
+export const loadBookContentsAndGenerateMetadata = async (
   url: string,
   options?: any
 ): Promise<IRawBook> => {
@@ -287,7 +284,7 @@ export const getBookFromFileSystemOrS3 = async (
   // try {
   //     const book = await readFileFromTemp(url);
   //     console.log("Book read from /tmp");
-  //     const metadata = await getBookMetadata(book);
+  //     const metadata = await generateBookMetadata(book);
   //     return {
   //         url,
   //         fileContents: book.fileContents,
@@ -295,11 +292,11 @@ export const getBookFromFileSystemOrS3 = async (
   //     };
   // } catch (err) {
   //     console.log("Problem getting book from /tmp:", err);
-  const book: IRawBook = await readFileFromS3Bucket(url);
+  const book: IRawBook = await getRawBookByUrl(url);
   if (!book) {
     throw new Error(`Could not find book at ${url}`);
   }
-  const metadata: IBookMetadata = await getBookMetadata(book, options);
+  const metadata: IBookMetadata = await generateBookMetadata(book, options);
   await writeBookToTemp(book);
   return {
     url,
@@ -360,8 +357,8 @@ const writeBookToTemp = async (book: IRawBook) => {
 // }
 
 // a function to pull the files from an s3 bucket before caching them locally
-const readFileFromS3Bucket = async (url: string): Promise<IRawBook> => {
-  console.log("readFileFromS3Bucket", url);
+export const getRawBookByUrl = async (url: string): Promise<IRawBook> => {
+  console.log("getRawBookByUrl", url);
 
   try {
     const object = await s3
@@ -414,7 +411,7 @@ const getKeyFromUrl = (url: string): string | undefined => {
 };
 
 //This method is called by the client to get the book metadata
-const getBookMetadata = async (
+const generateBookMetadata = async (
   book: IRawBook,
   options?: any
 ): Promise<IBookMetadata> => {
