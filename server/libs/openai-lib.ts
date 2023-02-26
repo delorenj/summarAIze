@@ -165,12 +165,21 @@ const OpenAILib = (params: OpenAILibParams) => {
   };
 
   const askGPTToFindAuthor = async (text: string): Promise<string> => {
+    const prompt =
+      "find the author of the following text. Respond with only the author's name or 'Unknown'";
+    return askGPT(prompt, text);
+  };
+
+  const askGPTToFindTitle = async (text: string): Promise<string> => {
+    const prompt =
+      "find the title of the following document using only this first page of text. Respond with only the title or 'Unknown'";
+    return askGPT(prompt, text);
+  };
+
+  const askGPT = async (prompt: string, content: string): Promise<string> => {
     const options = {
       model: defaultOptions.model,
-      prompt:
-        "\"find the author of the following text. Respond with only the author's name or 'Unknown': \"\n\"" +
-        text +
-        '"',
+      prompt: '"' + prompt + ': "\n"' + content + '"',
       max_tokens: 20,
       temperature: 0,
       top_p: defaultOptions.top_p,
@@ -186,7 +195,7 @@ const OpenAILib = (params: OpenAILibParams) => {
         result.data.choices[0].text as string
       );
     } catch (e) {
-      console.log("Error asking GPT to find author", e);
+      console.log("Error asking GPT to find title", e);
       return "Unknown";
     }
   };
@@ -195,6 +204,7 @@ const OpenAILib = (params: OpenAILibParams) => {
     summarize,
     generateDescriptionByPayload,
     askGPTToFindAuthor,
+    askGPTToFindTitle,
   };
 };
 
