@@ -6,6 +6,8 @@ import {
   getBookJobs,
   getDocumentByTitle,
   writeMetadataToDB,
+  updateBookCover,
+  getUserIdFromRawBook,
 } from "./libs/book-lib";
 import {
   APIGatewayProxyWithCognitoAuthorizerEvent,
@@ -211,5 +213,7 @@ export const locateBookCover = invokeHandler(async (event) => {
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
   console.log("book", book);
   const bookCover = await getBookCoverByBook(book);
-  return bookCover;
+  await updateBookCover(book.bookId.replace('"', ""), book.userId, bookCover);
+
+  return { url: bookCover };
 });

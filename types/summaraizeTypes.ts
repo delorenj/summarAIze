@@ -75,6 +75,7 @@ export interface IChapter {
 
 export interface IBookMetadata {
   title: string;
+  cover?: string;
   fileType: {
     ext: string;
     mime: string;

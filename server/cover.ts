@@ -33,7 +33,9 @@ export const getBookCoverByBookCoverRequest = async (req: BookCoverRequest) => {
   }
 
   const goodreadsResponse = await Axios.get(goodreadsLink);
-  return { url: getLinkGoodreads(goodreadsResponse.data) };
+  const link = getLinkGoodreads(goodreadsResponse.data);
+  console.log("link", link);
+  return link;
 };
 
 export const getBookCoverFromISBN = async (isbn: string) => {

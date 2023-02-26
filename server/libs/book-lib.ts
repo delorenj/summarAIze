@@ -315,6 +315,32 @@ export const loadBookContentsAndGenerateMetadata = async (
   // };
 };
 
+export const updateBookCover = async (
+  bookId: string,
+  userId: string,
+  cover: string
+): Promise<void> => {
+  const params: any = {
+    TableName: process.env.booksTableName,
+    Key: {
+      userId: userId,
+      bookId: bookId,
+    },
+    UpdateExpression: "set cover = :cover",
+    ExpressionAttributeValues: {
+      ":cover": cover,
+    },
+    ReturnValues: "UPDATED_NEW",
+  };
+
+  try {
+    console.log("Updating book cover", params);
+    await dynamoDb.update(params).promise();
+  } catch (err) {
+    console.log("Problem updating book cover:", err);
+  }
+};
+
 export const writeMetadataToDB = async (userId: string, book: IRawBook) => {
   const params: any = {
     TableName: process.env.booksTableName,
@@ -504,10 +530,16 @@ const generateBookMetadata = async (
     });
   }
 
+  const cover = await getBookCoverByBookCoverRequest({
+    bookTitle: metadata.title,
+    authorName: metadata.author,
+  });
+
   return {
     author: metadata.author || "Unknown",
     fileType,
     title: metadata.title || "Untitled",
+    cover,
     numWords: metadata.numWords,
     chapters: metadata.chapters,
   };
