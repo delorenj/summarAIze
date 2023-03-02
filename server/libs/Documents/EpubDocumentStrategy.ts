@@ -52,7 +52,6 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const text = await getAllText();
     const title = doc.metadata.title || "Untitled";
     const author =
-      findAuthorInContents(await getAllText()) ||
       (await oai.askGPTToFindAuthor(text.split(" ").slice(0, 100).join(" "))) ||
       "Unknown Author";
     const chapters: IChapter[] = [];

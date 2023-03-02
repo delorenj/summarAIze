@@ -33,6 +33,7 @@ import { LookForChapterHeadingParserStrategy } from "./ChapterParser/LookForChap
 import { DocumentStrategy } from "./Documents/DocumentStrategy";
 import { NativeChapterParserStrategy } from "./ChapterParser/NativeChapterParserStrategy";
 import { BookCoverRequest, getBookCoverByBookCoverRequest } from "../cover";
+import openaiLib from "./openai-lib";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -444,7 +445,7 @@ const getKeyFromUrl = (url: string): string | undefined => {
 };
 
 //This method is called by the client to get the book metadata
-const generateBookMetadata = async (
+export const generateBookMetadata = async (
   book: IRawBook,
   options?: any
 ): Promise<IBookMetadata> => {
@@ -457,9 +458,16 @@ const generateBookMetadata = async (
   };
   console.log("fileTypeFromBuffer", fileType);
 
+  const oai = openaiLib({});
+  const author =
+    findAuthorInContents(book.fileContents.toString()) ||
+    (await oai.askGPTToFindAuthor(
+      book.fileContents.toString().split(" ").slice(0, 100).join(" ")
+    )) ||
+    "Unknown Author";
   if (options?.simple) {
     return {
-      author: findAuthorInContents(book.fileContents.toString()) || "Unknown",
+      author,
       fileType,
       title: getTitleFromUrl(book.url) || "Untitled",
       numWords: 0,

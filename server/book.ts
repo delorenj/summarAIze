@@ -7,18 +7,21 @@ import {
   getDocumentByTitle,
   writeMetadataToDB,
   updateBookCover,
-  getUserIdFromRawBook,
+  getRawBookByUrl,
+  generateBookMetadata,
 } from "./libs/book-lib";
 import {
   APIGatewayProxyWithCognitoAuthorizerEvent,
   S3CreateEvent,
 } from "aws-lambda";
 import * as AWS from "aws-sdk";
-import { IBook, IBookDetails, IRawBook } from "../types/summaraizeTypes";
 import {
-  DocumentContext,
-  DocumentFactory,
-} from "./libs/Documents/DocumentContext";
+  IBook,
+  IBookDetails,
+  IBookMetadata,
+  IRawBook,
+} from "../types/summaraizeTypes";
+import { DocumentContext } from "./libs/Documents/DocumentContext";
 import { LookForChapterHeadingParserStrategy } from "./libs/ChapterParser/LookForChapterHeadingParserStrategy";
 import { createChapterParserContext } from "./libs/ChapterParser/ChapterParserContext";
 import { ChapterParsingStrategy } from "./libs/ChapterParser/ChapterParserStrategy";
@@ -102,11 +105,11 @@ export const parseBook = invokeHandler(async (event) => {
   const reg = new RegExp(searchString, "i");
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
   const bookUrl = `${book.userId}/${book.key}`;
-  const bookFromS3 = await loadBookContentsAndGenerateMetadata(
-    bookUrl,
-    options
-  );
-  await writeMetadataToDB(book.userId, bookFromS3);
+  const rawBook: IRawBook = await getRawBookByUrl(bookUrl);
+  const metadata: IBookMetadata = await generateBookMetadata(book, options);
+  rawBook.metadata = metadata;
+  await writeMetadataToDB(book.userId, rawBook);
+
   return {
     book: { key: book.key, author: book.author },
     event,

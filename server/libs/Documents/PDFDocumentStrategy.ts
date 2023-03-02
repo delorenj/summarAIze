@@ -35,7 +35,6 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     const text = await getAllText();
     const oai = openaiLib({});
     const author =
-      findAuthorInContents(await getAllText()) ||
       (await oai.askGPTToFindAuthor(text.split(" ").slice(0, 100).join(" "))) ||
       "Unknown Author";
     const chapters: IChapter[] = [];
