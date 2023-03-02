@@ -349,7 +349,7 @@ export const writeMetadataToDB = async (userId: string, book: IRawBook) => {
       // The attributes of the item to be created
       userId: userId,
       author: book.metadata?.author,
-      bookId: book.id, // The book's s3 ETag
+      bookId: book.id?.replace('"', ""), // The book's s3 ETag
       format: book.metadata?.fileType.ext,
       title: book.metadata?.title,
       chapters: book.metadata?.chapters,
@@ -456,7 +456,7 @@ export const generateBookMetadata = async (
     ext: "txt",
     mime: "plain/text",
   };
-  console.log("fileTypeFromBuffer", fileType);
+  console.log("generateBookMetadata(): fileTypeFromBuffer", fileType);
 
   const oai = openaiLib({});
   const author =
@@ -482,7 +482,10 @@ export const generateBookMetadata = async (
   } else if (isPdf(fileType)) {
     docStrategy = PDFDocumentStrategy({ book });
   } else {
-    console.log("Unknown file type, treating as plain text", fileType);
+    console.log(
+      "generateBookMetadata(): Unknown file type, treating as plain text",
+      fileType
+    );
     docStrategy = PlainTextDocumentStrategy({ book });
   }
 
@@ -493,28 +496,52 @@ export const generateBookMetadata = async (
   };
 
   const metadata = await documentContext.parseMetadata();
-  console.log("Got book metadata", metadata);
-  if (!options.metadataOnly) {
+  console.log("generateBookMetadata(): Got book metadata", metadata);
+  console.log("generateBookMetadata(): options", options);
+  console.log(
+    "generateBookMetadata(): !options.metadataOnly",
+    !options?.metadataOnly
+  );
+  if (!options?.metadataOnly) {
+    console.log("generateBookMetadata(): Going to parse chapters");
     let chapterParser = createChapterParserContext(
       documentContext,
       NativeChapterParserStrategy(parserOptions)
     );
+    console.log(
+      "generateBookMetadata(): Created chapter parser",
+      chapterParser
+    );
     let avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 150);
+    console.log(
+      "generateBookMetadata(): Got avgWordsPerChapter",
+      avgWordsPerChapter
+    );
     let chapters: IChapter[] = [];
-    console.log("Got avgWordsPerChapter", avgWordsPerChapter);
+    console.log(
+      "generateBookMetadata(): Got avgWordsPerChapter",
+      avgWordsPerChapter
+    );
     if (avgWordsPerChapter > 4000) {
       console.log(
-        "Too many words per chapter, going to see if headings are present"
+        "generateBookMetadata(): Too many words per chapter, going to see if headings are present"
       );
       chapterParser = createChapterParserContext(
         documentContext,
         LookForChapterHeadingParserStrategy(parserOptions)
       );
       avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 150);
-      console.log("Got avgWordsPerChapter", avgWordsPerChapter);
+      console.log(
+        "generateBookMetadata(): Got avgWordsPerChapter",
+        avgWordsPerChapter
+      );
       if (avgWordsPerChapter > 4000) {
-        console.log("Too many words per chapter, going to manually parse");
-        throw new Error("Artificial chapters not supported yet");
+        console.log(
+          "generateBookMetadata(): Too many words per chapter, going to manually parse"
+        );
+        throw new Error(
+          "generateBookMetadata(): Artificial chapters not supported yet"
+        );
       }
 
       chapters = await chapterParser.parse();
@@ -522,26 +549,36 @@ export const generateBookMetadata = async (
       metadata.chapters = chapters;
     } else {
       console.log(
-        "Not too many words per chapter, going to use native chapters"
+        "generateBookMetadata(): Not too many words per chapter, going to use native chapters"
       );
       chapters = await chapterParser.parse();
-      console.log("Got Chapters", chapters);
+      console.log("generateBookMetadata(): Got Chapters", chapters);
       metadata.chapters = chapters;
     }
 
-    console.log("Got book metadata", {
+    console.log("generateBookMetadata(): metadata after chapter parsing", {
       author: metadata.author || "Unknown",
       fileType: fileType,
       title: metadata.title,
       numWords: metadata.numWords,
       chapters: metadata.chapters,
     });
+  } else {
+    console.log("generateBookMetadata(): Skipping chapter parsing...");
   }
 
-  const cover = await getBookCoverByBookCoverRequest({
-    bookTitle: metadata.title,
-    authorName: metadata.author,
-  });
+  let cover;
+  try {
+    cover = await getBookCoverByBookCoverRequest({
+      bookTitle: metadata.title,
+      authorName: metadata.author,
+    });
+  } catch (err) {
+    console.log(
+      "generateBookMetadata(): Error getting book cover. TODO: Replace with filetype cover right here.",
+      err
+    );
+  }
 
   return {
     author: metadata.author || "Unknown",

@@ -28,13 +28,13 @@ export const getBookCoverByBookCoverRequest = async (req: BookCoverRequest) => {
 
   const goodreadsLink = getLinkGoogle(googleResponse.data);
   if (!goodreadsLink) {
-    console.log("Bookcover not found");
+    console.log("getBookCoverByBookCoverRequest(): Bookcover not found");
     throw new Error(BOOKCOVER_NOT_FOUND);
   }
 
   const goodreadsResponse = await Axios.get(goodreadsLink);
   const link = getLinkGoodreads(goodreadsResponse.data);
-  console.log("link", link);
+  console.log("getBookCoverByBookCoverRequest(): link", link);
   return link;
 };
 
