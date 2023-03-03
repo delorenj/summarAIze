@@ -3,6 +3,7 @@ import {
   IChapter,
   IRawBook,
 } from "../../../types/summaraizeTypes";
+import * as cheerio from "cheerio";
 import { DocumentStrategy, wordsPerPage } from "./DocumentStrategy";
 import { EPub } from "epub2";
 import striptags from "striptags";
@@ -34,6 +35,14 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     return await epub();
   };
 
+  const getFirstPageRaw = async (): Promise<string> => {
+    const doc = await epub();
+    const contents = await doc.getChapterRawAsync(doc.flow[0].id as string);
+    const $ = cheerio.load(contents);
+    const pageDiv = $("div.page-content");
+    const pageText = pageDiv.text();
+    return pageText;
+  };
   const getAllText = async (): Promise<string> => {
     const doc = await epub();
     let text = "";
@@ -96,6 +105,7 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
   return {
     parseMetadata,
     getAllText,
+    getFirstPageRaw,
     book,
     getNativeDocument,
     getNativeChapters,

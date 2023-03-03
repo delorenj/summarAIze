@@ -22,6 +22,7 @@ export interface DocumentContext {
   parseMetadata: () => Promise<any>;
   wordCount: () => Promise<number>;
   getAllWords: () => Promise<string[]>;
+  getFirstPageRaw: () => Promise<string>;
   getAllText: () => Promise<string>;
 }
 
@@ -65,6 +66,10 @@ export const createDocumentContext = (
     return (await strategy.getAllText()).split(" ");
   };
 
+  const getFirstPageRaw = async (): Promise<string> => {
+    return await strategy.getFirstPageRaw();
+  };
+
   const wordCount = async (): Promise<number> => {
     return (await getAllWords()).length;
   };
@@ -98,6 +103,7 @@ export const createDocumentContext = (
     pageCount,
     wordCount,
     getAllWords,
+    getFirstPageRaw,
     getPage,
   };
 };

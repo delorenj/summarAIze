@@ -63,6 +63,9 @@ const PlainTextDocumentStrategy = (params: {
   const getNativeChapterText = async (chapterId: string): Promise<string> => {
     return "not yet implemented";
   };
+  const getFirstPageRaw = async (): Promise<string> => {
+    return "not yet implemented";
+  };
 
   return {
     parseMetadata,
@@ -71,6 +74,7 @@ const PlainTextDocumentStrategy = (params: {
     getNativeDocument,
     getNativeChapters,
     getNativeChapterText,
+    getFirstPageRaw,
   };
 };
 

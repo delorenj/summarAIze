@@ -98,7 +98,7 @@ export enum FileType {
 }
 
 export interface IRawBook {
-  id: string | undefined;
+  id: string;
   url: string;
   fileType: string;
   fileContents: Buffer;

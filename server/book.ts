@@ -107,7 +107,7 @@ export const parseBook = invokeHandler(async (event) => {
   const book = books.Items.filter((book: IBook) => book.title.match(reg))[0];
   const bookUrl = `${book.userId}/${book.key}`;
   const rawBook: IRawBook = await getRawBookByUrl(bookUrl);
-  const metadata: IBookMetadata = await generateBookMetadata(book, options);
+  const metadata: IBookMetadata = await generateBookMetadata(rawBook, options);
   rawBook.metadata = metadata;
   await writeMetadataToDB(book.userId, rawBook);
 

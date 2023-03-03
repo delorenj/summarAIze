@@ -3,6 +3,9 @@ import { fileTypeFromBuffer } from "file-type";
 import { EPub } from "epub2";
 import pdf from "fork-pdf-parse-with-pagepertext";
 import striptags from "striptags";
+import { toPng } from "html-to-image";
+import * as cheerio from "cheerio";
+
 import {
   FileType,
   IBook,
@@ -34,6 +37,7 @@ import { DocumentStrategy } from "./Documents/DocumentStrategy";
 import { NativeChapterParserStrategy } from "./ChapterParser/NativeChapterParserStrategy";
 import { BookCoverRequest, getBookCoverByBookCoverRequest } from "../cover";
 import openaiLib from "./openai-lib";
+import { DOMParser } from "xmldom";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -55,21 +59,68 @@ export const getDocumentByTitle = async (
 };
 
 export const getBookCoverByBook = async (book: IBook) => {
-  if (!book.author || book.author === "" || book.author === "Unknown") {
-    console.log("no author found for book", book);
-    throw new Error("No author found for book");
-  }
-  if (!book.title || book.title === "" || book.title === "Unknown") {
-    console.log("no title found for book", book);
-    throw new Error("No title found for book");
-  }
+  try {
+    if (!book.author || book.author === "" || book.author === "Unknown") {
+      console.log("no author found for book", book);
+      throw new Error("No author found for book");
+    }
+    if (!book.title || book.title === "" || book.title === "Unknown") {
+      console.log("no title found for book", book);
+      throw new Error("No title found for book");
+    }
 
-  const req: BookCoverRequest = {
-    bookTitle: book.title,
-    authorName: book.author,
-  };
-  console.log("get book cover by book request", req);
-  return await getBookCoverByBookCoverRequest(req);
+    const req: BookCoverRequest = {
+      bookTitle: book.title,
+      authorName: book.author,
+    };
+    console.log("get book cover by book request", req);
+    return await getBookCoverByBookCoverRequest(req);
+  } catch (e) {
+    console.log(
+      "getBookCoverByBook(): Error getting book cover. TODO: Replace with filetype cover right here.",
+      e
+    );
+    const cover = await generateCoverImageByBook(book);
+    console.log("getBookCoverByBook(): generated cover", cover);
+    return cover;
+  }
+};
+
+export const generateCoverImageByBook = async (book: IBook) => {
+  const doc = await DocumentFactory().createFromBook(book);
+  const textContents = await doc.getFirstPageRaw();
+  console.log("generateCoverImageByBook(): textContents", textContents);
+  const parser = new DOMParser();
+  const html = parser.parseFromString(textContents, "plain/text");
+  console.log("generateCoverImageByBook(): html", html);
+  const container = document.createElement("div");
+  container.style.width = "300px";
+  container.style.height = "400px";
+  container.appendChild(html);
+
+  // Convert the container element to an image using 'html-to-image'
+  toPng(container).then((pngBlob) => {
+    // Generate a unique filename for the image
+    const filename = `${book.userId}/${book.key}-cover.png`;
+    console.log("generateCoverImageByBook(): filename", filename);
+    // Upload the image to S3
+    s3.upload(
+      {
+        Bucket: "summaraize-book",
+        Key: filename,
+        Body: pngBlob,
+        ContentType: "image/png",
+      },
+      (error, data) => {
+        if (error) {
+          console.error("Error:", error);
+        } else {
+          console.log("Success:", data);
+          return data;
+        }
+      }
+    );
+  });
 };
 
 export const getBookById = async (
@@ -80,8 +131,8 @@ export const getBookById = async (
   const params = {
     TableName: "dev-books",
     Key: {
-      userId,
-      bookId,
+      userId: userId.replace(/"/g, ""),
+      bookId: bookId.replace(/"/g, ""),
     },
   };
   console.log("get book params", params);
@@ -300,18 +351,18 @@ export const loadBookContentsAndGenerateMetadata = async (
   //     };
   // } catch (err) {
   //     console.log("Problem getting book from /tmp:", err);
-  const book: IRawBook = await getRawBookByUrl(url);
-  if (!book) {
-    throw new Error(`Could not find book at ${url}`);
+  const rawBook: IRawBook = await getRawBookByUrl(url);
+  if (!rawBook) {
+    throw new Error(`Could not find rawBook at ${url}`);
   }
-  const metadata: IBookMetadata = await generateBookMetadata(book, options);
-  await writeBookToTemp(book);
+  const metadata: IBookMetadata = await generateBookMetadata(rawBook, options);
+  await writeBookToTemp(rawBook);
   return {
     url,
-    fileType: book.fileType,
-    fileContents: book.fileContents,
+    fileType: rawBook.fileType,
+    fileContents: rawBook.fileContents,
     metadata,
-    id: book.id,
+    id: rawBook.id,
   };
   // };
 };
@@ -347,9 +398,9 @@ export const writeMetadataToDB = async (userId: string, book: IRawBook) => {
     TableName: process.env.booksTableName,
     Item: {
       // The attributes of the item to be created
-      userId: userId,
+      userId: userId.replace(/"/g, ""),
       author: book.metadata?.author,
-      bookId: book.id?.replace('"', ""), // The book's s3 ETag
+      bookId: book.id.replace(/"/g, ""),
       format: book.metadata?.fileType.ext,
       title: book.metadata?.title,
       chapters: book.metadata?.chapters,
@@ -408,7 +459,7 @@ export const getRawBookByUrl = async (url: string): Promise<IRawBook> => {
       url: url,
       fileType: url.split(".").pop() || "txt",
       fileContents: object.Body as Buffer,
-      id: object.ETag,
+      id: object.ETag || "unknown",
     };
   } catch (err) {
     console.log("Problem getting S3 object:", err);
@@ -446,13 +497,14 @@ const getKeyFromUrl = (url: string): string | undefined => {
 
 //This method is called by the client to get the book metadata
 export const generateBookMetadata = async (
-  book: IRawBook,
+  rawBook: IRawBook,
   options?: any
 ): Promise<IBookMetadata> => {
-  if (!book.fileContents) {
+  console.log("generateBookMetadata()", rawBook);
+  if (!rawBook.fileContents) {
     throw new Error("No file contents");
   }
-  const fileType = (await fileTypeFromBuffer(book.fileContents)) || {
+  const fileType = (await fileTypeFromBuffer(rawBook.fileContents)) || {
     ext: "txt",
     mime: "plain/text",
   };
@@ -460,16 +512,16 @@ export const generateBookMetadata = async (
 
   const oai = openaiLib({});
   const author =
-    findAuthorInContents(book.fileContents.toString()) ||
+    findAuthorInContents(rawBook.fileContents.toString()) ||
     (await oai.askGPTToFindAuthor(
-      book.fileContents.toString().split(" ").slice(0, 100).join(" ")
+      rawBook.fileContents.toString().split(" ").slice(0, 100).join(" ")
     )) ||
     "Unknown Author";
   if (options?.simple) {
     return {
       author,
       fileType,
-      title: getTitleFromUrl(book.url) || "Untitled",
+      title: getTitleFromUrl(rawBook.url) || "Untitled",
       numWords: 0,
       chapters: [],
     };
@@ -478,15 +530,15 @@ export const generateBookMetadata = async (
   let docStrategy: DocumentStrategy;
 
   if (isEpub(fileType)) {
-    docStrategy = EpubDocumentStrategy({ book });
+    docStrategy = EpubDocumentStrategy({ book: rawBook });
   } else if (isPdf(fileType)) {
-    docStrategy = PDFDocumentStrategy({ book });
+    docStrategy = PDFDocumentStrategy({ book: rawBook });
   } else {
     console.log(
       "generateBookMetadata(): Unknown file type, treating as plain text",
       fileType
     );
-    docStrategy = PlainTextDocumentStrategy({ book });
+    docStrategy = PlainTextDocumentStrategy({ book: rawBook });
   }
 
   const documentContext = createDocumentContext(docStrategy);
@@ -574,10 +626,14 @@ export const generateBookMetadata = async (
       authorName: metadata.author,
     });
   } catch (err) {
-    console.log(
-      "generateBookMetadata(): Error getting book cover. TODO: Replace with filetype cover right here.",
-      err
-    );
+    console.log("generateBookMetadata(): Error getting book cover.", err);
+  }
+
+  if (!cover) {
+    const userId = getUserIdFromRawBook(rawBook);
+    const book = await getBookById(rawBook.id, userId);
+    cover = await generateCoverImageByBook(book);
+    console.log("generateBookMetadata(): Generated cover image", cover);
   }
 
   return {

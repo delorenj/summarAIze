@@ -60,6 +60,10 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     return "not yet implemented";
   };
 
+  const getFirstPageRaw = async (): Promise<string> => {
+    return "not yet implemented";
+  };
+
   return {
     parseMetadata,
     getAllText,
@@ -67,6 +71,7 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     getNativeDocument,
     getNativeChapters,
     getNativeChapterText,
+    getFirstPageRaw,
   };
 };
 
