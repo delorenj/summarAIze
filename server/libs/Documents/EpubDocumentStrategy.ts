@@ -37,12 +37,11 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
 
   const getFirstPageRaw = async (): Promise<string> => {
     const doc = await epub();
-    const contents = await doc.getChapterRawAsync(doc.flow[0].id as string);
-    const $ = cheerio.load(contents);
-    const pageDiv = $("div.page-content");
-    const pageText = pageDiv.text();
-    return pageText;
+    const image = await doc.getImageAsync("615064102130413397_cover.jpg");
+    console.log("image", image);
+    return image;
   };
+
   const getAllText = async (): Promise<string> => {
     const doc = await epub();
     let text = "";
