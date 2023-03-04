@@ -63,8 +63,9 @@ const PlainTextDocumentStrategy = (params: {
   const getNativeChapterText = async (chapterId: string): Promise<string> => {
     return "not yet implemented";
   };
-  const getFirstPageRaw = async (): Promise<string> => {
-    return "not yet implemented";
+  const extractCoverImage = async (): Promise<string[]> => {
+    console.log("extractCoverImage not implemented for plain text");
+    return [];
   };
 
   return {
@@ -74,7 +75,7 @@ const PlainTextDocumentStrategy = (params: {
     getNativeDocument,
     getNativeChapters,
     getNativeChapterText,
-    getFirstPageRaw,
+    extractCoverImage,
   };
 };
 

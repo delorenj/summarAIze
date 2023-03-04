@@ -46,6 +46,7 @@ provider:
             - s3:DeleteObject
           Resource:
             - arn:aws:s3:::summaraize-book/*
+            - arn:aws:s3:::summaraize-book-cover/*
 plugins:
   - serverless-bundle
   - serverless-s3-local

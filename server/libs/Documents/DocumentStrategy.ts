@@ -11,7 +11,7 @@ export interface DocumentStrategy {
   book: IRawBook;
   parseMetadata(): Promise<IBookMetadata>;
   getAllText(): Promise<string>;
-  getFirstPageRaw(): Promise<string>;
+  extractCoverImage(): Promise<string[]>;
   getNativeDocument(): Promise<EPub | pdfParse.Result | string>;
   getNativeChapters(): Promise<IChapter[]>;
   getNativeChapterText(chapterId: string): Promise<string>;

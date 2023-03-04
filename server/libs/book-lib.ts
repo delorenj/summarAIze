@@ -88,39 +88,31 @@ export const getBookCoverByBook = async (book: IBook) => {
 
 export const generateCoverImageByBook = async (book: IBook) => {
   const doc = await DocumentFactory().createFromBook(book);
-  const textContents = await doc.getFirstPageRaw();
-  console.log("generateCoverImageByBook(): textContents", textContents);
-  const parser = new DOMParser();
-  const html = parser.parseFromString(textContents, "plain/text");
-  console.log("generateCoverImageByBook(): html", html);
-  const container = document.createElement("div");
-  container.style.width = "300px";
-  container.style.height = "400px";
-  container.appendChild(html);
+  const coverImage = await doc.extractCoverImage();
+  console.log(
+    "generateCoverImageByBook(): tried to extract coverImage",
+    coverImage
+  );
 
-  // Convert the container element to an image using 'html-to-image'
-  toPng(container).then((pngBlob) => {
-    // Generate a unique filename for the image
-    const filename = `${book.userId}/${book.key}-cover.png`;
-    console.log("generateCoverImageByBook(): filename", filename);
-    // Upload the image to S3
-    s3.upload(
-      {
-        Bucket: "summaraize-book",
-        Key: filename,
-        Body: pngBlob,
-        ContentType: "image/png",
-      },
-      (error, data) => {
-        if (error) {
-          console.error("Error:", error);
-        } else {
-          console.log("Success:", data);
-          return data;
-        }
-      }
-    );
-  });
+  if (coverImage) {
+    const Key = `${book.userId}/${book.key}-cover.png`;
+    console.log("Key", Key);
+    const params = {
+      Bucket: "summaraize-book-cover",
+      Key,
+      Body: coverImage[0],
+      ContentType: "image/png",
+    };
+    console.log("params", params);
+
+    const obj = await s3.putObject(params).promise();
+    console.log("File uploaded successfully!", obj);
+    const publicUrl = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
+    console.log("publicUrl", publicUrl);
+    return publicUrl;
+  } else {
+    console.log("no cover image found. TODO: Implement default cover image");
+  }
 };
 
 export const getBookById = async (
@@ -403,6 +395,7 @@ export const writeMetadataToDB = async (userId: string, book: IRawBook) => {
       bookId: book.id.replace(/"/g, ""),
       format: book.metadata?.fileType.ext,
       title: book.metadata?.title,
+      cover: book.metadata?.cover,
       chapters: book.metadata?.chapters,
       numWords: book.metadata?.numWords,
       key: getKeyFromUrl(book.url),

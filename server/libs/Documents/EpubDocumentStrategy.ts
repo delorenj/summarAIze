@@ -3,12 +3,9 @@ import {
   IChapter,
   IRawBook,
 } from "../../../types/summaraizeTypes";
-import * as cheerio from "cheerio";
 import { DocumentStrategy, wordsPerPage } from "./DocumentStrategy";
 import { EPub } from "epub2";
 import striptags from "striptags";
-import { font } from "pdfkit";
-import { findAuthorInContents } from "../book-lib";
 import openaiLib from "../openai-lib";
 
 const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
@@ -35,13 +32,18 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     return await epub();
   };
 
-  const getFirstPageRaw = async (): Promise<string> => {
+  const extractCoverImage = async (): Promise<string[]> => {
     const doc = await epub();
-    const image = await doc.getImageAsync("615064102130413397_cover.jpg");
-    console.log("image", image);
-    return image;
+    const imgs = doc.listImage();
+    console.log("imgs", imgs);
+    if (imgs.length > 0) {
+      const res = await doc.getImageAsync(imgs[0].id as string);
+      console.log("res", res);
+      return res;
+    } else {
+      return [];
+    }
   };
-
   const getAllText = async (): Promise<string> => {
     const doc = await epub();
     let text = "";
@@ -104,7 +106,7 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
   return {
     parseMetadata,
     getAllText,
-    getFirstPageRaw,
+    extractCoverImage,
     book,
     getNativeDocument,
     getNativeChapters,

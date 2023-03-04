@@ -22,7 +22,7 @@ export interface DocumentContext {
   parseMetadata: () => Promise<any>;
   wordCount: () => Promise<number>;
   getAllWords: () => Promise<string[]>;
-  getFirstPageRaw: () => Promise<string>;
+  extractCoverImage: () => Promise<string[]>;
   getAllText: () => Promise<string>;
 }
 
@@ -66,8 +66,8 @@ export const createDocumentContext = (
     return (await strategy.getAllText()).split(" ");
   };
 
-  const getFirstPageRaw = async (): Promise<string> => {
-    return await strategy.getFirstPageRaw();
+  const extractCoverImage = async (): Promise<string[]> => {
+    return await strategy.extractCoverImage();
   };
 
   const wordCount = async (): Promise<number> => {
@@ -103,7 +103,7 @@ export const createDocumentContext = (
     pageCount,
     wordCount,
     getAllWords,
-    getFirstPageRaw,
+    extractCoverImage,
     getPage,
   };
 };

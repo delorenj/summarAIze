@@ -114,7 +114,7 @@ export enum LogLevel {
 export interface IBook {
   cacheKey?: string;
   key: string;
-  userId?: string;
+  userId: string;
   bookId: string;
   format: string;
   chapters: IChapter[];
