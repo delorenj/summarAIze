@@ -154,9 +154,7 @@ export const LookForChapterHeadingParserStrategy = (
       }
       const headingCheckRegex = new RegExp(chapterBreakRegex, "igm");
       const pageMatch = page.match(headingCheckRegex);
-      console.log("pageMatch", pageMatch);
       if (!pageMatch) {
-        log("No chapter break found on page on full page match. Continuing");
         const lines = page.match(/[^\r\n]+/g) || [];
         currentPlaceholder.text += ` ${page}`; //Append the line to the current chapter with a space just in case
         currentPlaceholder.lineEnd = lines.length - 1;

@@ -80,6 +80,7 @@ resources:
 functions:
   onS3Upload:
     handler: book.onUpload
+    timeout: 900
     events:
       - s3:
           bucket: summaraize-book

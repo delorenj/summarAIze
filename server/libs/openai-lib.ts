@@ -185,12 +185,14 @@ const OpenAILib = (params: OpenAILibParams) => {
       top_p: defaultOptions.top_p,
       frequency_penalty: defaultOptions.frequency_penalty,
       presence_penalty: defaultOptions.presence_penalty,
+      timeout: 30,
     };
 
     console.log("options", options);
     try {
       const result = await openai.createCompletion(options);
       console.log("result", result);
+      console.log("result", result.data.choices[0].text as string);
       return stripNewlinesAndCollapseSpaces(
         result.data.choices[0].text as string
       );

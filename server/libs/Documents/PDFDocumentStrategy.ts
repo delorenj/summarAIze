@@ -5,9 +5,11 @@ import {
 } from "../../../types/summaraizeTypes";
 import { DocumentStrategy } from "./DocumentStrategy";
 import pdfParse from "pdf-parse";
-import { findAuthorInContents, getTitleFromUrl } from "../book-lib";
+import { getTitleFromUrl } from "../book-lib";
 import striptags from "striptags";
 import openaiLib from "../openai-lib";
+import { PDFDict, PDFDocument, PDFImage, PDFName, PDFPageLeaf } from "pdf-lib";
+import { image } from "pdfkit";
 
 const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
   const { book } = params;
@@ -38,7 +40,7 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
       (await oai.askGPTToFindAuthor(text.split(" ").slice(0, 100).join(" "))) ||
       "Unknown Author";
     const chapters: IChapter[] = [];
-    return {
+    const metadata = {
       author,
       title,
       numWords: await wordCount(),
@@ -48,6 +50,8 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
         mime: "application/pdf",
       },
     };
+    console.log("about to return metadata", metadata);
+    return metadata;
   };
 
   const getNativeChapters = async (): Promise<IChapter[]> => {
@@ -61,8 +65,28 @@ const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
   };
 
   const extractCoverImage = async (): Promise<string[]> => {
-    console.log("extractCoverImage not implemented for PDFs");
-    return [];
+    const doc = await PDFDocument.load(book.fileContents);
+    const firstPage = doc.getPages()[0] as unknown as PDFPageLeaf;
+    const resources = firstPage.Resources();
+    const xObjects = resources?.get(PDFName.of("XObject")) as unknown as Map<
+      PDFName,
+      any
+    >;
+    let image: PDFImage | undefined = undefined;
+
+    for (const value of xObjects.values()) {
+      if (value instanceof PDFImage) {
+        image = value;
+        break;
+      }
+    }
+
+    if (!image) {
+      console.log("No image found in PDF");
+      return [];
+    }
+    console.log("image", image);
+    return [image as unknown as string, "image/jpeg"];
   };
 
   return {

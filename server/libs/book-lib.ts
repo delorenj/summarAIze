@@ -554,40 +554,27 @@ export const generateBookMetadata = async (
       NativeChapterParserStrategy(parserOptions)
     );
     console.log(
-      "generateBookMetadata(): Created chapter parser",
+      "generateBookMetadata(): [NativeChapterParserStrategy] Created chapter parser",
       chapterParser
     );
-    let avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 150);
+    const avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 150);
     console.log(
-      "generateBookMetadata(): Got avgWordsPerChapter",
+      "generateBookMetadata(): [NativeChapterParserStrategy] Got avgWordsPerChapter",
       avgWordsPerChapter
     );
     let chapters: IChapter[] = [];
     console.log(
-      "generateBookMetadata(): Got avgWordsPerChapter",
+      "generateBookMetadata(): [NativeChapterParserStrategy] Got avgWordsPerChapter",
       avgWordsPerChapter
     );
     if (avgWordsPerChapter > 4000) {
       console.log(
-        "generateBookMetadata(): Too many words per chapter, going to see if headings are present"
+        "generateBookMetadata(): [NativeChapterParserStrategy] Too many words per chapter, going to see if headings are present"
       );
       chapterParser = createChapterParserContext(
         documentContext,
         LookForChapterHeadingParserStrategy(parserOptions)
       );
-      avgWordsPerChapter = await chapterParser.avgWordsPerChapter(0, 150);
-      console.log(
-        "generateBookMetadata(): Got avgWordsPerChapter",
-        avgWordsPerChapter
-      );
-      if (avgWordsPerChapter > 4000) {
-        console.log(
-          "generateBookMetadata(): Too many words per chapter, going to manually parse"
-        );
-        throw new Error(
-          "generateBookMetadata(): Artificial chapters not supported yet"
-        );
-      }
 
       chapters = await chapterParser.parse();
       console.log("Got Chapters", chapters);
