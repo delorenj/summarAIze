@@ -48,7 +48,6 @@ export const parseBookMetadata = handler(
 );
 
 export const onUpload = s3handler(async (event: S3CreateEvent) => {
-  console.log("onUpload event", event);
   const object = event.Records[0].s3.object;
   const key = object.key;
   if (key.indexOf("/chapters/") > -1) {
