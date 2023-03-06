@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/CircularProgressBar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/book.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/book.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +24,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
@@ -35,6 +40,10 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="feature/summary-output" />
+                    <option name="lastUsedInstant" value="1677993295" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="feature/covers" />
                     <option name="lastUsedInstant" value="1677286862" />
                   </RecentBranch>
@@ -49,10 +58,6 @@
                   <RecentBranch>
                     <option name="branchName" value="feature/chapter-persist" />
                     <option name="lastUsedInstant" value="1676666338" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="feature/document-strategy" />
-                    <option name="lastUsedInstant" value="1676568566" />
                   </RecentBranch>
                 </list>
               </option>
@@ -167,7 +172,7 @@
       <workItem from="1677340247486" duration="3660000" />
       <workItem from="1677345712256" duration="49649000" />
       <workItem from="1677947352911" duration="3362000" />
-      <workItem from="1677984911728" duration="680000" />
+      <workItem from="1677984911728" duration="8821000" />
     </task>
     <servers />
   </component>
