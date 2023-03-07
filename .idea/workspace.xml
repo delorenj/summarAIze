@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/CircularProgressBar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/BasicTabs.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/homeContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/openai-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/openai-lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +22,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -172,7 +171,9 @@
       <workItem from="1677340247486" duration="3660000" />
       <workItem from="1677345712256" duration="49649000" />
       <workItem from="1677947352911" duration="3362000" />
-      <workItem from="1677984911728" duration="8821000" />
+      <workItem from="1677984911728" duration="10015000" />
+      <workItem from="1678202764530" duration="70000" />
+      <workItem from="1678202869526" duration="4103000" />
     </task>
     <servers />
   </component>

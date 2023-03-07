@@ -6,10 +6,16 @@ import { useParams } from 'react-router-dom'
 export interface IDocViewContext {
   bookDetails?: IBookDetails
   setBookDetails(bookDetails: IBookDetails | undefined): void
+  activeTab: number
+  setActiveTab(activeTab: number): void
 }
 
 const defaultState: IDocViewContext = {
   setBookDetails(bookDetails: IBookDetails) {},
+  activeTab: 0,
+  setActiveTab(activeTab: number) {
+    throw new Error('Function not implemented.')
+  },
 }
 
 type Props = {
@@ -20,6 +26,7 @@ export const DocViewContext = React.createContext(defaultState)
 
 const DocViewContextProvider = ({ children }: Props) => {
   const [bookDetails, setBookDetails] = useState<IBookDetails>()
+  const [activeTab, setActiveTab] = useState<number>(0)
   const { bookId } = useParams()
   const { getBookDetails } = useMyData({ skipCache: true })
   const state: IDocViewContext = {
@@ -27,6 +34,8 @@ const DocViewContextProvider = ({ children }: Props) => {
     setBookDetails: function (bookDetails: any): void {
       throw new Error('Function not implemented.')
     },
+    activeTab,
+    setActiveTab,
   }
 
   useEffect(() => {

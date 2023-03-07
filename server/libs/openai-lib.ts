@@ -26,7 +26,7 @@ const OpenAILib = (params: OpenAILibParams) => {
   const mock = params.mock || false;
 
   const defaultOptions: ISummarizeOptions = {
-    model: "text-davinci-003",
+    model: "gpt-3.5-turbo-0301",
     temperature: 0.5,
     prompt: "",
     max_tokens: 60,
