@@ -3,6 +3,8 @@ import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { a11yProps, TabPanel } from './BasicTabs'
 import React from 'react'
 import { SummaryList } from './SummaryList'
+import { RenderDocument } from './RenderDocument'
+import { SummaryWorkspace } from './SummaryWorkspace'
 
 export const DocNavigator = () => {
   const { bookDetails, activeTab, setActiveTab } = useDocViewContext()
@@ -13,7 +15,7 @@ export const DocNavigator = () => {
 
   return bookDetails ? (
     <>
-      <Typography variant="h1">This Book is Boh</Typography>
+      <Typography variant="h1">{bookDetails.book.title}</Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', textAlign: 'center' }}>
         <Tabs
           value={activeTab}
@@ -30,13 +32,13 @@ export const DocNavigator = () => {
         </Tabs>
       </Box>
       <TabPanel value={activeTab} index={0}>
-        <RenderDocument bookId={bookDetails.book.bookId} />
+        <RenderDocument book={bookDetails.book} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
         <SummaryList />
       </TabPanel>
       <TabPanel value={activeTab} index={2}>
-        <SummaryWorkspace bookId={bookDetails.book.bookId} />
+        <SummaryWorkspace book={bookDetails.book} />
       </TabPanel>
     </>
   ) : null
