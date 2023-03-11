@@ -1,3 +1,5 @@
+import { getBookById } from "./libs/book-lib";
+
 const AWS = require("aws-sdk");
 import handler from "./libs/handler-lib";
 AWS.config.update({ region: "us-east-1" });
@@ -31,5 +33,29 @@ export const getUploadUrl = handler(async (event) => {
   return JSON.stringify({
     uploadURL,
     Key,
+  });
+});
+
+export const getDownloadUrl = handler(async (event) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+  const querystring = event.queryStringParameters;
+  const bookId = querystring.id;
+  console.log("Query Params:", bookId);
+  const book = await getBookById(bookId, userId);
+  const Key = `${book.userId}/${book.key}`;
+  console.log("Download Key:", Key);
+
+  // Get signed URL from S3
+  const s3Params = {
+    Bucket: "summaraize-book",
+    Key,
+    Expires: URL_EXPIRATION_SECONDS,
+  };
+
+  console.log("Params: ", s3Params);
+  const downloadURL = await s3.getSignedUrlPromise("getObject", s3Params);
+  console.log("Download URL: ", downloadURL);
+  return JSON.stringify({
+    downloadURL,
   });
 });

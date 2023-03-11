@@ -97,6 +97,17 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+  s3SignedDownloadUrl:
+    handler: s3SignedUrl.getDownloadUrl
+    events:
+      - http:
+          path: /signed/download
+          method: get
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   parseAllBooks:
     handler: book.parseAllBooks
     timeout: 300
