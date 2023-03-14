@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/hooks/useS3Download.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/RenderDocument.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RenderDocument.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/s3SignedUrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/s3SignedUrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ViewBook.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ViewBook.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useS3Download.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useS3Download.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +173,7 @@
       <workItem from="1677947352911" duration="3362000" />
       <workItem from="1677984911728" duration="10015000" />
       <workItem from="1678202764530" duration="70000" />
-      <workItem from="1678202869526" duration="16251000" />
+      <workItem from="1678202869526" duration="23950000" />
     </task>
     <servers />
   </component>

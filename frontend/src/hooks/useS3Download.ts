@@ -26,8 +26,6 @@ export const useS3Download = () => {
       console.log('signedDownloadURL Response:', response)
       // @ts-ignore
       setDownloadUrl(response.data.downloadURL)
-      // Navigate to download URL
-      window.open(downloadUrl, '_blank')
     } catch (e: any) {
       console.log('Error getting signedDownloadURL', e)
       if (e.response.status === 401) {

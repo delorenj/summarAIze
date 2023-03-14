@@ -220,9 +220,7 @@ export const getChapterTextByPayload = async (
 ): Promise<IChapterText[]> => {
   const book = await getBookById(payload.bookId, userId);
   console.log("book", book);
-  const rawBook = await loadBookContentsAndGenerateMetadata(
-    book.userId + "/" + book.key
-  );
+  const rawBook = await loadBookContents(book.userId + "/" + book.key);
   console.log("rawBook", rawBook);
   const chapterTexts = [];
   for (const selectedChapter of payload.selectedChapters) {
@@ -327,7 +325,7 @@ export const findAuthorInContents = (contents: string): string | null => {
     return null;
   }
 };
-export const loadBookContentsAndGenerateMetadata = async (
+export const loadBookContents = async (
   url: string,
   options?: any
 ): Promise<IRawBook> => {
@@ -347,6 +345,14 @@ export const loadBookContentsAndGenerateMetadata = async (
   if (!rawBook) {
     throw new Error(`Could not find rawBook at ${url}`);
   }
+  return rawBook;
+};
+
+export const loadBookContentsAndGenerateMetadata = async (
+  url: string,
+  options?: any
+): Promise<IRawBook> => {
+  const rawBook = await loadBookContents(url, options);
   const metadata: IBookMetadata = await generateBookMetadata(rawBook, options);
   await writeBookToTemp(rawBook);
   return {
