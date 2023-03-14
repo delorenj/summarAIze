@@ -24,6 +24,7 @@ export interface DocumentContext {
   getAllWords: () => Promise<string[]>;
   extractCoverImage: () => Promise<string[]>;
   getAllText: () => Promise<string>;
+  getChapterText: (chapterIndex: number) => Promise<string>;
 }
 
 export interface IDocumentFactory {
@@ -99,6 +100,9 @@ export const createDocumentContext = (
     },
     async getAllText(): Promise<string> {
       return await strategy.getAllText();
+    },
+    async getChapterText(chapterIndex: number): Promise<string> {
+      return await strategy.getChapterText(chapterIndex);
     },
     pageCount,
     wordCount,

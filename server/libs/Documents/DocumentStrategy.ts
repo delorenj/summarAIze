@@ -15,4 +15,5 @@ export interface DocumentStrategy {
   getNativeDocument(): Promise<EPub | pdfParse.Result | string>;
   getNativeChapters(): Promise<IChapter[]>;
   getNativeChapterText(chapterId: string): Promise<string>;
+  getChapterText(chapterIndex: number): Promise<string>;
 }

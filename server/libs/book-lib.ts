@@ -3,8 +3,6 @@ import { fileTypeFromBuffer } from "file-type";
 import { EPub } from "epub2";
 import pdf from "fork-pdf-parse-with-pagepertext";
 import striptags from "striptags";
-import { toPng } from "html-to-image";
-import * as cheerio from "cheerio";
 
 import {
   FileType,
@@ -37,7 +35,6 @@ import { DocumentStrategy } from "./Documents/DocumentStrategy";
 import { NativeChapterParserStrategy } from "./ChapterParser/NativeChapterParserStrategy";
 import { BookCoverRequest, getBookCoverByBookCoverRequest } from "../cover";
 import openaiLib from "./openai-lib";
-import { DOMParser } from "xmldom";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -220,14 +217,13 @@ export const getChapterTextByPayload = async (
 ): Promise<IChapterText[]> => {
   const book = await getBookById(payload.bookId, userId);
   console.log("book", book);
-  const rawBook = await loadBookContents(book.userId + "/" + book.key);
-  console.log("rawBook", rawBook);
+  const doc = await DocumentFactory().createFromBook(book);
   const chapterTexts = [];
   for (const selectedChapter of payload.selectedChapters) {
     console.log("selectedChapter", selectedChapter);
     const chapter = getRawChapterByIndex(book, selectedChapter.index);
     console.log("chapter", chapter);
-    const chapterText = await getTextByChapter(rawBook, chapter);
+    const chapterText = await doc.getChapterText(selectedChapter.index);
     console.log("chapterText", chapterText);
     chapterTexts.push({ chapter, text: chapterText });
   }
