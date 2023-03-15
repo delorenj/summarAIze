@@ -1,18 +1,18 @@
-import {
-  IBook,
-  IChapterParserOptions,
-  IRawBook,
-  LogLevel,
-} from "../../../types/summaraizeTypes";
+import { IBook, IRawBook } from "../../../types/summaraizeTypes";
 import { DocumentStrategy, wordsPerPage } from "./DocumentStrategy";
-import { LookForChapterHeadingParserStrategy } from "../ChapterParser/LookForChapterHeadingParserStrategy";
 import PDFDocumentStrategy from "./PDFDocumentStrategy";
-import { createChapterParserContext } from "../ChapterParser/ChapterParserContext";
 import { fileTypeFromBuffer } from "file-type";
 import EpubDocumentStrategy from "./EpubDocumentStrategy";
 import PlainTextDocumentStrategy from "./PlainTextDocumentStrategy";
-import S3ChapterPersistenceStrategy from "../ChapterPersistence/S3ChapterPersistenceStrategy";
-import { isPdf, isEpub, isPlainText, getRawBookByUrl } from "../book-lib";
+import {
+  isPdf,
+  isEpub,
+  getRawBookByUrl,
+  getUserIdFromRawBook,
+  getChapterUrlByRawBook,
+  getChapterTextFromS3,
+} from "../book-lib";
+import * as stream from "stream";
 
 export interface DocumentContext {
   strategy: DocumentStrategy;
@@ -92,6 +92,10 @@ export const createDocumentContext = (
     return pageWords.join(" ");
   };
 
+  const getChapterText = async (chapterIndex: number): Promise<string> => {
+    return await getChapterTextFromS3(strategy.book, chapterIndex);
+  };
+
   return {
     strategy,
     book: strategy.book,
@@ -101,13 +105,11 @@ export const createDocumentContext = (
     async getAllText(): Promise<string> {
       return await strategy.getAllText();
     },
-    async getChapterText(chapterIndex: number): Promise<string> {
-      return await strategy.getChapterText(chapterIndex);
-    },
     pageCount,
     wordCount,
     getAllWords,
     extractCoverImage,
     getPage,
+    getChapterText,
   };
 };

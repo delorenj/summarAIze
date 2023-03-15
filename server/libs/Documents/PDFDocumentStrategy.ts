@@ -8,8 +8,7 @@ import pdfParse from "pdf-parse";
 import { getTitleFromUrl } from "../book-lib";
 import striptags from "striptags";
 import openaiLib from "../openai-lib";
-import { PDFDict, PDFDocument, PDFImage, PDFName, PDFPageLeaf } from "pdf-lib";
-import { image } from "pdfkit";
+import { PDFDocument, PDFImage, PDFName, PDFPageLeaf } from "pdf-lib";
 
 const PDFDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
   const { book } = params;

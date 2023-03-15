@@ -462,6 +462,29 @@ export const getRawBookByUrl = async (url: string): Promise<IRawBook> => {
   }
 };
 
+export const getChapterTextFromS3 = async (
+  book: IRawBook,
+  chapterIndex: number
+): Promise<string> => {
+  console.log("getChapterTextFromS3", book.url, chapterIndex);
+
+  try {
+    const chapterUrl = getChapterUrlByRawBook(book, chapterIndex);
+    const object = await s3
+      .getObject({
+        Key: chapterUrl,
+        Bucket: "summaraize-book",
+      })
+      .promise();
+
+    console.log("Got Chapter!", object.Body);
+    return (object.Body as Buffer).toString();
+  } catch (err) {
+    console.log("Problem getting Chapter text:", err);
+    throw err;
+  }
+};
+
 export const isPlainText = (fileType: IFileType) => {
   return fileType && fileType.mime === "text/plain";
 };

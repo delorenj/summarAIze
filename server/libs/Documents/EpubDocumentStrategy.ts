@@ -104,11 +104,6 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     return striptags(contents);
   };
 
-  const getChapterText = async (chapterIndex: number): Promise<string> => {
-    //not implemented
-    return "NOT IMPLEMENTED";
-  };
-
   return {
     parseMetadata,
     getAllText,
@@ -117,7 +112,6 @@ const EpubDocumentStrategy = (params: { book: IRawBook }): DocumentStrategy => {
     getNativeDocument,
     getNativeChapters,
     getNativeChapterText,
-    getChapterText,
   };
 };
 

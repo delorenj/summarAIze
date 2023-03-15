@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentContext.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/DocumentStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/EpubDocumentStrategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/Documents/PDFDocumentStrategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/libs/book-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/book-lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -173,7 +174,7 @@
       <workItem from="1677947352911" duration="3362000" />
       <workItem from="1677984911728" duration="10015000" />
       <workItem from="1678202764530" duration="70000" />
-      <workItem from="1678202869526" duration="27123000" />
+      <workItem from="1678202869526" duration="31181000" />
     </task>
     <servers />
   </component>
