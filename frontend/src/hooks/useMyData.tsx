@@ -3,13 +3,14 @@ import axios from 'axios'
 import { useAuth } from '../contexts/authContext'
 import { signOut } from '../libs/cognito'
 import { useNavigate } from 'react-router-dom'
-import { IBook, IBookDetails, IGetUserDataResponse, IUploadBookProps } from "../types/summaraizeTypes";
+import { IBook, IBookDetails, IGetUserDataResponse, IUploadBookProps } from '../types/summaraizeTypes'
 import { useHomeContext } from '../contexts/homeContext'
 import { usePollJobStatus } from './usePollJobStatus'
 
 const defaultBook: IBook = {
   key: '',
   bookId: '',
+  userId: '',
   format: 'epub',
   title: '',
   chapters: [],
