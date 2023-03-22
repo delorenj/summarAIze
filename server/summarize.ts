@@ -10,6 +10,8 @@ import { getChapterTextByPayload } from "./libs/book-lib";
 import { getUser } from "./libs/user-lib";
 import { publishToSummaryQueue } from "./libs/sqs-lib";
 import { JSONType } from "aws-sdk/clients/s3";
+import AWS from "aws-sdk";
+import { getSummaryJob } from "./libs/summary-lib";
 
 const generateSummaries = async (payload: ISummaryFormPayload, user: IUser) => {
   const textToSummarize = await getChapterTextByPayload(payload, user.userId);
@@ -46,6 +48,42 @@ export const publishSummaryJob = handler(
     } catch (e) {
       console.log("Error parsing summaryform payload", e);
       throw new Error("Error parsing summary form payload");
+    }
+  }
+);
+export const fetchSummaryJob = handler(
+  async (event: APIGatewayProxyWithCognitoAuthorizerEvent) => {
+    const userId = event.requestContext.authorizer.claims.sub;
+    const jobId = event.pathParameters?.jobId;
+
+    if (!userId) {
+      return JSON.stringify({
+        statusCode: 400,
+        body: { error: "Error getting user" },
+      });
+    }
+
+    if (!jobId) {
+      return JSON.stringify({
+        statusCode: 400,
+        body: { error: "Error getting jobId" },
+      });
+    }
+
+    try {
+      const summaryJob = await getSummaryJob(jobId, userId);
+
+      if (summaryJob) {
+        return JSON.stringify(summaryJob);
+      } else {
+        return JSON.stringify({
+          statusCode: 404,
+          body: { error: "Job not found" },
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching summary job:", error);
+      throw new Error("Error fetching summary job");
     }
   }
 );

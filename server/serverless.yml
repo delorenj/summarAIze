@@ -179,6 +179,18 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+  fetchSummaryJob:
+    handler: summarize.fetchSummaryJob
+    events:
+      - http:
+          path: /summary/{jobId}
+          method: get
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   billing:
     handler: billing.main
     events:

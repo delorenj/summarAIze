@@ -5,11 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/hooks/useSummaries.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/SummaryView.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SummaryList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMyData.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/contexts/docViewContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useSummaries.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useSummaries.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/types/summaraizeTypes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/sqs-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/sqs-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/libs/summary-lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/libs/summary-lib.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/serverless.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/summarize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/summarize.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/summaraizeTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/summaraizeTypes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +103,7 @@
     "go.import.settings.migrated": "true",
     "javascript.nodejs.core.library.configured.version": "18.12.0",
     "javascript.nodejs.core.library.typings.version": "18.14.0",
-    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/frontend/src/hooks",
+    "last_opened_file_path": "/Users/jaraddelorenzo/code/summaraize/frontend/src/components",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -115,8 +121,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/frontend/src/hooks" />
       <recent name="$PROJECT_DIR$/frontend/src/components" />
+      <recent name="$PROJECT_DIR$/frontend/src/hooks" />
       <recent name="$PROJECT_DIR$/server/libs/ChapterParser" />
       <recent name="$PROJECT_DIR$/server" />
       <recent name="$PROJECT_DIR$/frontend/src/contexts" />
@@ -173,7 +179,7 @@
       <workItem from="1677947352911" duration="3362000" />
       <workItem from="1677984911728" duration="10015000" />
       <workItem from="1678202764530" duration="70000" />
-      <workItem from="1678202869526" duration="34874000" />
+      <workItem from="1678202869526" duration="51857000" />
     </task>
     <servers />
   </component>

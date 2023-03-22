@@ -45,8 +45,9 @@ export interface ISummaryJobStatus {
   jobId: string
   status: JobStatus
   userId: string
+  bookId: string
   payload: ISummaryFormPayload
-  summaries?: IChapterSummary
+  summaries?: IChapterSummary[]
   createdAt: string
 }
 

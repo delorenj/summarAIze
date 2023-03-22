@@ -38,6 +38,7 @@ export const publishToSummaryQueue = async (
       jobId: sqsResponse.MessageId as string,
       status: JobStatus.PENDING,
       userId: user.userId,
+      bookId: payload.bookId,
       payload,
       createdAt: new Date().toISOString(),
     };

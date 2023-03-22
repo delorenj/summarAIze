@@ -5,13 +5,12 @@ import DownloadIcon from '@mui/icons-material/Download'
 import PreviewIcon from '@mui/icons-material/Preview'
 import ListItemText from '@mui/material/ListItemText'
 import { useDocViewContext } from '../contexts/docViewContext'
-import { useSummaries } from '../hooks/useSummaries'
 import { ISummaryJobStatus } from '../types/summaraizeTypes'
+import { SummaryView } from './SummaryView'
 
 export const SummaryList: React.FC = () => {
-  const { bookDetails } = useDocViewContext()
+  const { bookDetails, getSummaryFromBookDetailsByJobId } = useDocViewContext()
   const [expandedRow, setExpandedRow] = useState<string | null>(null)
-  const { data, loading } = useSummaries(expandedRow)
 
   useEffect(() => {
     console.log(bookDetails)
@@ -42,13 +41,7 @@ export const SummaryList: React.FC = () => {
           </ListItem>
           {expandedRow === job.jobId && (
             <ListItem>
-              {loading ? (
-                <Box sx={{ width: '100%' }}>
-                  <LinearProgress />
-                </Box>
-              ) : (
-                <ListItemText primary={data} />
-              )}
+              <SummaryView summaryJob={getSummaryFromBookDetailsByJobId(job.jobId)} />
             </ListItem>
           )}
         </React.Fragment>

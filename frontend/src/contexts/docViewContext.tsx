@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { IBook, IBookDetails } from '../types/summaraizeTypes'
+import { IBookDetails, ISummaryJobStatus } from '../types/summaraizeTypes'
 import { useMyData } from '../hooks/useMyData'
 import { useParams } from 'react-router-dom'
 
@@ -8,12 +8,16 @@ export interface IDocViewContext {
   setBookDetails(bookDetails: IBookDetails | undefined): void
   activeTab: number
   setActiveTab(activeTab: number): void
+  getSummaryFromBookDetailsByJobId(jobId: string): ISummaryJobStatus
 }
 
 const defaultState: IDocViewContext = {
   setBookDetails(bookDetails: IBookDetails) {},
   activeTab: 0,
   setActiveTab(activeTab: number) {
+    throw new Error('Function not implemented.')
+  },
+  getSummaryFromBookDetailsByJobId(jobId: string) {
     throw new Error('Function not implemented.')
   },
 }
@@ -36,6 +40,11 @@ const DocViewContextProvider = ({ children }: Props) => {
     },
     activeTab,
     setActiveTab,
+    getSummaryFromBookDetailsByJobId: (jobId: string) => {
+      if (!bookDetails) return {} as ISummaryJobStatus
+      const summary = bookDetails.bookJobs.find((summary) => summary.jobId === jobId)
+      return summary || ({} as ISummaryJobStatus)
+    },
   }
 
   useEffect(() => {
