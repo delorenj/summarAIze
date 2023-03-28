@@ -39,11 +39,7 @@ export const SummaryList: React.FC = () => {
               </Stack>
             </ListItemButton>
           </ListItem>
-          {expandedRow === job.jobId && (
-            <ListItem>
-              <SummaryView summaryJob={getSummaryFromBookDetailsByJobId(job.jobId)} />
-            </ListItem>
-          )}
+          {expandedRow === job.jobId && <SummaryView summaryJob={getSummaryFromBookDetailsByJobId(job.jobId)} />}
         </React.Fragment>
       ))}
     </List>

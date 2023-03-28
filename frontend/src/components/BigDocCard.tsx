@@ -12,7 +12,6 @@ export const BigDocCard = () => {
       <Card
         raised
         sx={{
-          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',

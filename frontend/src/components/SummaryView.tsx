@@ -13,13 +13,16 @@ export const SummaryView = ({ summaryJob }: SummaryViewProps) => {
   }, [])
 
   return (
-    <ListItem>
+    <>
       {summaryJob?.summaries?.map((chapterSummary: IChapterSummary) => (
         <ListItem key={`chapter-summary-${chapterSummary.chapterIndex}`}>
           {/* Define the type of the chapter text */}
-          <ListItemText primary={chapterSummary.text} />
+          <ListItemText
+            secondary={chapterSummary.text}
+            primary={<h1>Chapter {chapterSummary.chapterIndex} Summary</h1>}
+          />
         </ListItem>
       ))}
-    </ListItem>
+    </>
   )
 }
