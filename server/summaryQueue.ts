@@ -31,7 +31,7 @@ export const handler = sqsHandler(async (event: SQSEvent) => {
 
     const textToSummarize = await getChapterTextByPayload(payload, userId);
     console.log("textToSummarize", textToSummarize);
-    const oai = OpenAILib({ user, mock: true });
+    const oai = OpenAILib({ user, mock: false });
     const summarizations: ISummarizeResult[] = await oai.summarize(
       payload,
       textToSummarize
