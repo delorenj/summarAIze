@@ -1,5 +1,10 @@
 import { AxiosError } from "axios";
-import { Configuration, CreateCompletionRequest, OpenAIApi } from "openai";
+import {
+  Configuration,
+  CreateChatCompletionRequest,
+  CreateCompletionRequest,
+  OpenAIApi,
+} from "openai";
 import {
   IChapterText,
   ISummarizeOptions,
@@ -27,7 +32,7 @@ const OpenAILib = (params: OpenAILibParams) => {
   const mock = params.mock || false;
 
   const defaultOptions: ISummarizeOptions = {
-    model: "gpt-4-32k",
+    model: "gpt-4",
     temperature: 0.5,
     prompt: "",
     max_tokens: 60,
@@ -60,34 +65,32 @@ const OpenAILib = (params: OpenAILibParams) => {
         JSON.stringify(payload)
       );
     }
-    console.log("About to generate description by payload: ", payload);
-    const options = getSummarizeOptionsByPayload(payload);
-    const subDescriptionPrompt = descriptionPrompt
-      .replace("{complexity}", payload.complexity.toString())
-      .replace("{depth}", payload.depth.toString());
-    console.log("description prompt", subDescriptionPrompt);
-    const request: CreateCompletionRequest = {
-      model: options.model,
-      prompt: subDescriptionPrompt,
-      max_tokens: options.max_tokens,
-      temperature: options.temperature,
-      top_p: options.top_p,
-      frequency_penalty: options.frequency_penalty,
-      presence_penalty: options.presence_penalty,
-    };
-    console.log("request", request);
-    const description = await openai.createCompletion(request);
+    return "This is a simple summary of the chapter";
+  };
 
-    console.log("description", description);
+  const countTokens = (text: string) => {
+    return text.split(/\s+/).length;
+  };
 
-    if (
-      !description.data.choices ||
-      description.data.choices.length === 0 ||
-      !description.data.choices[0].text
-    ) {
-      throw new Error("No description returned from OpenAI API");
+  const splitText = async (chapterText: string, maxTokens = 8000) => {
+    let chunks = [];
+    let currentChunk = "";
+
+    const words = chapterText.split(/\s+/);
+    for (let word of words) {
+      if (countTokens(currentChunk + " " + word) <= maxTokens) {
+        currentChunk += " " + word;
+      } else {
+        chunks.push({ role: "user", content: currentChunk.trim() });
+        currentChunk = word;
+      }
     }
-    return description.data.choices[0].text;
+
+    if (currentChunk) {
+      chunks.push({ role: "user", content: currentChunk.trim() });
+    }
+
+    return chunks;
   };
 
   const summarizeChapter = async (
@@ -112,40 +115,43 @@ const OpenAILib = (params: OpenAILibParams) => {
     }
     console.log("options", options);
     const prompt = composePromptByOptions(chapterText, options);
+    const textChunks = await splitText(chapterText.text);
 
     try {
-      const summary = await openai.createCompletion({
+      const summary = await openai.createChatCompletion({
         model: options.model,
-        prompt,
-        max_tokens: options.max_tokens,
-        temperature: options.temperature,
-        top_p: options.top_p,
-        frequency_penalty: options.frequency_penalty,
-        presence_penalty: options.presence_penalty,
+        messages: [
+          ...{
+            role: "system",
+            content:
+              "You are college professor of literature that summarizes the following text for your students:",
+          },
+          ...textChunks,
+        ],
       });
 
       console.log("summary", summary);
       if (
         !summary.data.choices ||
         summary.data.choices.length === 0 ||
-        !summary.data.choices[0].text
+        !summary.data.choices[0].message
       ) {
         throw new Error("No summary returned from OpenAI API");
       }
       const result: IChapterText = {
-        text: summary.data.choices[0].text,
+        text: summary.data.choices[0].message.content,
         chapter: chapterText.chapter,
       };
 
       return {
-        summarizationId: "mock",
+        summarizationId: "todo",
         userId: user.userId,
-        bookId: "mock",
+        bookId: "todo",
         options,
         summary: result,
         createdAt: new Date().toISOString(),
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       if (error instanceof Error && "response" in error) {
         const axiosError = error as AxiosError;
         console.error("Error:", axiosError.response?.data.error);
@@ -162,7 +168,6 @@ const OpenAILib = (params: OpenAILibParams) => {
   ): Promise<ISummarizeResult[]> => {
     console.log("About to summarize payload: ", payload);
     const options = getSummarizeOptionsByPayload(payload);
-    console.log("options", options);
     const summarizations: ISummarizeResult[] = [];
     for (const chapterText of chapterTexts) {
       const summary: ISummarizeResult = await summarizeChapter(
