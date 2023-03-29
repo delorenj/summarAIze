@@ -21,27 +21,37 @@ export const SummaryList: React.FC = () => {
     setExpandedRow(expandedRow === jobId ? null : jobId)
   }
 
+  const renderJobDescription = (job: ISummaryJobStatus) => {
+    return (
+      (job.payload.selectedChapters.length > 1 ? 'Summaries' : 'Summary') +
+      ' of ' +
+      (job.payload.selectedChapters.length > 1 ? 'chapters ' : 'chapter ') +
+      job.payload.selectedChapters.map((c) => c.index).join(', ')
+    )
+  }
   return (
     <List>
       {bookDetails?.bookJobs.length === 0 && <ListItem>No summaries yet</ListItem>}
-      {bookDetails?.bookJobs.map((job: ISummaryJobStatus) => (
-        <React.Fragment key={job.jobId}>
-          <ListItem>
-            <ListItemButton>
-              <Stack direction="row" alignItems="center">
-                <ListItemText primary={job.payload.bookId} secondary={job.status} />
-                <IconButton>
-                  <DownloadIcon />
-                </IconButton>
-                <IconButton onClick={(event) => handlePreviewClick(event, job.jobId)}>
-                  <PreviewIcon />
-                </IconButton>
-              </Stack>
-            </ListItemButton>
-          </ListItem>
-          {expandedRow === job.jobId && <SummaryView summaryJob={getSummaryFromBookDetailsByJobId(job.jobId)} />}
-        </React.Fragment>
-      ))}
+      {bookDetails?.bookJobs
+        ?.filter((job) => job.status !== 'FAILED')
+        .map((job: ISummaryJobStatus) => (
+          <React.Fragment key={job.jobId}>
+            <ListItem>
+              <ListItemButton>
+                <Stack direction="row" alignItems="center">
+                  <ListItemText primary={renderJobDescription(job)} secondary={job.status} />
+                  <IconButton>
+                    <DownloadIcon />
+                  </IconButton>
+                  <IconButton onClick={(event) => handlePreviewClick(event, job.jobId)}>
+                    <PreviewIcon />
+                  </IconButton>
+                </Stack>
+              </ListItemButton>
+            </ListItem>
+            {expandedRow === job.jobId && <SummaryView summaryJob={getSummaryFromBookDetailsByJobId(job.jobId)} />}
+          </React.Fragment>
+        ))}
     </List>
   )
 }
