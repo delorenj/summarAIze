@@ -26,9 +26,9 @@ export const DocNavigator = () => {
             justifyContent: 'center',
           }}
           variant="fullWidth">
-          <Tab label="Original Contents" {...a11yProps(0)} />
+          <Tab label="Summary Workspace" {...a11yProps(0)} />
           <Tab label="Summaries" {...a11yProps(1)} />
-          <Tab label="Summary Workspace" {...a11yProps(2)} />
+          <Tab label="Original Contents" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel value={activeTab} index={0}>
