@@ -5,6 +5,7 @@ import React from 'react'
 import { SummaryList } from './SummaryList'
 import { RenderDocument } from './RenderDocument'
 import { SummaryWorkspace } from './SummaryWorkspace'
+import { ActionPanel } from "./ActionPanel";
 
 export const DocNavigator = () => {
   const { bookDetails, activeTab, setActiveTab } = useDocViewContext()
@@ -32,7 +33,8 @@ export const DocNavigator = () => {
         </Tabs>
       </Box>
       <TabPanel value={activeTab} index={0}>
-        <RenderDocument book={bookDetails.book} />
+        <ActionPanel />
+        {/*<RenderDocument book={bookDetails.book} />*/}
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
         <SummaryList />
