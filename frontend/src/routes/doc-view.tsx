@@ -18,11 +18,11 @@ export const DocView = () => {
       <main>
         <Container>
           <Grid container sx={{ py: 3 }}>
-            <Grid xs={4}>
-              <BigDocCard />
-            </Grid>
-            <Grid xs={8}>
+            <Grid xs={10}>
               <DocNavigator />
+            </Grid>
+            <Grid xs={2}>
+              <BigDocCard />
             </Grid>
           </Grid>
         </Container>

@@ -16,7 +16,7 @@ export const DocNavigator = () => {
 
   return bookDetails ? (
     <>
-      <Typography variant="h1">{bookDetails.book.title}</Typography>
+      <Typography variant="h2">{bookDetails.book.title}</Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', textAlign: 'center' }}>
         <Tabs
           value={activeTab}
@@ -25,8 +25,7 @@ export const DocNavigator = () => {
           sx={{
             flex: 1,
             justifyContent: 'center',
-          }}
-          variant="fullWidth">
+          }}>
           <Tab label="Summary Workspace" {...a11yProps(0)} />
           <Tab label="Summaries" {...a11yProps(1)} />
           <Tab label="Original Contents" {...a11yProps(2)} />

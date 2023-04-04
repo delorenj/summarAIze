@@ -18,24 +18,11 @@ export const BigDocCard = () => {
           zIndex: 1,
         }}>
         <CardMedia component="img" image={bookDetails.book.cover} alt={bookDetails.book.title} height={undefined} />
-        <CardContent
-          sx={{
-            flexGrow: 1,
-          }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {bookDetails.book.title}
-          </Typography>
-        </CardContent>
         <CardActions>
-          <IconButton>
-            <RemoveRedEyeTwoToneIcon />
-          </IconButton>
           <IconButton aria-label="add to favorites">
             <CloudDownloadTwoToneIcon />
           </IconButton>
-          <IconButton>
-            <SummarizeTwoToneIcon />
-          </IconButton>
+          <Typography variant='button'>Download</Typography>
         </CardActions>
         <SummaraizeDrawer />
       </Card>

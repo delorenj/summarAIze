@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ddc34b6-7cd0-46e6-90cb-9d37a61a42f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/ActionPanel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/ActionRow.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/BigDocCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/BigDocCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/DocNavigator.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/server/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/routes/doc-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/doc-view.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +174,7 @@
       <workItem from="1677984911728" duration="10015000" />
       <workItem from="1678202764530" duration="70000" />
       <workItem from="1678202869526" duration="66684000" />
-      <workItem from="1680485084806" duration="3030000" />
+      <workItem from="1680485084806" duration="6068000" />
     </task>
     <servers />
   </component>
