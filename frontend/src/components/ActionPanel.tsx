@@ -1,21 +1,70 @@
-import React, { useEffect, useState } from "react";
-import DownloadIcon from "@mui/icons-material/Download";
-import { ISummaryJobStatus } from "../types/summaraizeTypes";
+import React from "react";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  List,
+  ListItemButton,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+  Divider,
+} from "@mui/material";
+import ChatIcon from "@mui/icons-material/ChatTwoTone";
+import ArticleIcon from "@mui/icons-material/Article";
+import BlurLinearIcon from "@mui/icons-material/BlurLinear";
+import CoPresentIcon from "@mui/icons-material/CoPresent";
 import { useDocViewContext } from "../contexts/docViewContext";
-import PreviewIcon from "@mui/icons-material/Preview";
-import { SummaryView } from "./SummaryView";
-import { List, ListItemButton } from "@mui/material";
-import { ActionRow } from "./ActionRow";
+import { cyan, deepOrange, green, pink } from "@mui/material/colors";
 
 export const ActionPanel: React.FC = () => {
-  const { bookDetails } = useDocViewContext()
+  const { bookDetails } = useDocViewContext();
 
+  const data = [
+    {
+      title: "Chapter Summary",
+      url: "#",
+      Icon: ArticleIcon,
+      color: pink[500],
+    },
+    {
+      title: "Spoiler Free Summary",
+      url: "#",
+      Icon: BlurLinearIcon,
+      color: cyan[500],
+    },
+    {
+      title: "Character Glossary",
+      url: "#",
+      Icon: CoPresentIcon,
+      color: deepOrange[500],
+    },
+    {
+      title: "Chapter Chat",
+      url: "#",
+      Icon: ChatIcon,
+      color: green[500],
+    },
+  ];
   return (
-    <List>
-      <ActionRow image='/action01.png' name='chapterSummary' title='Chapter Summary'>Get a full summary of a one or more chapters</ActionRow>
-      <ActionRow image='/action02.png' name='recap' title='Spoiler-free Recap'>Get a full, spoiler-free recap up to any chapter</ActionRow>
-      <ActionRow image='/action03.png' name='characterGlossary' title='Character Glossary'>Get a full character glossary of all major characters in the document</ActionRow>
-
-    </List>
-  )
-}
+    <Box sx={{ maxWidth: '80%', margin: 0 }}>
+      <Grid container spacing={4}>
+        {data.map((item, index) => (
+          <Grid item key={index} xs={12} sm={6}>
+            <Stack direction="row" >
+              <item.Icon sx={{ color: item.color, marginRight: "10px" }} />
+              <Link href={item.url} underline="none">
+                {item.title}
+              </Link>
+            </Stack>
+          {index < data.length - 1 && (
+            <Divider orientation="horizontal" sx={{ my: 2 }} />
+          )}          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
